@@ -1,0 +1,100 @@
+\doxysection{KLLSketch Class Reference}
+\hypertarget{class_k_l_l_sketch}{}\label{class_k_l_l_sketch}\index{KLLSketch@{KLLSketch}}
+
+
+A sketch data structure for approximate quantile estimation.  
+
+
+
+
+{\ttfamily \#include $<$kll.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_k_l_l_sketch_a1985ae2800a4f8470f2c5aac12efc7ac}{KLLSketch}} (int max\+Bins)
+\begin{DoxyCompactList}\small\item\em Constructs a \doxylink{class_k_l_l_sketch}{KLLSketch} object with the specified maximum number of bins. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_k_l_l_sketch_a96a425b32af7c7289cc91f55dfd8ab54}{update}} (double value)
+\begin{DoxyCompactList}\small\item\em Updates the sketch with a new data point. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_k_l_l_sketch_ae92c18edf8ff5d62a029c00e15dbbf0b}{get\+Quantile}} (double quantile)
+\begin{DoxyCompactList}\small\item\em Estimates the quantile of the data stream represented by the sketch. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A sketch data structure for approximate quantile estimation. 
+
+This class represents a KLL sketch, which can be used to estimate quantiles of a data stream in an approximate but memory-\/efficient way. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_k_l_l_sketch_a1985ae2800a4f8470f2c5aac12efc7ac}\label{class_k_l_l_sketch_a1985ae2800a4f8470f2c5aac12efc7ac} 
+\index{KLLSketch@{KLLSketch}!KLLSketch@{KLLSketch}}
+\index{KLLSketch@{KLLSketch}!KLLSketch@{KLLSketch}}
+\doxysubsubsection{\texorpdfstring{KLLSketch()}{KLLSketch()}}
+{\footnotesize\ttfamily KLLSketch\+::\+KLLSketch (\begin{DoxyParamCaption}\item[{int}]{max\+Bins }\end{DoxyParamCaption})}
+
+
+
+Constructs a \doxylink{class_k_l_l_sketch}{KLLSketch} object with the specified maximum number of bins. 
+
+A sketch data structure for approximate quantile estimation using the KLL algorithm.
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Bins} & The maximum number of bins to store in the sketch.\\
+\hline
+\end{DoxyParams}
+This class implements the KLL sketch data structure, which can be used to estimate quantiles of a data stream in an approximate but memory-\/efficient way.
+
+Constructs a \doxylink{class_k_l_l_sketch}{KLLSketch} object with the specified maximum number of bins.
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Bins} & The maximum number of bins to store in the sketch. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_k_l_l_sketch_ae92c18edf8ff5d62a029c00e15dbbf0b}\label{class_k_l_l_sketch_ae92c18edf8ff5d62a029c00e15dbbf0b} 
+\index{KLLSketch@{KLLSketch}!getQuantile@{getQuantile}}
+\index{getQuantile@{getQuantile}!KLLSketch@{KLLSketch}}
+\doxysubsubsection{\texorpdfstring{getQuantile()}{getQuantile()}}
+{\footnotesize\ttfamily double KLLSketch\+::get\+Quantile (\begin{DoxyParamCaption}\item[{double}]{quantile }\end{DoxyParamCaption})}
+
+
+
+Estimates the quantile of the data stream represented by the sketch. 
+
+This function estimates the value at a specific quantile (e.\+g., median) based on the data points stored in the sketch.
+
+
+\begin{DoxyParams}{Parameters}
+{\em quantile} & The quantile value (between 0.\+0 and 1.\+0). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The estimated value at the specified quantile. 
+\end{DoxyReturn}
+\Hypertarget{class_k_l_l_sketch_a96a425b32af7c7289cc91f55dfd8ab54}\label{class_k_l_l_sketch_a96a425b32af7c7289cc91f55dfd8ab54} 
+\index{KLLSketch@{KLLSketch}!update@{update}}
+\index{update@{update}!KLLSketch@{KLLSketch}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily void KLLSketch\+::update (\begin{DoxyParamCaption}\item[{double}]{value }\end{DoxyParamCaption})}
+
+
+
+Updates the sketch with a new data point. 
+
+This function adds a new data point to the sketch and maintains the internal state for quantile estimation. If the number of data points exceeds the maximum number of bins, the merge\+Bins() function is called to reduce the number of bins.
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & The data point to be added to the sketch. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/core/sketches/kll.\+h\item 
+src/core/sketches/kll.\+cpp\end{DoxyCompactItemize}

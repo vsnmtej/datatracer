@@ -1,0 +1,93 @@
+\doxysection{Image\+Profile Class Reference}
+\hypertarget{class_image_profile}{}\label{class_image_profile}\index{ImageProfile@{ImageProfile}}
+
+
+Class for computing and managing various image statistics.  
+
+
+
+
+{\ttfamily \#include $<$imageprofile.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_image_profile_aeb22e7e5b4321abfae9f67b8e2116724}{Image\+Profile}} (std\+::string conf\+\_\+path, \mbox{\hyperlink{class_saver}{Saver}}$<$ \mbox{\hyperlink{modelprofile_8h_a92fd5976a4406747961d26306e5787bf}{distribution\+Box}} $>$ \&saver)
+\begin{DoxyCompactList}\small\item\em Constructs an \doxylink{class_image_profile}{Image\+Profile} object with the specified image characteristics. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_image_profile_a781a3a13241369106a75541d9cb4aba3}{log}} (std\+::vector$<$ uint8\+\_\+t $>$ \&img, int image\+\_\+width, int image\+\_\+height, std\+::map$<$ int, \&distribution\+\_\+sketch $>$ \&imgpixels\+\_\+stat, std\+::map$<$ string, distribution\+\_\+sketch $>$ \&imgprofile\+\_\+map)
+\begin{DoxyCompactList}\small\item\em Logs image statistics for the provided image data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_image_profile_a716feca697689561e61d2807094bc306}\label{class_image_profile_a716feca697689561e61d2807094bc306} 
+std\+::vector$<$ std\+::pair$<$ std\+::string, double $>$ $>$ {\bfseries sampling\+Confidences}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class for computing and managing various image statistics. 
+
+A class for analyzing and storing image statistics.
+
+This class provides functionalities for analyzing image properties like distribution of pixel values, contrast, brightness, etc. It utilizes KLL sketches for memory-\/efficient storage of these statistics. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_image_profile_aeb22e7e5b4321abfae9f67b8e2116724}\label{class_image_profile_aeb22e7e5b4321abfae9f67b8e2116724} 
+\index{ImageProfile@{ImageProfile}!ImageProfile@{ImageProfile}}
+\index{ImageProfile@{ImageProfile}!ImageProfile@{ImageProfile}}
+\doxysubsubsection{\texorpdfstring{ImageProfile()}{ImageProfile()}}
+{\footnotesize\ttfamily Image\+Profile\+::\+Image\+Profile (\begin{DoxyParamCaption}\item[{std\+::string}]{conf\+\_\+path,  }\item[{\mbox{\hyperlink{class_saver}{Saver}}$<$ \mbox{\hyperlink{modelprofile_8h_a92fd5976a4406747961d26306e5787bf}{distribution\+Box}} $>$ \&}]{saver }\end{DoxyParamCaption})}
+
+
+
+Constructs an \doxylink{class_image_profile}{Image\+Profile} object with the specified image characteristics. 
+
+Constructor to initialize \doxylink{class_image_profile}{Image\+Profile} object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em channels} & The number of channels in the image (e.\+g., grayscale\+: 1, RGB\+: 3). \\
+\hline
+{\em img\+\_\+type} & The image type (implementation specific). \\
+\hline
+{\em metrics} & The set of image metrics to be tracked (e.\+g., "{}contrast"{}, "{}brightness"{}).\\
+\hline
+{\em conf\+\_\+path} & Path to configuration file \\
+\hline
+{\em saver} & \doxylink{class_saver}{Saver} object for saving statistics \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_image_profile_a781a3a13241369106a75541d9cb4aba3}\label{class_image_profile_a781a3a13241369106a75541d9cb4aba3} 
+\index{ImageProfile@{ImageProfile}!log@{log}}
+\index{log@{log}!ImageProfile@{ImageProfile}}
+\doxysubsubsection{\texorpdfstring{log()}{log()}}
+{\footnotesize\ttfamily void Image\+Profile\+::log (\begin{DoxyParamCaption}\item[{std\+::vector$<$ uint8\+\_\+t $>$ \&}]{img,  }\item[{int}]{image\+\_\+width,  }\item[{int}]{image\+\_\+height,  }\item[{std\+::map$<$ int, \&distribution\+\_\+sketch $>$ \&}]{imgpixels\+\_\+stat,  }\item[{std\+::map$<$ string, distribution\+\_\+sketch $>$ \&}]{imgprofile\+\_\+map }\end{DoxyParamCaption})}
+
+
+
+Logs image statistics for the provided image data. 
+
+This function analyzes the provided image data and updates the internal KLL sketches with relevant statistics.
+
+
+\begin{DoxyParams}{Parameters}
+{\em img} & The image data as a vector of bytes. \\
+\hline
+{\em image\+\_\+width} & The width of the image in pixels. \\
+\hline
+{\em image\+\_\+height} & The height of the image in pixels. \\
+\hline
+{\em imgpixels\+\_\+stat} & A map to store per-\/channel statistics (implementation specific). \\
+\hline
+{\em imgprofile\+\_\+map} & A map to store various image profile metrics (e.\+g., "{}contrast"{}). \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/core/profiles/\mbox{\hyperlink{imageprofile_8h}{imageprofile.\+h}}\item 
+src/core/profiles/\mbox{\hyperlink{imageprofile_8cpp}{imageprofile.\+cpp}}\end{DoxyCompactItemize}

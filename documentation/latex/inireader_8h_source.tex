@@ -1,0 +1,29 @@
+\doxysection{inireader.\+h}
+\hypertarget{inireader_8h_source}{}\label{inireader_8h_source}\index{src/core/helpers/inireader.h@{src/core/helpers/inireader.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ INI\_PARSER\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ INI\_PARSER\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_ini_parser}{IniParser}}\ \{}
+\DoxyCodeLine{00008\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00009\ \ \ \textcolor{comment}{//\ Constructor\ (takes\ ownership\ of\ the\ IniParser\ object)}}
+\DoxyCodeLine{00010\ \ \ \mbox{\hyperlink{class_ini_parser}{IniParser}}(\mbox{\hyperlink{class_ini_parser}{IniParser}}\&\&\ parser)\ :\ parser\_(std::move(parser))\ \{\}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \ \ \textcolor{comment}{//\ Parse\ the\ INI\ file\ and\ store\ data}}
+\DoxyCodeLine{00013\ \ \ \textcolor{keywordtype}{bool}\ parse(\textcolor{keyword}{const}\ \textcolor{keywordtype}{string}\&\ filename);}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \textcolor{comment}{//\ Get\ all\ sections\ and\ their\ key-\/value\ pairs}}
+\DoxyCodeLine{00016\ \ \ \textcolor{keyword}{const}\ map<string,\ map<string,\ string>>\&\ getData()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00019\ \ \ \mbox{\hyperlink{class_ini_parser}{IniParser}}\ parser\_;\ \ \textcolor{comment}{//\ IniParser\ object\ from\ the\ library}}
+\DoxyCodeLine{00020\ \};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ INI\_PARSER\_H}}
+\DoxyCodeLine{00023\ }
+
+\end{DoxyCode}

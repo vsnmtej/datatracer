@@ -1,0 +1,31 @@
+\doxysection{kll.\+h}
+\hypertarget{kll_8h_source}{}\label{kll_8h_source}\index{src/core/sketches/kll.h@{src/core/sketches/kll.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifndef\ KLL\_SKETCH\_H}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ KLL\_SKETCH\_H}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_k_l_l_sketch}{KLLSketch}}\ \{}
+\DoxyCodeLine{00022\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00028\ \ \ \mbox{\hyperlink{class_k_l_l_sketch_a1985ae2800a4f8470f2c5aac12efc7ac}{KLLSketch}}(\textcolor{keywordtype}{int}\ maxBins);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00037\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_k_l_l_sketch_a96a425b32af7c7289cc91f55dfd8ab54}{update}}(\textcolor{keywordtype}{double}\ value);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00047\ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_k_l_l_sketch_ae92c18edf8ff5d62a029c00e15dbbf0b}{getQuantile}}(\textcolor{keywordtype}{double}\ quantile);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00055\ \ \ \textcolor{keywordtype}{void}\ mergeBins();}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ std::vector<double>\ bins;\ }
+\DoxyCodeLine{00058\ \ \ \textcolor{keywordtype}{int}\ maxBins;\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00059\ \};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00062\ }
+
+\end{DoxyCode}

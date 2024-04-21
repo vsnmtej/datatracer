@@ -1,0 +1,108 @@
+\doxysection{Model\+Stats Class Reference}
+\hypertarget{class_model_stats}{}\label{class_model_stats}\index{ModelStats@{ModelStats}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_model_stats_adb823fc53150a786244b28048397da0f}{Model\+Stats}} (std\+::string model\+\_\+id, unit8 no\+\_\+of\+\_\+classes, \mbox{\hyperlink{class_saver}{Saver}}$<$ \mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distribution\+Box}} $>$ \&saver)
+\begin{DoxyCompactList}\small\item\em Constructor to initialize \doxylink{class_model_stats}{Model\+Stats} object. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_model_stats_a5c28e8327d7314bed172f1c0cdff6b92}{log\+\_\+classification\+\_\+model\+\_\+stats}} (float inference\+\_\+latency, const std\+::vector$<$ Classification\+Result $>$ \&results)
+\begin{DoxyCompactList}\small\item\em Logs statistics for a classification model. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_model_stats_ac16afdf5e666bad798ef7435127a36d2}{log\+\_\+yolov5\+\_\+model\+\_\+stats}} (float inference\+\_\+latency, const std\+::vector$<$ Yolo\+Detection $>$ \&results)
+\begin{DoxyCompactList}\small\item\em Logs statistics for a YOLOv5 model. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_model_stats_adb823fc53150a786244b28048397da0f}\label{class_model_stats_adb823fc53150a786244b28048397da0f} 
+\index{ModelStats@{ModelStats}!ModelStats@{ModelStats}}
+\index{ModelStats@{ModelStats}!ModelStats@{ModelStats}}
+\doxysubsubsection{\texorpdfstring{ModelStats()}{ModelStats()}}
+{\footnotesize\ttfamily Model\+Stats\+::\+Model\+Stats (\begin{DoxyParamCaption}\item[{std\+::string}]{model\+\_\+id,  }\item[{unit8}]{no\+\_\+of\+\_\+classes,  }\item[{\mbox{\hyperlink{class_saver}{Saver}}$<$ \mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distribution\+Box}} $>$ \&}]{saver }\end{DoxyParamCaption})}
+
+
+
+Constructor to initialize \doxylink{class_model_stats}{Model\+Stats} object. 
+
+\doxylink{class_model_stats}{Model\+Stats} class constructor.
+
+
+\begin{DoxyParams}{Parameters}
+{\em model\+\_\+id} & Unique identifier for the model \\
+\hline
+{\em no\+\_\+of\+\_\+classes} & Number of classes the model predicts \\
+\hline
+{\em saver} & Reference to a \doxylink{class_saver}{Saver} object used for saving model statistics \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_model_stats_a5c28e8327d7314bed172f1c0cdff6b92}\label{class_model_stats_a5c28e8327d7314bed172f1c0cdff6b92} 
+\index{ModelStats@{ModelStats}!log\_classification\_model\_stats@{log\_classification\_model\_stats}}
+\index{log\_classification\_model\_stats@{log\_classification\_model\_stats}!ModelStats@{ModelStats}}
+\doxysubsubsection{\texorpdfstring{log\_classification\_model\_stats()}{log\_classification\_model\_stats()}}
+{\footnotesize\ttfamily int Model\+Stats\+::log\+\_\+classification\+\_\+model\+\_\+stats (\begin{DoxyParamCaption}\item[{float}]{inference\+\_\+latency,  }\item[{const std\+::vector$<$ Classification\+Result $>$ \&}]{results }\end{DoxyParamCaption})}
+
+
+
+Logs statistics for a classification model. 
+
+Logs classification model statistics.
+
+
+\begin{DoxyParams}{Parameters}
+{\em inference\+\_\+latency} & Time taken for model inference \\
+\hline
+{\em results} & Reference to the classification results \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, negative value on error
+\end{DoxyReturn}
+
+\begin{DoxyParams}{Parameters}
+{\em inference\+\_\+latency} & Time taken for model inference \\
+\hline
+{\em results} & Reference to the classification results \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, negative value on error
+\end{DoxyReturn}
+This function iterates through the provided results and logs statistics for the most frequent classes. It updates the {\ttfamily model\+\_\+classes\+\_\+stat} map with scores for each class. \Hypertarget{class_model_stats_ac16afdf5e666bad798ef7435127a36d2}\label{class_model_stats_ac16afdf5e666bad798ef7435127a36d2} 
+\index{ModelStats@{ModelStats}!log\_yolov5\_model\_stats@{log\_yolov5\_model\_stats}}
+\index{log\_yolov5\_model\_stats@{log\_yolov5\_model\_stats}!ModelStats@{ModelStats}}
+\doxysubsubsection{\texorpdfstring{log\_yolov5\_model\_stats()}{log\_yolov5\_model\_stats()}}
+{\footnotesize\ttfamily int Model\+Stats\+::log\+\_\+yolov5\+\_\+model\+\_\+stats (\begin{DoxyParamCaption}\item[{float}]{inference\+\_\+latency,  }\item[{const std\+::vector$<$ Yolo\+Detection $>$ \&}]{results }\end{DoxyParamCaption})}
+
+
+
+Logs statistics for a YOLOv5 model. 
+
+Logs YOLOv5 model statistics.
+
+
+\begin{DoxyParams}{Parameters}
+{\em inference\+\_\+latency} & Time taken for model inference \\
+\hline
+{\em results} & Reference to the detection results from YOLOv5 model \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, negative value on error
+\end{DoxyReturn}
+
+\begin{DoxyParams}{Parameters}
+{\em inference\+\_\+latency} & Time taken for model inference \\
+\hline
+{\em results} & Reference to the detection results from YOLOv5 model \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, negative value on error
+\end{DoxyReturn}
+This function logs inference latency, number of detections, objectness scores, and class frequencies for YOLOv5 model. It updates the {\ttfamily model\+\_\+classes\+\_\+stat} map with scores for each detected class. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/core/stats/\mbox{\hyperlink{modelstats_8h}{modelstats.\+h}}\item 
+src/core/stats/modelstats.\+cpp\end{DoxyCompactItemize}

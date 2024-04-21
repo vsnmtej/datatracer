@@ -1,0 +1,46 @@
+\doxysection{Ini\+Parser\+::Ini\+Parser Class Reference}
+\hypertarget{class_ini_parser_1_1_ini_parser}{}\label{class_ini_parser_1_1_ini_parser}\index{IniParser::IniParser@{IniParser::IniParser}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_ini_parser_1_1_ini_parser_a98cde77513b8add3d061596841f0e211}{parse}} (const std\+::string \&filename)
+\item 
+const std\+::map$<$ std\+::string, std\+::map$<$ std\+::string, std\+::string $>$ $>$ \& \mbox{\hyperlink{class_ini_parser_1_1_ini_parser_a55cd765e2a010bad9994733fb260f881}{get\+Data}} () const
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_ini_parser_1_1_ini_parser_a55cd765e2a010bad9994733fb260f881}\label{class_ini_parser_1_1_ini_parser_a55cd765e2a010bad9994733fb260f881} 
+\index{IniParser::IniParser@{IniParser::IniParser}!getData@{getData}}
+\index{getData@{getData}!IniParser::IniParser@{IniParser::IniParser}}
+\doxysubsubsection{\texorpdfstring{getData()}{getData()}}
+{\footnotesize\ttfamily const std\+::map$<$ std\+::string, std\+::map$<$ std\+::string, std\+::string $>$ $>$ \& Ini\+Parser\+::\+Ini\+Parser\+::get\+Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Retrieves the parsed data as a map of sections and key-\/value pairs.
+
+This method returns a const reference to a map where the first level keys represent section names and the second level keys represent key-\/value pairs within those sections.
+
+\begin{DoxyReturn}{Returns}
+A const reference to a map containing the parsed data. 
+\end{DoxyReturn}
+\Hypertarget{class_ini_parser_1_1_ini_parser_a98cde77513b8add3d061596841f0e211}\label{class_ini_parser_1_1_ini_parser_a98cde77513b8add3d061596841f0e211} 
+\index{IniParser::IniParser@{IniParser::IniParser}!parse@{parse}}
+\index{parse@{parse}!IniParser::IniParser@{IniParser::IniParser}}
+\doxysubsubsection{\texorpdfstring{parse()}{parse()}}
+{\footnotesize\ttfamily bool Ini\+Parser\+::\+Ini\+Parser\+::parse (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{filename }\end{DoxyParamCaption})}
+
+Parses an INI file from the specified filename.
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & The path to the INI file. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the file was parsed successfully, false otherwise. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/core/helpers/inireader.\+cpp\end{DoxyCompactItemize}

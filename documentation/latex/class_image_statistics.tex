@@ -1,0 +1,63 @@
+\doxysection{Image\+Statistics Class Reference}
+\hypertarget{class_image_statistics}{}\label{class_image_statistics}\index{ImageStatistics@{ImageStatistics}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_image_statistics_ab698cbeec9985f22bdcfe28ab4dcadc1}{Image\+Statistics}} (uint8 channels, uint8 img\+\_\+type, uint8 metrics)
+\begin{DoxyCompactList}\small\item\em Constructor to initialize \doxylink{class_image_statistics}{Image\+Statistics} object. \end{DoxyCompactList}\item 
+\Hypertarget{class_image_statistics_ac824f9eebe7fb18b6a46d9eca3a4353f}\label{class_image_statistics_ac824f9eebe7fb18b6a46d9eca3a4353f} 
+void {\bfseries log} (std\+::vector$<$ uint8\+\_\+t $>$ \&img, int image\+\_\+width, int image\+\_\+height, std\+::map$<$ int, \&distribution\+\_\+sketch $>$ \&imgpixels\+\_\+stat, std\+::map$<$ string, distribution\+\_\+sketch $>$ \&imgstats\+\_\+map)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_image_statistics_af0b179c8cd84fe9e03a1b694a9087d0a}\label{class_image_statistics_af0b179c8cd84fe9e03a1b694a9087d0a} 
+\mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distribution\+Box}} {\bfseries contrast\+Box}
+\item 
+\Hypertarget{class_image_statistics_a1b54bf0722dc78eb0dbe7459146b322b}\label{class_image_statistics_a1b54bf0722dc78eb0dbe7459146b322b} 
+\mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distribution\+Box}} {\bfseries brightness\+Box}
+\item 
+\Hypertarget{class_image_statistics_a93eb8b9c8e79a14924a011904ff98146}\label{class_image_statistics_a93eb8b9c8e79a14924a011904ff98146} 
+\mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distribution\+Box}} {\bfseries mean\+Box}
+\item 
+\Hypertarget{class_image_statistics_adf9b53621d9342623135028f4a3b5fba}\label{class_image_statistics_adf9b53621d9342623135028f4a3b5fba} 
+\mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distribution\+Box}} {\bfseries noise\+Box}
+\item 
+\Hypertarget{class_image_statistics_a184e8a1775e0f06dc5d344038af082e3}\label{class_image_statistics_a184e8a1775e0f06dc5d344038af082e3} 
+\mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distribution\+Box}} {\bfseries pixel\+Box\+\_\+r}
+\item 
+\Hypertarget{class_image_statistics_ac9ed3cbab5f6611638537a1eb327f20e}\label{class_image_statistics_ac9ed3cbab5f6611638537a1eb327f20e} 
+\mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distribution\+Box}} {\bfseries pixel\+Box\+\_\+g}
+\item 
+\Hypertarget{class_image_statistics_a68231388f76c5a36966f3739c8637b25}\label{class_image_statistics_a68231388f76c5a36966f3739c8637b25} 
+\mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distribution\+Box}} {\bfseries pixel\+Box\+\_\+b}
+\item 
+\Hypertarget{class_image_statistics_a74f56152bd4ac2401f306d19817b17eb}\label{class_image_statistics_a74f56152bd4ac2401f306d19817b17eb} 
+\mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distribution\+Box}} {\bfseries pixel\+Box}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_image_statistics_ab698cbeec9985f22bdcfe28ab4dcadc1}\label{class_image_statistics_ab698cbeec9985f22bdcfe28ab4dcadc1} 
+\index{ImageStatistics@{ImageStatistics}!ImageStatistics@{ImageStatistics}}
+\index{ImageStatistics@{ImageStatistics}!ImageStatistics@{ImageStatistics}}
+\doxysubsubsection{\texorpdfstring{ImageStatistics()}{ImageStatistics()}}
+{\footnotesize\ttfamily Image\+Statistics\+::\+Image\+Statistics (\begin{DoxyParamCaption}\item[{uint8}]{channels,  }\item[{uint8}]{img\+\_\+type,  }\item[{uint8}]{metrics }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructor to initialize \doxylink{class_image_statistics}{Image\+Statistics} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em conf\+\_\+path} & Path to configuration file \\
+\hline
+{\em saver} & \doxylink{class_saver}{Saver} object for saving statistics \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/core/stats/imagestatistics.\+h\item 
+src/core/stats/\mbox{\hyperlink{imagestatistics_8cpp}{imagestatistics.\+cpp}}\end{DoxyCompactItemize}

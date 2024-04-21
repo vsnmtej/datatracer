@@ -1,0 +1,79 @@
+\doxysection{Image\+Uploader Class Reference}
+\hypertarget{class_image_uploader}{}\label{class_image_uploader}\index{ImageUploader@{ImageUploader}}
+
+
+Class for uploading images to AWS S3 in a separate thread.  
+
+
+
+
+{\ttfamily \#include $<$objectuploader.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_image_uploader_a75e010f9d1642c9b7dccd8b0dd246065}{Image\+Uploader}} (const Aws\+::\+Auth\+::\+AWSCredentials \&credentials, const Aws\+::\+String \&region, std\+::shared\+\_\+ptr$<$ Aws\+::\+Utils\+::\+Threading\+::\+Executor $>$ executor=nullptr)
+\begin{DoxyCompactList}\small\item\em Constructor to initialize the \doxylink{class_image_uploader}{Image\+Uploader} object. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_image_uploader_a09a95f5fd14c5d3ef0f6c59e28b1a7a1}{start\+Upload\+Thread}} (const std\+::string \&image\+Path, const std\+::string \&bucket\+Name, const std\+::string \&object\+Key, const std\+::chrono\+::milliseconds \&interval)
+\begin{DoxyCompactList}\small\item\em Starts a thread that uploads the image to S3 in a loop at a specified interval. \end{DoxyCompactList}\item 
+\Hypertarget{class_image_uploader_aa79d88846e1b717e53dfcbf5e9476dac}\label{class_image_uploader_aa79d88846e1b717e53dfcbf5e9476dac} 
+void {\bfseries stop\+Upload\+Thread} ()
+\begin{DoxyCompactList}\small\item\em Stops the running upload thread. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class for uploading images to AWS S3 in a separate thread. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_image_uploader_a75e010f9d1642c9b7dccd8b0dd246065}\label{class_image_uploader_a75e010f9d1642c9b7dccd8b0dd246065} 
+\index{ImageUploader@{ImageUploader}!ImageUploader@{ImageUploader}}
+\index{ImageUploader@{ImageUploader}!ImageUploader@{ImageUploader}}
+\doxysubsubsection{\texorpdfstring{ImageUploader()}{ImageUploader()}}
+{\footnotesize\ttfamily Image\+Uploader\+::\+Image\+Uploader (\begin{DoxyParamCaption}\item[{const Aws\+::\+Auth\+::\+AWSCredentials \&}]{credentials,  }\item[{const Aws\+::\+String \&}]{region,  }\item[{std\+::shared\+\_\+ptr$<$ Aws\+::\+Utils\+::\+Threading\+::\+Executor $>$}]{executor = {\ttfamily nullptr} }\end{DoxyParamCaption})}
+
+
+
+Constructor to initialize the \doxylink{class_image_uploader}{Image\+Uploader} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em credentials} & AWS credentials for S3 access \\
+\hline
+{\em region} & AWS region where the S3 bucket resides \\
+\hline
+{\em executor} & Optional thread executor for upload tasks (defaults to Pooled\+Thread\+Executor) \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_image_uploader_a09a95f5fd14c5d3ef0f6c59e28b1a7a1}\label{class_image_uploader_a09a95f5fd14c5d3ef0f6c59e28b1a7a1} 
+\index{ImageUploader@{ImageUploader}!startUploadThread@{startUploadThread}}
+\index{startUploadThread@{startUploadThread}!ImageUploader@{ImageUploader}}
+\doxysubsubsection{\texorpdfstring{startUploadThread()}{startUploadThread()}}
+{\footnotesize\ttfamily bool Image\+Uploader\+::start\+Upload\+Thread (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{image\+Path,  }\item[{const std\+::string \&}]{bucket\+Name,  }\item[{const std\+::string \&}]{object\+Key,  }\item[{const std\+::chrono\+::milliseconds \&}]{interval }\end{DoxyParamCaption})}
+
+
+
+Starts a thread that uploads the image to S3 in a loop at a specified interval. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em image\+Path} & Path to the image file on local storage \\
+\hline
+{\em bucket\+Name} & Name of the S3 bucket where the image will be uploaded \\
+\hline
+{\em object\+Key} & Name of the object (filename) in the S3 bucket \\
+\hline
+{\em interval} & Upload interval in milliseconds \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true on success, false on error 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/core/helpers/objectuploader.\+h\item 
+src/core/helpers/objectuploader.\+cpp\end{DoxyCompactItemize}

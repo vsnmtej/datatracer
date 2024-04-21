@@ -1,0 +1,30 @@
+\doxysection{imagestatistics.\+h}
+\hypertarget{imagestatistics_8h_source}{}\label{imagestatistics_8h_source}\index{src/core/stats/imagestatistics.h@{src/core/stats/imagestatistics.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{import}\ kll.h}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ typedef\ datasketches::kll\_sketch<unit>\ \mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distributionBox}};\ }
+\DoxyCodeLine{00004\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_image_statistics}{ImageStatistics}}\ \{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00005\ \ \ \textcolor{keyword}{public}:\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00006\ \ \ \ \ \mbox{\hyperlink{class_image_statistics_ab698cbeec9985f22bdcfe28ab4dcadc1}{ImageStatistics}}(uint8\ channels,\ uint8\ img\_type,\ uint8\ metrics)}
+\DoxyCodeLine{00007\ \ \ \ \ \{\ }
+\DoxyCodeLine{00008\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Constructor\ with\ parameters}}
+\DoxyCodeLine{00009\ \ \ \ \ \ \ \ \textcolor{comment}{//distributionBox\ :\ KLL\ Sketches\ for\ Image\ Distribution.}}
+\DoxyCodeLine{00010\ \ \ \ \ \ \ \ std::map<int,\ \&distribution\_sketch>\ imgpixels\_stat(channels);}
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ std::map<string,\ \&distribution\_sketch>\ imgstats\_map(metrics);}
+\DoxyCodeLine{00012\ \ \ \ \ \}}
+\DoxyCodeLine{00013\ \ \ \ \ }
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keywordtype}{void}\ log\ (std::vector<uint8\_t>\ \&img,\ \textcolor{keywordtype}{int}\ image\_width,\ \textcolor{keywordtype}{int}\ image\_height,}
+\DoxyCodeLine{00015\ \ \ \ \ \ std::map<int,\ \&distribution\_sketch>\ \&imgpixels\_stat,\ std::map<string,\ distribution\_sketch>\ \&imgstats\_map);\ \ }
+\DoxyCodeLine{00016\ \ \ \ \ \ \mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distributionBox}}\ contrastBox;}
+\DoxyCodeLine{00017\ \ \ \ \ \ \mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distributionBox}}\ brightnessBox;}
+\DoxyCodeLine{00018\ \ \ \ \ \ \mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distributionBox}}\ meanBox;}
+\DoxyCodeLine{00019\ \ \ \ \ \ \mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distributionBox}}\ noiseBox;}
+\DoxyCodeLine{00020\ \ \ \ \ \ \mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distributionBox}}\ pixelBox\_r;}
+\DoxyCodeLine{00021\ \ \ \ \ \ \mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distributionBox}}\ pixelBox\_g;}
+\DoxyCodeLine{00022\ \ \ \ \ \ \mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distributionBox}}\ pixelBox\_b;}
+\DoxyCodeLine{00023\ \ \ \ \ \ \mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distributionBox}}\ pixelBox;}
+\DoxyCodeLine{00024\ \};}
+
+\end{DoxyCode}

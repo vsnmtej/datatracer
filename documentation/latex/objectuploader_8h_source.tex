@@ -1,0 +1,40 @@
+\doxysection{objectuploader.\+h}
+\hypertarget{objectuploader_8h_source}{}\label{objectuploader_8h_source}\index{src/core/helpers/objectuploader.h@{src/core/helpers/objectuploader.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#ifndef\ IMAGE\_UPLOADER\_H}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#define\ IMAGE\_UPLOADER\_H}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <aws/core/utils/threading/Executor.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <aws/transfer/TransferManager.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <chrono>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <mutex>}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_image_uploader}{ImageUploader}}\ \{}
+\DoxyCodeLine{00019\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00026\ \ \ \mbox{\hyperlink{class_image_uploader_a75e010f9d1642c9b7dccd8b0dd246065}{ImageUploader}}(\textcolor{keyword}{const}\ Aws::Auth::AWSCredentials\&\ credentials,\ \textcolor{keyword}{const}\ Aws::String\&\ region,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::shared\_ptr<Aws::Utils::Threading::Executor>\ executor\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00037\ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_image_uploader_a09a95f5fd14c5d3ef0f6c59e28b1a7a1}{startUploadThread}}(\textcolor{keyword}{const}\ std::string\&\ imagePath,\ \textcolor{keyword}{const}\ std::string\&\ bucketName,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ objectKey,\ \textcolor{keyword}{const}\ std::chrono::milliseconds\&\ interval);}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00043\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_image_uploader_aa79d88846e1b717e53dfcbf5e9476dac}{stopUploadThread}}();}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00046\ \ \ Aws::Auth::AWSCredentials\ credentials\_;\ \ }
+\DoxyCodeLine{00047\ \ \ Aws::String\ region\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00048\ \ \ Aws::Transfer::TransferManager\ transferManager\_;\ \ }
+\DoxyCodeLine{00049\ \ \ std::atomic<bool>\ stopFlag\_;\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00050\ \ \ std::mutex\ uploadMutex\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00051\ \ \ std::shared\_ptr<Aws::Utils::Threading::Executor>\ executor\_;\ \ }
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \textcolor{comment}{//\ Function\ to\ run\ the\ upload\ thread\ (implementation\ in\ ImageUploader.cpp)}}
+\DoxyCodeLine{00054\ \ \ \textcolor{keywordtype}{void}\ uploadThread(\textcolor{keyword}{const}\ std::string\&\ imagePath,\ \textcolor{keyword}{const}\ std::string\&\ bucketName,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ objectKey,\ \textcolor{keyword}{const}\ std::chrono::milliseconds\&\ interval);}
+\DoxyCodeLine{00056\ \};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ IMAGE\_UPLOADER\_H}}
+\DoxyCodeLine{00059\ }
+
+\end{DoxyCode}

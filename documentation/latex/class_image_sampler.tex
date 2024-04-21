@@ -1,0 +1,81 @@
+\doxysection{Image\+Sampler Class Reference}
+\hypertarget{class_image_sampler}{}\label{class_image_sampler}\index{ImageSampler@{ImageSampler}}
+
+
+Class for selecting uncertain image samples for further analysis.  
+
+
+
+
+{\ttfamily \#include $<$uncertainity\+\_\+sampling.\+h$>$}
+
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_image_sampler_ad13e532e994abe87b7c997ff8ff27346}\label{class_image_sampler_ad13e532e994abe87b7c997ff8ff27346} 
+typedef datasketches\+::kll\+\_\+sketch$<$ unit $>$ {\bfseries distribution\+Box}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_image_sampler_ac7fe65e41f8b682cef03f6627f5ad5a6}{Image\+Sampler}} (const std\+::string \&config\+File\+Path)
+\begin{DoxyCompactList}\small\item\em Constructor to initialize \doxylink{class_image_sampler}{Image\+Sampler} object with configuration file path. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_image_sampler_a2d5c61b1e7f501faf3e41a740adf9fa8}{sample}} (const std\+::vector$<$ std\+::pair$<$ float, int $>$ $>$ \&classification\+Results, const cv\+::\+Mat \&image, bool save\+Sample=true)
+\begin{DoxyCompactList}\small\item\em Selects uncertain image samples based on configured criteria. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class for selecting uncertain image samples for further analysis. 
+
+Class for selecting uncertain image samples for further analysis based on various confidence metrics. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_image_sampler_ac7fe65e41f8b682cef03f6627f5ad5a6}\label{class_image_sampler_ac7fe65e41f8b682cef03f6627f5ad5a6} 
+\index{ImageSampler@{ImageSampler}!ImageSampler@{ImageSampler}}
+\index{ImageSampler@{ImageSampler}!ImageSampler@{ImageSampler}}
+\doxysubsubsection{\texorpdfstring{ImageSampler()}{ImageSampler()}}
+{\footnotesize\ttfamily Image\+Sampler\+::\+Image\+Sampler (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{config\+File\+Path }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Constructor to initialize \doxylink{class_image_sampler}{Image\+Sampler} object with configuration file path. 
+
+Constructor to initialize \doxylink{class_image_sampler}{Image\+Sampler} object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em config\+File\+Path} & Path to the configuration file\\
+\hline
+{\em conf\+\_\+path} & Path to configuration file \\
+\hline
+{\em saver} & \doxylink{class_saver}{Saver} object for saving sampling statistics \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_image_sampler_a2d5c61b1e7f501faf3e41a740adf9fa8}\label{class_image_sampler_a2d5c61b1e7f501faf3e41a740adf9fa8} 
+\index{ImageSampler@{ImageSampler}!sample@{sample}}
+\index{sample@{sample}!ImageSampler@{ImageSampler}}
+\doxysubsubsection{\texorpdfstring{sample()}{sample()}}
+{\footnotesize\ttfamily void Image\+Sampler\+::sample (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ std\+::pair$<$ float, int $>$ $>$ \&}]{classification\+Results,  }\item[{const cv\+::\+Mat \&}]{image,  }\item[{bool}]{save\+Sample = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Selects uncertain image samples based on configured criteria. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em classification\+Results} & Vector of confidence scores for each image prediction \\
+\hline
+{\em image} & Open\+CV image matrix \\
+\hline
+{\em save\+Sample} & Flag indicating whether to save sampled images \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/core/sampling/uncertainity\+\_\+sampling.\+h\item 
+src/core/sampling/uncertainity\+\_\+sampling.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,62 @@
+\doxysection{uncertainity\+\_\+sampling.\+h}
+\hypertarget{uncertainity__sampling_8h_source}{}\label{uncertainity__sampling_8h_source}\index{src/core/sampling/uncertainity\_sampling.h@{src/core/sampling/uncertainity\_sampling.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#ifndef\ CONFIDENCE\_METRICS\_H}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#define\ CONFIDENCE\_METRICS\_H}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <stdexcept>}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_image_sampler}{ImageSampler}}\ \{}
+\DoxyCodeLine{00022\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00027\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_image_sampler_ac7fe65e41f8b682cef03f6627f5ad5a6}{ImageSampler}}(\textcolor{keyword}{const}\ std::string\&\ configFilePath);}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \textcolor{comment}{//\ Typedef\ for\ distribution\ box\ data\ structure\ (assuming\ datasketches::kll\_sketch<unit>)}}
+\DoxyCodeLine{00030\ \ \ \textcolor{keyword}{typedef}\ datasketches::kll\_sketch<unit>\ distributionBox;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00038\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_image_sampler_a2d5c61b1e7f501faf3e41a740adf9fa8}{sample}}(\textcolor{keyword}{const}\ std::vector<std::pair<float,\ int>>\&\ classificationResults,\ \textcolor{keyword}{const}\ cv::Mat\&\ image,\ \textcolor{keywordtype}{bool}\ saveSample\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00047\ \ \ \textcolor{keywordtype}{float}\ calculateMarginConfidence(\textcolor{keyword}{const}\ std::vector<float>\&\ probabilityDistribution,\ \textcolor{keywordtype}{bool}\ sorted\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00055\ \ \ \textcolor{keywordtype}{float}\ calculateLeastConfidence(\textcolor{keyword}{const}\ std::vector<float>\&\ probabilityDistribution,\ \textcolor{keywordtype}{bool}\ sorted\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00063\ \ \ \textcolor{keywordtype}{float}\ calculateRatioConfidence(\textcolor{keyword}{const}\ std::vector<float>\&\ probabilityDistribution,\ \textcolor{keywordtype}{bool}\ sorted\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00070\ \ \ \textcolor{keywordtype}{float}\ calculateEntropyBasedConfidence(\textcolor{keyword}{const}\ std::vector<float>\&\ probabilityDistribution);}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \textcolor{comment}{//\ Functions\ for\ determining\ sampling\ methods\ (implementations\ assumed\ elsewhere)}}
+\DoxyCodeLine{00073\ \ \ \textcolor{comment}{//\ /**}}
+\DoxyCodeLine{00074\ \ \ \textcolor{comment}{//\ \ *\ @brief\ Determines\ active\ uncertainty\ sampling\ methods\ based\ on\ configuration}}
+\DoxyCodeLine{00075\ \ \ \textcolor{comment}{//\ \ *\ @return\ Vector\ of\ active\ uncertainty\ sampling\ method\ IDs}}
+\DoxyCodeLine{00076\ \ \ \textcolor{comment}{//\ \ */}}
+\DoxyCodeLine{00077\ \ \ \textcolor{comment}{//\ std::vector<int>\ determineActiveUncertaintySamplingMethods()\ const;}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \textcolor{comment}{//\ /**}}
+\DoxyCodeLine{00080\ \ \ \textcolor{comment}{//\ \ *\ @brief\ Determines\ active\ filter\ flags\ based\ on\ active\ sampling\ methods}}
+\DoxyCodeLine{00081\ \ \ \textcolor{comment}{//\ \ *\ @param\ samplingMethods\ Vector\ of\ active\ uncertainty\ sampling\ method\ IDs}}
+\DoxyCodeLine{00082\ \ \ \textcolor{comment}{//\ \ *\ @return\ Combined\ filter\ flag\ value}}
+\DoxyCodeLine{00083\ \ \ \textcolor{comment}{//\ \ */}}
+\DoxyCodeLine{00084\ \ \ \textcolor{comment}{//\ int\ determineActiveFilterFlags(const\ std::vector<int>\&\ samplingMethods)\ const;}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00090\ \ \ \textcolor{keywordtype}{void}\ checkAndSave(\textcolor{keyword}{const}\ cv::Mat\&\ image);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \textcolor{comment}{//\ Member\ variables\ for\ storing\ confidence\ metric\ statistics}}
+\DoxyCodeLine{00093\ \ \ distributionBox\ marginConfidenceBox;}
+\DoxyCodeLine{00094\ \ \ distributionBox\ leastConfidenceBox;}
+\DoxyCodeLine{00095\ \ \ distributionBox\ ratioConfidenceBox;}
+\DoxyCodeLine{00096\ \ \ distributionBox\ entropyConfidenceBox;}
+\DoxyCodeLine{00097\ \ \ std::string\ imageSamplePath\_;\ \textcolor{comment}{//\ Path\ for\ saving\ sampled\ images\ (assuming\ set\ in\ constructor)}}
+\DoxyCodeLine{00098\ \};}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ CONFIDENCE\_METRICS\_H}}
+\DoxyCodeLine{00101\ }
+
+\end{DoxyCode}

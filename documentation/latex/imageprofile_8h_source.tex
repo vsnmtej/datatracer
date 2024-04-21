@@ -1,0 +1,40 @@
+\doxysection{imageprofile.\+h}
+\hypertarget{imageprofile_8h_source}{}\label{imageprofile_8h_source}\index{src/core/profiles/imageprofile.h@{src/core/profiles/imageprofile.h}}
+\mbox{\hyperlink{imageprofile_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifndef\ IMAGE\_PROFILE\_H}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ IMAGE\_PROFILE\_H}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}kll.h"{}}\ \textcolor{comment}{//\ Assuming\ kll.h\ defines\ datasketches::kll\_sketch}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_image_profile}{ImageProfile}}\ \{}
+\DoxyCodeLine{00020\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00028\ \ \ \mbox{\hyperlink{class_image_profile_aeb22e7e5b4321abfae9f67b8e2116724}{ImageProfile}}(std::string\ conf\_path,\ \mbox{\hyperlink{class_saver}{Saver<distributionBox>}}\&\ saver);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00041\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_image_profile_a781a3a13241369106a75541d9cb4aba3}{log}}(std::vector<uint8\_t>\&\ img,\ \textcolor{keywordtype}{int}\ image\_width,\ \textcolor{keywordtype}{int}\ image\_height,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ std::map<int,\ \&distribution\_sketch>\&\ imgpixels\_stat,}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ std::map<string,\ distribution\_sketch>\&\ imgprofile\_map);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ std::vector<std::pair<std::string,\ double>>\ samplingConfidences;}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00051\ \ \ datasketches::kll\_sketch<unit>\ contrastBox;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00056\ \ \ datasketches::kll\_sketch<unit>\ brightnessBox;}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00061\ \ \ datasketches::kll\_sketch<unit>\ meanBox;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00066\ \ \ datasketches::kll\_sketch<unit>\ noiseBox;}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \textcolor{comment}{//\ Per-\/channel\ KLL\ sketches\ (assuming\ pixelBox\_r,\ etc.\ are\ for\ individual\ channels)}}
+\DoxyCodeLine{00069\ \ \ datasketches::kll\_sketch<unit>\ pixelBox\_r;}
+\DoxyCodeLine{00070\ \ \ datasketches::kll\_sketch<unit>\ pixelBox\_g;}
+\DoxyCodeLine{00071\ \ \ datasketches::kll\_sketch<unit>\ pixelBox\_b;}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00076\ \ \ datasketches::kll\_sketch<unit>\ pixelBox;}
+\DoxyCodeLine{00077\ \};}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,37 @@
+\doxysection{modelstats.\+h}
+\hypertarget{modelstats_8h_source}{}\label{modelstats_8h_source}\index{src/core/stats/modelstats.h@{src/core/stats/modelstats.h}}
+\mbox{\hyperlink{modelstats_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#ifndef\ MODEL\_STATS\_H}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#define\ MODEL\_STATS\_H}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ Assuming\ declarations\ for\ Saver,\ distributionBox,\ ClassificationResult,\ and\ YoloDetection}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{typedef}\ datasketches::kll\_sketch<unit>\ \mbox{\hyperlink{modelstats_8h_a92fd5976a4406747961d26306e5787bf}{distributionBox}}\ ;}
+\DoxyCodeLine{00019\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_model_stats}{ModelStats}}\ \{}
+\DoxyCodeLine{00020\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00027\ \ \ \mbox{\hyperlink{class_model_stats_adb823fc53150a786244b28048397da0f}{ModelStats}}(std::string\ model\_id,\ unit8\ no\_of\_classes,\ \mbox{\hyperlink{class_saver}{Saver<distributionBox>}}\&\ saver);}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00035\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_model_stats_a5c28e8327d7314bed172f1c0cdff6b92}{log\_classification\_model\_stats}}(\textcolor{keywordtype}{float}\ inference\_latency,\ \textcolor{keyword}{const}\ std::vector<ClassificationResult>\&\ results);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00043\ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_model_stats_ac16afdf5e666bad798ef7435127a36d2}{log\_yolov5\_model\_stats}}(\textcolor{keywordtype}{float}\ inference\_latency,\ \textcolor{keyword}{const}\ std::vector<YoloDetection>\&\ results);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00046\ \ \ \textcolor{comment}{//\ Member\ variables\ (declarations\ only,\ definitions\ in\ .cpp\ file)}}
+\DoxyCodeLine{00047\ \ \ std::string\ model\_id\_;}
+\DoxyCodeLine{00048\ \ \ unit8\ no\_of\_classes\_;}
+\DoxyCodeLine{00049\ \ \ std::vector<float>\ inference\_latency\_;}
+\DoxyCodeLine{00050\ \ \ std::vector<int>\ no\_detections\_per\_image\_;}
+\DoxyCodeLine{00051\ \ \ std::vector<unit8>\ frequent\_class\_;}
+\DoxyCodeLine{00052\ \ \ std::vector<double>\ objectnessbox\_;}
+\DoxyCodeLine{00053\ \ \ std::map<unit8,\ distributionBox>\ model\_classes\_stat\_;}
+\DoxyCodeLine{00054\ \};}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ MODEL\_STATS\_H}}
+
+\end{DoxyCode}

@@ -1,0 +1,43 @@
+\doxysection{saver.\+h}
+\hypertarget{saver_8h_source}{}\label{saver_8h_source}\index{src/core/helpers/saver.h@{src/core/helpers/saver.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ SAVER\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ SAVER\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}MyObject.h"{}}\ \textcolor{comment}{//\ Include\ your\ object\ header}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00007\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_saver}{Saver}}\ \{}
+\DoxyCodeLine{00008\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00009\ \ \ \textcolor{comment}{//\ Constructor\ to\ specify\ filename\ and\ save\ interval}}
+\DoxyCodeLine{00010\ \ \ \mbox{\hyperlink{class_saver}{Saver}}(\textcolor{keyword}{const}\ std::string\&\ filename,\ \textcolor{keywordtype}{int}\ save\_interval\_minutes);}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \ \ \textcolor{comment}{//\ Add\ an\ object\ to\ the\ queue\ for\ saving}}
+\DoxyCodeLine{00013\ \ \ \textcolor{keywordtype}{void}\ AddObjectToSave(\textcolor{keyword}{const}\ T\&\ \textcolor{keywordtype}{object});}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \textcolor{comment}{//\ Start\ the\ background\ thread\ to\ save\ objects\ from\ the\ queue\ periodically}}
+\DoxyCodeLine{00016\ \ \ \textcolor{keywordtype}{void}\ StartSaving();}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \textcolor{comment}{//\ Manual\ trigger\ to\ save\ all\ objects\ in\ the\ queue\ immediately}}
+\DoxyCodeLine{00019\ \ \ \textcolor{keywordtype}{void}\ TriggerSave();}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00022\ \ \ \textcolor{comment}{//\ Function\ to\ be\ executed\ in\ the\ background\ thread}}
+\DoxyCodeLine{00023\ \ \ \textcolor{keywordtype}{void}\ SaveLoop();}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ std::string\ filename\_;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Filename\ for\ saving}}
+\DoxyCodeLine{00026\ \ \ \textcolor{keywordtype}{int}\ save\_interval\_minutes\_;\ \ \ \ \ \textcolor{comment}{//\ Interval\ between\ saves\ in\ minutes}}
+\DoxyCodeLine{00027\ \ \ std::thread\ save\_thread\_;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Thread\ object\ for\ saving}}
+\DoxyCodeLine{00028\ \ \ std::mutex\ queue\_mutex\_;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mutex\ for\ queue\ access}}
+\DoxyCodeLine{00029\ \ \ std::condition\_variable\ cv\_;\ \ \ \ \ \textcolor{comment}{//\ Condition\ variable\ for\ thread\ synchronization}}
+\DoxyCodeLine{00030\ \ \ std::queue<T>\ objects\_to\_save\_;\ \ \textcolor{comment}{//\ Queue\ of\ objects\ to\ be\ saved}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \textcolor{comment}{//\ Replace\ this\ function\ with\ your\ actual\ logic\ to\ save\ the\ object\ to\ a\ file}}
+\DoxyCodeLine{00033\ \ \ \textcolor{keywordtype}{void}\ SaveObjectToFile(\textcolor{keyword}{const}\ T\&\ \textcolor{keywordtype}{object});}
+\DoxyCodeLine{00034\ \};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ SAVER\_H}}
+\DoxyCodeLine{00037\ }
+
+\end{DoxyCode}
