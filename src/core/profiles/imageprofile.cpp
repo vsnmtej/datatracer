@@ -28,17 +28,17 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
       for (const auto& stat_confidence : imagemetricsConfidence) {
         std::string name = stat_confidence.first;
         switch (name) {
-          case "NOISE": saver.AddObjectToSave(noiseBox, "margin"); break;
-          case "BRIGHTNESS": saver.AddObjectToSave(brightnessBox, "brightness"); break;
-          case "SHARPNESS": saver.AddObjectToSave(sharpnessBox, "sharpness"); break;
-	  case "MEAN": saver.AddObjectToSave(meanBox, "mean"); break;
+          case "NOISE": saver.AddObjectToSave(noiseBox, filesSavePath["imgstats"]+"margin.bin"); break;
+          case "BRIGHTNESS": saver.AddObjectToSave(brightnessBox, filesSavePath["imgstats"]+"brightness.bin"); break;
+          case "SHARPNESS": saver.AddObjectToSave(sharpnessBox, filesSavePath["imgstats"]+"sharpness.bin"); break;
+	  case "MEAN": saver.AddObjectToSave(meanBox, "filesSavePath["imgstats]+"mean.bin"); break;
 	  case "HISTOGRAM":
 	        if(channel ==1){
-		        saver.AddObjectToSave(histogramBox, "histogram");
+		        saver.AddObjectToSave(histogramBox, filesSavePath["imgstats"]+"histogram.bin");
 	        }else if(channel ==3){
-		        saver.AddObjectToSave(hisogramBox_b, "histogram_b");
-		        saver.AddObjectToSave(hisogramBox_g, "histogram_g");
-		        saver.AddObjectToSave(hisogramBox_r, "histogram_r");
+		        saver.AddObjectToSave(hisogramBox_b, filesSavePath["imgstats"]+"histogram_b.bin");
+		        saver.AddObjectToSave(hisogramBox_g, filesSavePath["imgstats"]+"histogram_g.bin");
+		        saver.AddObjectToSave(hisogramBox_r, filesSavePath["imgstats"]+"histogram_r.bin");
 		}; break;
           }
       }
@@ -56,12 +56,12 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
    * @return 1 on success, error code on failure
    */
   int ImageProfile::profile(std::vector<cv::Mat &img, bool save_sample = false) {
-    for (const auto& imgstat : samplingConfidences) {
+    for (const auto& imgstat : imagemetricsConfidence) {
       // Access name and threshold from the pair
       std::string name = imgstat.first;
-      double threshold = imgstat.second;
+      double threshold = std::stod(imgstat.second);
       switch (name) {
-        case "NOISE": {
+        case "noise": {
           // Compute noise statistic
           float stat_score = computeNoise(img);
           // Update corresponding distribution box and save image if threshold exceeded
@@ -73,7 +73,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
           }
           break;
         }
-        case "BRIGHTNESS":{
+        case "brightness":{
 	    stat_score = computeBrightness(&img);
 	    brightnessBox.update(stat_score);
 	    if (stat_score >= threshold && save_sample==true){
@@ -83,7 +83,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
           }
           break;
         }
-	case "SHARPNESS":{
+	case "sharpness":{
 	    stat_score = computeSharpness(&img);
 	    sharpnessBox.update(stat_score);
 	    if (stat_score >= threshold && save_sample==true){
@@ -93,7 +93,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
 	    }
              break;
          }
-	 case "MEAN":
+	 case "mean":
 	     stat_score = computeMean(&img);
 	     entropyBox.update(stat_score);
 	     if (stat_score >= threshold && save_sample==true){
@@ -103,7 +103,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
 	      }
               break;
           }  
-	  case "CONTRAST":
+	  case "contrast":
 	      stat_score = computeContrast(&img);
 	      contrastBox.update(stat_score);
 	      if (stat_score >= threshold && save_sample==true){
@@ -113,7 +113,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
 	      }
                break;
             }
-	    case "HISTOGRAM":{
+	    case "histogram":{
                if (ch==3){
 	        cv::MatIterator_<cv::Vec3b> it, end;
                  for (it = img.begin<cv::Vec3b>(); it != end; ++it) {
