@@ -24,25 +24,27 @@
 ImageSampler::ImageSampler(std::string conf_path, Saver<distributionBox>& saver) {
     try {
       // Read configuration settings
-      IniReader reader("config.ini"); // Assuming filename is correct
-      std::vector<std::pair<std::string, double>> samplingConfidences = reader.readSamplingConfidences();
+      std::map<std::string, std::string> samplingConfidences = parseIniFile(conf_path,
+		      "sampling.confidence", "");
+      std::map<std::string, std::string> filesSavePath = parseIniFile(conf_path,
+			  "files.savepath", "");
 
       // Register sampling statistics for saving based on configuration
       for (const auto& sampling_confidence : samplingConfidences) {
         std::string name = sampling_confidence.first;
         switch (name) {
           case "MARGINCONFIDENCE":
-            saver.AddObjectToSave(marginConfidenceBox, "marginconfidence");
+            saver.AddObjectToSave(marginConfidenceBox, filesSavePath["samplestats"]+"marginconfidence.bin");
             break;
           case "LEASTCONFIDENCE":
-            saver.AddObjectToSave(leastConfidenceBox, "leastconfidence");
+            saver.AddObjectToSave(leastConfidenceBox, filesSavePath["samplestats"]+"leastconfidence.bin");
             break;
           // ... Register other sampling statistics similarly
 	  case "RATIOCONFIDENCE":
-            saver.AddObjectToSave(ratioConfidenceBox, "ratioconfidence");
+            saver.AddObjectToSave(ratioConfidenceBox, filesSavePath["samplestats"]+"ratioconfidence.bin");
 	    break;
 	  case "ENTROPYCONFIDENCE":
-            saver.AddObjectToSave(entropyConfidenceBox, "entropyconfidence");
+            saver.AddObjectToSave(entropyConfidenceBox, filesSavePath["samplestats"]+"entropyconfidence.bin");
 	    break;
         }
       }
@@ -81,29 +83,38 @@ ImageSampler::ImageSampler(std::string conf_path, Saver<distributionBox>& saver)
           confidence_score = margin_confidence(confidence);
           marginConfidencebox.update(confidence_score);
           if (confidence_score >= threshold) {
-            checkAndSave(img, name);
+	      std::string imagePath = filesSavePath['marginconfidence'];
+              std::string baseName = "marginconfidence";
+              std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
           }
+
           break;
 	case "LEASTCONFIDENCE":
 	    confidence_score = least_confidence(&confidence);
 	    leastConfidencebox.update(confidence_score);
 	    if (confidence_score >= threshold){
-		  check&save(img, name);
-		 }
+	      std::string imagePath = filesSavePath['leastconfidence'];
+              std::string baseName = "leastconfidence";
+              std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
+	    }
 	  break; 
 	case "RATIOCONFIDENCE":
 	    confidence_score = ratio_confidence(&confidence);
 	    ratioConfidencebox.update(confidence_score);
 	    if (confidence_score >= threshold){
-		  check&save(img, name);
-		 }
+	      std::string imagePath = filesSavePath['ratioconfidence'];
+              std::string baseName = "ratioconfidence";
+              std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
+	    }
 	  break; 
 	case "ENTROPYCONFIDENCE":
 	    confidence_score = entropy_confidence(&confidence);
 	    entropyConfidencebox.update(confidence_score);
 	    if (confidence_score >= threshold){
-		  check&save(img, name);
-		 }
+	      std::string imagePath = filesSavePath['entropyconfidence'];
+              std::string baseName = "entropyconfidence";
+              std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
+	    }
 	 break; 
        }
       }
@@ -111,31 +122,6 @@ ImageSampler::ImageSampler(std::string conf_path, Saver<distributionBox>& saver)
     return 1; // Indicate success
   }
 
-
-  /**
-   * @brief Saves the image with a timestamped filename if active sampling flags are set
-   * @param img OpenCV image matrix
-   * @param name Name of the sampling criteria used for identification
-   */
-  void ImageSampler::checkAndSave(cv::Mat &img, std::string name){
-  int active_flags = getfilterFlags(sampling_method)
-	  & uncertainity_sampling_methods(&uncertainity_sampling);
-  if(active_flags > 0){
-    auto now = std::chrono::system_clock::now();
-    auto time_t_in_seconds = std::chrono::system_clock::to_time_t(now);
-
-    // Format timestamp for filename
-    std::tm tm = *std::localtime(&time_t_in_seconds);
-    std::stringstream timestamp_ss;
-    timestamp_ss << std::put_time(&tm, "%Y-%m-%d_%H-%M-%S");
-
-    // Generate filename with timestamp
-    std::string filename = "sample_image_" + name + "_" + timestamp_ss.str() + ".png";
-
-    // Save the image with timestamped filename
-    bool success = imwrite(filename, image);
-   }
- }
 
   /**
    * @brief Calculates margin confidence (difference between top two probabilities)
