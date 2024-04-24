@@ -26,6 +26,9 @@ public:
    * @param maxBins The maximum number of bins to store in the sketch.
    */
   KLLSketch(int maxBins);
+  KLLSketch() {
+	KLLSketch(10);
+  };
 
   /**
    * @brief Updates the sketch with a new data point.

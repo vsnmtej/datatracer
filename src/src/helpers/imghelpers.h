@@ -8,7 +8,10 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
-#include <filesystem>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <iostream>
+#include <cstring>
 
 using namespace cv;
 

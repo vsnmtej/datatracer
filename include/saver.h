@@ -1,7 +1,10 @@
 #ifndef SAVER_H
 #define SAVER_H
 
-#include "MyObject.h" // Include your object header
+#include <mutex>
+#include <thread>
+#include <condition_variable>
+//#include "MyObject.h" // Include your object header
 
 template <typename T>
 class Saver {

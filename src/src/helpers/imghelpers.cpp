@@ -1,19 +1,14 @@
-#include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-
-using namespace cv;
+#include "imghelpers.h"
 
 int convertGrayScale(Mat &img, Mat &grayscale){
-	Mat grayscale;
-	cvtColor(image, grayscale, COLOR_BGR2GRAY);
+	cvtColor(img, grayscale, COLOR_BGR2GRAY);
 	return 0;
 }
 
 double calcSharpness(Mat &img){
     // convert the image in to grayscale
     Mat grayscale;
-    cvtColor(image, grayscale, COLOR_BGR2GRAY);
+    cvtColor(img, grayscale, COLOR_BGR2GRAY);
 
     // Apply the Laplacian operator to the grayscale image
     Mat laplacian;
@@ -21,7 +16,7 @@ double calcSharpness(Mat &img){
 
     // Compute the mean and std of laplacian image
     Scalar mean, sigma;
-    meanStdDev(laplacian, mean sigma);
+    meanStdDev(laplacian, mean, sigma);
 
     // Calculate the sharpness of the image using the Laplacian STD
     double sharpness = sigma.val[0] * sigma.val[0];
@@ -32,7 +27,7 @@ double calcSharpness(Mat &img){
 double calcSNR(Mat &img){
     // Convert the image to grayscale
     Mat grayscale;
-    cvtColor(image, grayscale, COLOR_BGR2GRAY);
+    cvtColor(img, grayscale, COLOR_BGR2GRAY);
 
     Scalar mean, sigma;
     meanStdDev(grayscale, mean, sigma);
@@ -42,9 +37,9 @@ double calcSNR(Mat &img){
     return snr;    
 }
 
-int calcRGBMean(Mat &img, std::vector<double> rgbMean){
-    int height = ima.rows;
-    int width = ima.cols;
+int calcRGBMean(Mat &img, std::vector<double> &rgbMean){
+    int height = img.rows;
+    int width = img.cols;
     int channels = img.channels();
     
     rgbMean[0] = 0;
@@ -53,21 +48,21 @@ int calcRGBMean(Mat &img, std::vector<double> rgbMean){
 
     for (int i = 0; i < height ; i++){
         for (int j = 0; j < width; j++){
-	    rgbMean[0] += image.at<Vec3b>(i, j)[0];
-	    rgbMean[1] += image.at<Vec3b>(i, j)[1];
-	    rgbMean[2] += image.at<Vec3b>(i, j)[2];
+	    rgbMean[0] += img.at<Vec3b>(i, j)[0];
+	    rgbMean[1] += img.at<Vec3b>(i, j)[1];
+	    rgbMean[2] += img.at<Vec3b>(i, j)[2];
 	}
     }
     int hw = height*width;
     rgbMean[0] /= hw;
     rgbMean[1] /= hw;
-    rgbMean[2]/ = hw;
+    rgbMean[2] /= hw;
     return 0;
 }
 
 double calcContrast(Mat &img){
     Mat grayscale;
-    cvtColor(image, grayscale, COLOR_BGR2GRAY);
+    cvtColor(img, grayscale, COLOR_BGR2GRAY);
     double min_pixel_value, max_pixel_value;
     minMaxLoc(grayscale, &min_pixel_value, &max_pixel_value);
     return (max_pixel_value - min_pixel_value)/ max_pixel_value;  
@@ -75,24 +70,41 @@ double calcContrast(Mat &img){
 
 double caclBrightness(Mat &img){
 	std::vector<double> mean;
-	calcRGBMean(&img, &mean);
+	calcRGBMean(img, mean);
 	return mean[0] * 0.299 + mean[1] * 0.587 + mean[2] * 0.114;
 }
 
-std::string saveImageWithIncrementalName(const cv::Mat& image, const std::string& path, const std::string& baseName) {
+std::string saveImageWithIncrementalName(const cv::Mat& img, const std::string& path, const std::string& baseName) {
     // Ensure the directory exists
-    fs::create_directories(path);
+    // Check if the directory already exists
+    struct stat st;
+    if (stat(path.c_str(), &st) != 0) {
+		// Attempt to create the directory
+		if (mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IRWXO) == -1) {
+			// Error occurred
+			perror("Error creating directory");
+			return "";
+		}
+	}
 
     // Find the highest numbered image in the directory
     int highestIndex = 0;
-    for (const auto& entry : fs::directory_iterator(path)) {
-        if (entry.is_regular_file()) {
-            std::string filename = entry.path().filename().string();
-            if (filename.find(baseName) == 0) {
-                int index = std::stoi(filename.substr(baseName.length()));
-                highestIndex = std::max(highestIndex, index);
-            }
+	DIR* dir = opendir(path.c_str());
+    if (dir) {
+        dirent* entry;
+        while ((entry = readdir(dir)) != NULL) {
+			if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
+				std::string filename(entry->d_name);
+				if (filename.find(baseName) == 0) {
+					int index = std::stoi(filename.substr(baseName.length()));
+					highestIndex = std::max(highestIndex, index);
+				}
+			}
         }
+        closedir(dir);
+    } else {
+        perror("Error opening directory");
+        return "";
     }
 
     // Increment the index for the new image
@@ -104,7 +116,7 @@ std::string saveImageWithIncrementalName(const cv::Mat& image, const std::string
     std::string newFilename = ss.str();
 
     // Save the image
-    cv::imwrite(newFilename, image);
+    cv::imwrite(newFilename, img);
 
     return newFilename;
 }

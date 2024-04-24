@@ -34,6 +34,7 @@ add_subdirectory(src)
 
 # Include Directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/src/src)
 
 # file(GLOB SOURCE_FILES src/*.cpp)
 # add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})

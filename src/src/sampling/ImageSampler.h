@@ -6,6 +6,10 @@
 #ifndef CONFIDENCE_METRICS_H
 #define CONFIDENCE_METRICS_H
 
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/opencv.hpp>
 #include <vector>
 #include <algorithm>
 #include <cmath>
@@ -13,6 +17,14 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include "inireader.h"
+#include "libs/sketches.h"
+#include "saver.h"
+
+using namespace cv;
+
+// Typedef for distribution box data structure (assuming datasketches::KLLSketch<unit>)
+typedef datasketches::KLLSketch distributionBox;
 
 /**
  * @class ImageSampler
@@ -20,14 +32,12 @@
  */
 class ImageSampler {
 public:
+
   /**
    * @brief Constructor to initialize ImageSampler object with configuration file path
    * @param configFilePath Path to the configuration file
    */
-  explicit ImageSampler(const std::string& configFilePath);
-
-  // Typedef for distribution box data structure (assuming datasketches::kll_sketch<unit>)
-  typedef datasketches::kll_sketch<unit> distributionBox;
+  explicit ImageSampler(std::string conf_path, Saver<distributionBox>& saver);
 
   /**
    * @brief Selects uncertain image samples based on configured criteria
@@ -87,7 +97,7 @@ private:
    * @brief Saves the image with a timestamped filename (implementation assumed elsewhere)
    * @param image OpenCV image matrix
    */
-  void checkAndSave(const cv::Mat& image);
+	void checkAndSave(cv::Mat &img, std::string name);
 
   // Member variables for storing confidence metric statistics
   distributionBox marginConfidenceBox;
