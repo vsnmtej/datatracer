@@ -63,7 +63,7 @@ ImageSampler::ImageSampler(std::string conf_path, Saver<distributionBox>& saver)
    * @return 1 on success, error code on failure
    */
 
-  int ImageSampler::sampling(std::vector<std::pair<float, int>> &results, std::vector<std::pair<int, bool>> &uncertainty_sampling, cv::Mat &img, bool save_sample = true) {
+  int ImageSampler::sample(std::vector<std::pair<float, int>> &results, cv::Mat &img, bool save_sample = true) {
     std::vector<float> confidence; // Extract confidence scores
 
     // Extract confidence scores from results
@@ -78,7 +78,7 @@ ImageSampler::ImageSampler(std::string conf_path, Saver<distributionBox>& saver)
       float confidence_score = -1.0f;
 
       switch (name) {
-        case "MARGINCONFIDENCE":
+        case "marginconfidence":
           // Compute margin confidence and update statistics
           confidence_score = margin_confidence(confidence);
           marginConfidencebox.update(confidence_score);
@@ -89,7 +89,7 @@ ImageSampler::ImageSampler(std::string conf_path, Saver<distributionBox>& saver)
           }
 
           break;
-	case "LEASTCONFIDENCE":
+	case "leastconfidence":
 	    confidence_score = least_confidence(&confidence);
 	    leastConfidencebox.update(confidence_score);
 	    if (confidence_score >= threshold){
@@ -98,7 +98,7 @@ ImageSampler::ImageSampler(std::string conf_path, Saver<distributionBox>& saver)
               std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
 	    }
 	  break; 
-	case "RATIOCONFIDENCE":
+	case "ratioconfidence":
 	    confidence_score = ratio_confidence(&confidence);
 	    ratioConfidencebox.update(confidence_score);
 	    if (confidence_score >= threshold){
@@ -107,7 +107,7 @@ ImageSampler::ImageSampler(std::string conf_path, Saver<distributionBox>& saver)
               std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
 	    }
 	  break; 
-	case "ENTROPYCONFIDENCE":
+	case "entropyconfidence":
 	    confidence_score = entropy_confidence(&confidence);
 	    entropyConfidencebox.update(confidence_score);
 	    if (confidence_score >= threshold){
