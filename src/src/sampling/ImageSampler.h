@@ -17,14 +17,13 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
-#include "inireader.h"
-#include "libs/sketches.h"
+#include <kll_sketch.hpp>
+
+#include "IniParser.h"
 #include "saver.h"
 
-using namespace cv;
-
-// Typedef for distribution box data structure (assuming datasketches::KLLSketch<unit>)
-typedef datasketches::KLLSketch distributionBox;
+// Typedef for distribution box data structure (assuming datasketches::kll_sketch<unit>)
+typedef datasketches::kll_sketch<float> distributionBox;
 
 /**
  * @class ImageSampler
@@ -32,12 +31,11 @@ typedef datasketches::KLLSketch distributionBox;
  */
 class ImageSampler {
 public:
-
   /**
    * @brief Constructor to initialize ImageSampler object with configuration file path
    * @param configFilePath Path to the configuration file
    */
-  explicit ImageSampler(std::string conf_path, Saver<distributionBox>& saver);
+  explicit ImageSampler(std::string conf_path, Saver<distributionBox> &saver);
 
   /**
    * @brief Selects uncertain image samples based on configured criteria
@@ -45,7 +43,7 @@ public:
    * @param image OpenCV image matrix
    * @param saveSample Flag indicating whether to save sampled images
    */
-  void sample(const std::vector<std::pair<float, int>>& classificationResults, const cv::Mat& image, bool saveSample = true);
+   int sample(std::vector<std::pair<float, int>> &results, cv::Mat &img, bool save_sample);
 
 private:
   /**
@@ -54,7 +52,7 @@ private:
    * @param sorted Flag indicating if probabilities are already sorted (default: false)
    * @return Margin confidence score
    */
-  float calculateMarginConfidence(const std::vector<float>& probabilityDistribution, bool sorted = false);
+   float margin_confidence(std::vector<float>& prob_dist, bool sorted);
 
   /**
    * @brief Calculates least confidence (normalized maximum probability)
@@ -62,7 +60,7 @@ private:
    * @param sorted Flag indicating if probabilities are already sorted (default: false)
    * @return Least confidence score
    */
-  float calculateLeastConfidence(const std::vector<float>& probabilityDistribution, bool sorted = false);
+    float least_confidence(std::vector<float>& prob_dist, bool sorted);
 
   /**
    * @brief Calculates ratio confidence (ratio of top two probabilities)
@@ -70,41 +68,23 @@ private:
    * @param sorted Flag indicating if probabilities are already sorted (default: false)
    * @return Ratio confidence score
    */
-  float calculateRatioConfidence(const std::vector<float>& probabilityDistribution, bool sorted = false);
+    float ratio_confidence(std::vector<float>& prob_dist, bool sorted);
 
   /**
    * @brief Calculates entropy-based confidence
    * @param probabilityDistribution Vector of class probabilities
    * @return Entropy-based confidence score
    */
-  float calculateEntropyBasedConfidence(const std::vector<float>& probabilityDistribution);
-
-  // Functions for determining sampling methods (implementations assumed elsewhere)
-  // /**
-  //  * @brief Determines active uncertainty sampling methods based on configuration
-  //  * @return Vector of active uncertainty sampling method IDs
-  //  */
-  // std::vector<int> determineActiveUncertaintySamplingMethods() const;
-
-  // /**
-  //  * @brief Determines active filter flags based on active sampling methods
-  //  * @param samplingMethods Vector of active uncertainty sampling method IDs
-  //  * @return Combined filter flag value
-  //  */
-  // int determineActiveFilterFlags(const std::vector<int>& samplingMethods) const;
-
-  /**
-   * @brief Saves the image with a timestamped filename (implementation assumed elsewhere)
-   * @param image OpenCV image matrix
-   */
-	void checkAndSave(cv::Mat &img, std::string name);
+   float entropy_confidence(std::vector<float>& prob_dist);
 
   // Member variables for storing confidence metric statistics
   distributionBox marginConfidenceBox;
   distributionBox leastConfidenceBox;
   distributionBox ratioConfidenceBox;
   distributionBox entropyConfidenceBox;
-  std::string imageSamplePath_; // Path for saving sampled images (assuming set in constructor)
+
+	std::map<std::string, std::string> samplingConfidences;
+	std::map<std::string, std::string> filesSavePath;
 };
 
 #endif // CONFIDENCE_METRICS_H

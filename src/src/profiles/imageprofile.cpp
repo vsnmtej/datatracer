@@ -5,8 +5,8 @@
 
 #include <vector>
 #include <cmath>
-#include "helpers/inireader.h" // Assuming declarations for IniReader, Saver, distributionBox
-#include "helpers/imagehelpers.h"
+
+#include "imageprofile.h"
 
 /**
  * @class ImageProfile
@@ -61,59 +61,49 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
       std::string name = imgstat.first;
       double threshold = imgstat.second;
       switch (name) {
-        case "NOISE": {
+		if (strcmp(name.c_str(), "NOISE") == 0) {
           // Compute noise statistic
           float stat_score = computeNoise(img);
           // Update corresponding distribution box and save image if threshold exceeded
           noiseBox.update(stat_score);
           if (stat_score >= threshold && save_sample == true) {
-	      std::string imagePath = filesSavePath['noise'];
+	      std::string imagePath = filesSavePath["noise"];
               std::string baseName = str(int(stat_score));
               std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
           }
-          break;
-        }
-        case "BRIGHTNESS":{
+        } else if (strcmp(name.c_str(), "BRIGHTNESS") == 0) {
 	    stat_score = computeBrightness(&img);
 	    brightnessBox.update(stat_score);
 	    if (stat_score >= threshold && save_sample==true){
-	        std::string imagePath = filesSavePath['brightness'];
+	        std::string imagePath = filesSavePath["brightness"];
                 std::string baseName = str(int(stat_score));
                 std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
           }
-          break;
-        }
-	case "SHARPNESS":{
+        } else if (strcmp(name.c_str(), "SHARPNESS") == 0) {
 	    stat_score = computeSharpness(&img);
 	    sharpnessBox.update(stat_score);
 	    if (stat_score >= threshold && save_sample==true){
-                std::string imagePath = filesSavePath['sharpness'];
+                std::string imagePath = filesSavePath["sharpness"];
                 std::string baseName = str(int(stat_score));
                 std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
 	    }
-             break;
-         }
-	 case "MEAN":
+        } else if (strcmp(name.c_str(), "MEAN") == 0) {
 	     stat_score = computeMean(&img);
 	     entropyBox.update(stat_score);
 	     if (stat_score >= threshold && save_sample==true){
-		std::string imagePath = filesSavePath['mean'];
+		std::string imagePath = filesSavePath["mean"];
                 std::string baseName = str(int(stat_score));
                 std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
 	      }
-              break;
-          }  
-	  case "CONTRAST":
+        } else if (strcmp(name.c_str(), "CONTRAST") == 0) {
 	      stat_score = computeContrast(&img);
 	      contrastBox.update(stat_score);
 	      if (stat_score >= threshold && save_sample==true){
-		std::string imagePath = filesSavePath['contrast'];
+		std::string imagePath = filesSavePath["contrast"];
                 std::string baseName = str(int(stat_score));
                 std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
 	      }
-               break;
-            }
-	    case "HISTOGRAM":{
+        } else if (strcmp(name.c_str(), "HISTOGRAM") == 0) {
                if (ch==3){
 	        cv::MatIterator_<cv::Vec3b> it, end;
                  for (it = img.begin<cv::Vec3b>(); it != end; ++it) {

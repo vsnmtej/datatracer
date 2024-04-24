@@ -1,24 +1,7 @@
-#include "Saver.h"
+#include "saver.h"
 #include <fstream>
 
-/**
- * @class Saver
- * @brief Class for saving the sketches in the given interval
- */
-// The saver class is a singleton
-template <typename T>
-class Saver {
-public:
-  static Saver<T>& GetInstance(int save_interval) {
-    static Saver<T> instance(save_interval);
-    return instance;
-  }
 
-private:
-  Saver(const int save_interval) : /* ... */ {}
-};
-
-  
 template <typename T>
 void Saver<T>::AddObjectToSave(const T& object, const std::string& filename) {
   std::lock_guard<std::mutex> lock(queue_mutex_);
@@ -34,7 +17,8 @@ void Saver<T>::StartSaving() {
 // Trigger method is to asynchronously trigger the object save
 template <typename T>
 void Saver<T>::TriggerSave() {
-  std{lock_guard<std::mutex>} lock(queue_mutex_);
+  std::lock_guard<std::mutex> lock(queue_mutex_);
+
   cv_.notify_one(); // Notify the waiting thread to process the queue manually
 }
 

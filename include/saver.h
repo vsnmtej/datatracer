@@ -4,6 +4,8 @@
 #include <mutex>
 #include <thread>
 #include <condition_variable>
+#include <queue>
+
 //#include "MyObject.h" // Include your object header
 
 template <typename T>
@@ -13,7 +15,7 @@ public:
   Saver(const std::string& filename, int save_interval_minutes);
 
   // Add an object to the queue for saving
-  void AddObjectToSave(const T& object);
+  void AddObjectToSave(const T& object, const std::string& filename);
 
   // Start the background thread to save objects from the queue periodically
   void StartSaving();
@@ -33,7 +35,7 @@ private:
   std::queue<T> objects_to_save_;  // Queue of objects to be saved
 
   // Replace this function with your actual logic to save the object to a file
-  void SaveObjectToFile(const T& object);
+  void SaveObjectToFile(const T& object, const std::string& filename_);
 };
 
 #endif // SAVER_H

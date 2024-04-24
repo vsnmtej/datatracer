@@ -8,7 +8,8 @@
 #ifndef IMAGE_PROFILE_H
 #define IMAGE_PROFILE_H
 
-#include "kll.h" // Assuming kll.h defines datasketches::kll_sketch
+#include "IniParser.h" // Assuming declarations for IniReader, Saver, distributionBox
+#include "imghelpers.h"
 
 /**
  * @class ImageProfile

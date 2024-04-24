@@ -8,7 +8,6 @@
  * @brief Class for parsing INI files and extracting key-value pairs.
  */
 class IniParser {
-	std::string file_name;
 public:
     /**
      * @brief Parses the specified INI file and returns key-value pairs for the given section and subsection.
@@ -18,9 +17,6 @@ public:
      * @param subsection The name of the subsection in the INI file.
      * @return A map containing the key-value pairs.
      */
-	IniParser(const std::string filename) {
-		file_name = filename;
-	};
     static std::map<std::string, std::string> parseIniFile(const std::string& filename, const std::string& section, const std::string& subsection);
 };
 
