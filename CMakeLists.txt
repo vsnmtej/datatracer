@@ -22,18 +22,18 @@ INCLUDE_DIRECTORIES($(CMAKE_CURRENT_SOURCE_DIR)/../tflite-dist/libs/)
 
 #Add Subdirectories
 #add_subdirectory(src)
-#add_subdirectory(src/src/helpers)
-#add_subdirectory(src/src/sampling)
-#add_subdirectory(src/src/sketches)
+#add_subdirectory(src/core/helpers)
+#add_subdirectory(src/core/sampling)
+#add_subdirectory(src/core/sketches)
 
 # Include Directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_library(imagesampler SHARED
-            src/src/sampling/ImageSampler.cpp
-            src/src/helpers/imghelpers.cpp
-			src/src/helpers/saver.cpp
-			src/src/helpers/inireader.cpp
+            src/core/sampling/ImageSampler.cpp
+            src/core/helpers/imghelpers.cpp
+			src/core/helpers/saver.cpp
+			src/core/helpers/inireader.cpp
 			)
 
 target_link_libraries(${CMAKE_PROJECT_NAME} ${OpenCV_LIBS} pthread)
