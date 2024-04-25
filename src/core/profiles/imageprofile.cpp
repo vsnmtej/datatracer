@@ -67,7 +67,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
       switch (name) {
 		if (strcmp(name.c_str(), "NOISE") == 0) {
           // Compute noise statistic
-          float stat_score = computeNoise(img);
+          float stat_score = computeSNR(img);
           // Update corresponding distribution box and save image if threshold exceeded
           noiseBox.update(stat_score);
           if (stat_score >= threshold && save_sample == true) {
@@ -125,47 +125,3 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
     }
     return 1; // Indicate success
   }
-
-
-  /**
-   * @brief Computes image noise using SNR
-   * @param img OpenCV image matrix
-   * @return Calculated noise value
-   */
-  float ImageProfile::computeNoise(cv::Mat &img) {
-    return computeSNR(&img); // Assuming computeSNR implementation exists
-  }
-
-  /**
-   * @brief Computes image brightness 
-   * @param img OpenCV image matrix
-   * @return Calculated brightness value
-   */
-
-  float ImageProfile::logBrightness(cv::Mat &img){
-    return computeBrightness(&img);
-  }
-  /**
-   * @brief Computes image contrast 
-   * @param img OpenCV image matrix
-   * @return Calculated contrast value
-   */
-   float ImageProfile::logContrast(cv::Mat &img){
-    return computeContrast(&img);
-   }
-  /**
-   * @brief Computes image sharpness using SNR
-   * @param img OpenCV image matrix
-   * @return Calculated sharpness value
-   */
-    float ImageProfile::logSharpness(cv::Mat &img){
-     return computeSharpness(&img);    
-   }
-  /**
-   * @brief Computes image mean 
-   * @param img OpenCV image matrix
-   * @return Calculated mean value
-   */
-    int ImageProfile::logMean(cv::Mat &img){
-    return computeMean(&img);    
-   }
