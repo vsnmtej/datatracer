@@ -39,9 +39,8 @@ public:
    * @param imgpixels_stat A map to store per-channel statistics (implementation specific).
    * @param imgprofile_map A map to store various image profile metrics (e.g., "contrast").
    */
-  void log(std::vector<uint8_t>& img, int image_width, int image_height,
-          std::map<int, &distribution_sketch>& imgpixels_stat,
-          std::map<string, distribution_sketch>& imgprofile_map);
+
+  int profile(std::vector<cv::Mat &img, bool save_sample = false);
 
   std::vector<std::pair<std::string, double>> samplingConfidences;
 

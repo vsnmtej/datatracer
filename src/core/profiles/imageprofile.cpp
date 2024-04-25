@@ -5,8 +5,8 @@
 
 #include <vector>
 #include <cmath>
-
 #include "imageprofile.h"
+#include "helpers/inireader.h"
 
 /**
  * @class ImageProfile
@@ -17,6 +17,8 @@
    * @param conf_path Path to configuration file
    * @param saver Saver object for saving statistics
    */
+
+
 ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver) {
     try {
       // Read configuration settings
@@ -28,17 +30,17 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
       for (const auto& stat_confidence : imagemetricsConfidence) {
         std::string name = stat_confidence.first;
         switch (name) {
-          case "NOISE": saver.AddObjectToSave(noiseBox, "margin"); break;
-          case "BRIGHTNESS": saver.AddObjectToSave(brightnessBox, "brightness"); break;
-          case "SHARPNESS": saver.AddObjectToSave(sharpnessBox, "sharpness"); break;
-	  case "MEAN": saver.AddObjectToSave(meanBox, "mean"); break;
+          case "NOISE": saver.AddObjectToSave(noiseBox, filesSavePath["imgstats"]+"margin.bin"); break;
+          case "BRIGHTNESS": saver.AddObjectToSave(brightnessBox, filesSavePath["imgstats"]+"brightness.bin"); break;
+          case "SHARPNESS": saver.AddObjectToSave(sharpnessBox, filesSavePath["imgstats"]+"sharpness.bin"); break;
+	  case "MEAN": saver.AddObjectToSave(meanBox, "filesSavePath["imgstats]+"mean.bin"); break;
 	  case "HISTOGRAM":
 	        if(channel ==1){
-		        saver.AddObjectToSave(histogramBox, "histogram");
+		        saver.AddObjectToSave(histogramBox, filesSavePath["imgstats"]+"histogram.bin");
 	        }else if(channel ==3){
-		        saver.AddObjectToSave(hisogramBox_b, "histogram_b");
-		        saver.AddObjectToSave(hisogramBox_g, "histogram_g");
-		        saver.AddObjectToSave(hisogramBox_r, "histogram_r");
+		        saver.AddObjectToSave(hisogramBox_b, filesSavePath["imgstats"]+"histogram_b.bin");
+		        saver.AddObjectToSave(hisogramBox_g, filesSavePath["imgstats"]+"histogram_g.bin");
+		        saver.AddObjectToSave(hisogramBox_r, filesSavePath["imgstats"]+"histogram_r.bin");
 		}; break;
           }
       }
@@ -47,6 +49,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
       return 1; // Indicate error
     }
   }
+
 
   /**
    * @brief Computes and logs selected image statistics
@@ -60,6 +63,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
       // Access name and threshold from the pair
       std::string name = imgstat.first;
       double threshold = imgstat.second;
+      std::string baseName = name;
       switch (name) {
 		if (strcmp(name.c_str(), "NOISE") == 0) {
           // Compute noise statistic
@@ -68,40 +72,35 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
           noiseBox.update(stat_score);
           if (stat_score >= threshold && save_sample == true) {
 	      std::string imagePath = filesSavePath["noise"];
-              std::string baseName = str(int(stat_score));
-              std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
+              std::string savedImagePath = saveImageWithIncrementalName(&img, imagePath, baseName);
           }
         } else if (strcmp(name.c_str(), "BRIGHTNESS") == 0) {
 	    stat_score = computeBrightness(&img);
 	    brightnessBox.update(stat_score);
 	    if (stat_score >= threshold && save_sample==true){
 	        std::string imagePath = filesSavePath["brightness"];
-                std::string baseName = str(int(stat_score));
-                std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
+                std::string savedImagePath = saveImageWithIncrementalName(&img, imagePath, baseName);
           }
         } else if (strcmp(name.c_str(), "SHARPNESS") == 0) {
 	    stat_score = computeSharpness(&img);
 	    sharpnessBox.update(stat_score);
 	    if (stat_score >= threshold && save_sample==true){
                 std::string imagePath = filesSavePath["sharpness"];
-                std::string baseName = str(int(stat_score));
-                std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
+                std::string savedImagePath = saveImageWithIncrementalName(&img, imagePath, baseName);
 	    }
         } else if (strcmp(name.c_str(), "MEAN") == 0) {
 	     stat_score = computeMean(&img);
 	     entropyBox.update(stat_score);
 	     if (stat_score >= threshold && save_sample==true){
 		std::string imagePath = filesSavePath["mean"];
-                std::string baseName = str(int(stat_score));
-                std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
+                std::string savedImagePath = saveImageWithIncrementalName(&img, imagePath, baseName);
 	      }
         } else if (strcmp(name.c_str(), "CONTRAST") == 0) {
 	      stat_score = computeContrast(&img);
 	      contrastBox.update(stat_score);
 	      if (stat_score >= threshold && save_sample==true){
 		std::string imagePath = filesSavePath["contrast"];
-                std::string baseName = str(int(stat_score));
-                std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
+                std::string savedImagePath = saveImageWithIncrementalName(&img, imagePath, baseName);
 	      }
         } else if (strcmp(name.c_str(), "HISTOGRAM") == 0) {
                if (ch==3){
