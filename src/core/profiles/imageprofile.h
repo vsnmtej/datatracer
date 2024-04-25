@@ -48,22 +48,22 @@ private:
   /**
    * @brief KLL sketch for storing contrast distribution.
    */
-  datasketches::kll_sketch<unit> contrastBox;
+  datasketches::kll_sketch<float> contrastBox;
 
   /**
    * @brief KLL sketch for storing brightness distribution.
    */
-  datasketches::kll_sketch<unit> brightnessBox;
+  datasketches::kll_sketch<float> brightnessBox;
 
   /**
    * @brief KLL sketch for storing mean pixel value distribution.
    */
-  datasketches::kll_sketch<unit> meanBox;
+  datasketches::kll_sketch<float> meanBox;
 
   /**
    * @brief KLL sketch for storing noise distribution.
    */
-  datasketches::kll_sketch<unit> noiseBox;
+  datasketches::kll_sketch<float> noiseBox;
 
   // Per-channel KLL sketches (assuming pixelBox_r, etc. are for individual channels)
   datasketches::kll_sketch<unit> pixelBox_r;
