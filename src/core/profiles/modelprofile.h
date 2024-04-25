@@ -15,7 +15,8 @@
 /**
  * @brief Class for managing and logging model statistics
  */
-typedef datasketches::kll_sketch<unit> distributionBox ;
+typedef datasketches::kll_sketch<float> distributionBox;
+typedef std::vector<std::pair<float, int>> ClassificationResults;
 class ModelProfile {
 public:
   /**
@@ -40,17 +41,18 @@ public:
    * @param results Reference to the detection results from YOLOv5 model
    * @return 0 on success, negative value on error
    */
-  int log_yolov5_model_stats(float inference_latency, const YoloDetections& results);
+  //int log_yolov5_model_stats(float inference_latency, const YoloDetections& results);
 
 private:
   // Member variables (declarations only, definitions in .cpp file)
   std::string model_id_;
-  unit8 no_of_classes_;
+  unit8 top_classes_;
   std::vector<float> inference_latency_;
   std::vector<int> no_detections_per_image_;
   std::vector<unit8> frequent_class_;
   std::vector<double> objectnessbox_;
-  std::map<unit8, distributionBox> model_classes_stat_;
+  std::vector<distributionBox> boxes;
+  std::map<unit8, distributionBox&>> model_classes_stat_;
 };
 
 #endif // MODEL_STATS_H
