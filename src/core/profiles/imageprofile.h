@@ -10,6 +10,12 @@
 
 #include "IniParser.h" // Assuming declarations for IniReader, Saver, distributionBox
 #include "imghelpers.h"
+#include "saver.h"
+#include <kll_sketch.hpp>
+
+
+// Typedef for distribution box data structure (assuming datasketches::kll_sketch<float>)
+typedef datasketches::kll_sketch<float> distributionBox;
 
 /**
  * @class ImageProfile
@@ -19,6 +25,9 @@
  */
 class ImageProfile {
 public:
+
+	int channel;
+
   /**
    * @brief Constructs an ImageProfile object with the specified image characteristics.
    *
@@ -40,40 +49,53 @@ public:
    * @param imgprofile_map A map to store various image profile metrics (e.g., "contrast").
    */
 
-  int profile(std::vector<cv::Mat &img, bool save_sample = false);
+  int profile(std::vector<cv::Mat> &img, bool save_sample);
 
   std::vector<std::pair<std::string, double>> samplingConfidences;
 
 private:
+
+  float computeNoise(cv::Mat &img);
+
   /**
    * @brief KLL sketch for storing contrast distribution.
    */
-  datasketches::kll_sketch<float> contrastBox;
+  distributionBox contrastBox;
 
   /**
    * @brief KLL sketch for storing brightness distribution.
    */
-  datasketches::kll_sketch<float> brightnessBox;
+  distributionBox brightnessBox;
+  distributionBox sharpnessBox;
+
+  distributionBox histogramBox;
+  distributionBox histogramBox_r;
+  distributionBox histogramBox_g;
+  distributionBox histogramBox_b;
 
   /**
    * @brief KLL sketch for storing mean pixel value distribution.
    */
-  datasketches::kll_sketch<float> meanBox;
+  distributionBox meanBox;
+  distributionBox entropyBox;
 
   /**
    * @brief KLL sketch for storing noise distribution.
    */
-  datasketches::kll_sketch<float> noiseBox;
+  distributionBox noiseBox;
 
   // Per-channel KLL sketches (assuming pixelBox_r, etc. are for individual channels)
-  datasketches::kll_sketch<unit> pixelBox_r;
-  datasketches::kll_sketch<unit> pixelBox_g;
-  datasketches::kll_sketch<unit> pixelBox_b;
+  distributionBox pixelBox_r;
+  distributionBox pixelBox_g;
+  distributionBox pixelBox_b;
 
   /**
    * @brief KLL sketch for storing overall pixel value distribution.
    */
-  datasketches::kll_sketch<unit> pixelBox;
+  distributionBox pixelBox;
+
+	std::map<std::string, std::string> filesSavePath;
+	std::map<std::string, std::string> imagemetricsConfidence;
 };
 
 #endif

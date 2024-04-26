@@ -36,6 +36,13 @@ add_library(imagesampler SHARED
 			src/core/helpers/inireader.cpp
 			)
 
+add_library(imageprofiler SHARED
+            src/core/helpers/imghelpers.cpp
+			src/core/helpers/saver.cpp
+			src/core/helpers/inireader.cpp
+			src/core/profiles/imageprofile.cpp
+			)
+
 target_link_libraries(${CMAKE_PROJECT_NAME} ${OpenCV_LIBS} pthread)
 
 # Install the library
