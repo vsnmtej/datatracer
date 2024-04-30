@@ -19,7 +19,7 @@
    */
 
 
-ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver) {
+ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver, int channels=1) {
     try {
       // Read configuration settings
 		IniParser parser; // Assuming filename is correct
@@ -27,7 +27,6 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
 		      "imagemetrics.confidence", "");
       filesSavePath = parser.parseIniFile(conf_path,
 			  "files.savepath", "");
-      int channels = parser.parseIniFile(conf_path, "imagemetrics.image", "channels");
 
       // Register statistics for saving based on configuration
       for (const auto& stat_confidence : imagemetricsConfidence) {
