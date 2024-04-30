@@ -27,27 +27,33 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
 		      "imagemetrics.confidence", "");
       filesSavePath = parser.parseIniFile(conf_path,
 			  "files.savepath", "");
+      int channels = parser.parseIniFile(conf_path, "imagemetrics.image", "channels");
+
       // Register statistics for saving based on configuration
       for (const auto& stat_confidence : imagemetricsConfidence) {
         std::string name = stat_confidence.first;
-          if (strcmp(name.c_str(), "NOISE") == 0)
+          if (strcmp(name.c_str(), "NOISE") == 0){
             saver.AddObjectToSave(noiseBox, filesSavePath["imgstats"]+"margin.bin");
-          else if (strcmp(name.c_str(), "BRIGHTNESS") == 0)
+	  }  
+          else if (strcmp(name.c_str(), "BRIGHTNESS") == 0){
             saver.AddObjectToSave(brightnessBox, filesSavePath["imgstats"]+"brightness.bin");
-          else if (strcmp(name.c_str(), "SHARPNESS") == 0)
+	  }  
+          else if (strcmp(name.c_str(), "SHARPNESS") == 0){
             saver.AddObjectToSave(sharpnessBox, filesSavePath["imgstats"]+"sharpness.bin");
-          else if (strcmp(name.c_str(), "MEAN") == 0)
-	          saver.AddObjectToSave(meanBox, filesSavePath["imgstats"]+"mean.bin");
+	  }
+          else if (strcmp(name.c_str(), "MEAN") == 0){
+		  for (int i = 0; i < channels; ++i) {
+                       saver.AddObjectToSave(meanBox[i],
+				       filesSavePath["imgstats"]+"mean_"+std::to_str(i)+".bin"); 
+                   }
+	  } 
           else if (strcmp(name.c_str(), "HISTOGRAM") == 0) {
-            if(channel ==1){
-              saver.AddObjectToSave(histogramBox, filesSavePath["imgstats"]+"histogram.bin");
-            }else if(channel ==3){
-              saver.AddObjectToSave(histogramBox_b, filesSavePath["imgstats"]+"histogram_b.bin");
-              saver.AddObjectToSave(histogramBox_g, filesSavePath["imgstats"]+"histogram_g.bin");
-              saver.AddObjectToSave(histogramBox_r, filesSavePath["imgstats"]+"histogram_r.bin");
-            }
-          }
-      }
+             for (int i = 0; i < channels; ++i) {
+                       saver.AddObjectToSave(pixelBox[i],
+				       filesSavePath["imgstats"]+"pixel_"+std::to_str(i)+".bin"); 
+             } 
+          }	     
+       }
     } catch (const std::runtime_error& e) {
       std::cerr << e.what() << std::endl;
     }
@@ -71,7 +77,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
 		std::string baseName = name;
 		if (strcmp(name.c_str(), "NOISE") == 0) {
           // Compute noise statistic
-          stat_score = computeNoise(img);
+          stat_score = computeNoise(&img);
           // Update corresponding distribution box and save image if threshold exceeded
           noiseBox.update(stat_score);
           if (stat_score >= threshold && save_sample == true) {
@@ -79,28 +85,26 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
               std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
           }
         } else if (strcmp(name.c_str(), "BRIGHTNESS") == 0) {
-			stat_score = calcBrightness(img);
+			stat_score = calcBrightness(&img);
 			brightnessBox.update(stat_score);
 			if (stat_score >= threshold && save_sample==true){
 				std::string imagePath = filesSavePath["brightness"];
                 std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
           }
         } else if (strcmp(name.c_str(), "SHARPNESS") == 0) {
-			stat_score = calcSharpness(img);
+			stat_score = calcSharpness(&img);
 			sharpnessBox.update(stat_score);
 			if (stat_score >= threshold && save_sample==true){
 					std::string imagePath = filesSavePath["sharpness"];
 					std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
 			}
         } else if (strcmp(name.c_str(), "MEAN") == 0) {
-			stat_score = 0;//calcRGBMean(img);
-			entropyBox.update(stat_score);
-			if (stat_score >= threshold && save_sample==true){
-				std::string imagePath = filesSavePath["mean"];
-				std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
-			}
+		         cv::scalar mean_values = cv::mean(img);
+			 for (int i = 0; i < mean_value.rows; ++i) {
+			      meanBox[i].update(mean_values[i]);	 
+                         }    
         } else if (strcmp(name.c_str(), "CONTRAST") == 0) {
-			stat_score = calcContrast(img);
+			stat_score = calcContrast(&img);
 			contrastBox.update(stat_score);
 			if (stat_score >= threshold && save_sample==true){
 				std::string imagePath = filesSavePath["contrast"];
@@ -112,9 +116,9 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
 				for (it = img.begin<cv::Vec3b>(); it != end; ++it) {
 					// Access pixel value through iterator
 					cv::Vec3b pixel_value = *it;
-					pixelBox_b.update(pixel_value[0]);
-					pixelBox_g.update(pixel_value[1]);
-					pixelBox_r.update(pixel_value[2]);
+					pixelBox[i].update(pixel_value[0]);
+					pixelBox[i].update(pixel_value[1]);
+					pixelBox[i].update(pixel_value[2]);
 				}
 			}
 			else if (channel==1){
@@ -126,7 +130,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver)
 				}
 			}
 		}
+        }
     }
-	}
     return 1; // Indicate success
   }

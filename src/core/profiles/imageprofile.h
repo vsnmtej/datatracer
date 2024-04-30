@@ -76,7 +76,7 @@ private:
   /**
    * @brief KLL sketch for storing mean pixel value distribution.
    */
-  distributionBox meanBox;
+  std::vector<distributionBox> channel_meanBox;
   distributionBox entropyBox;
 
   /**
