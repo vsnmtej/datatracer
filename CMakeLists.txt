@@ -30,21 +30,21 @@ INCLUDE_DIRECTORIES($(CMAKE_CURRENT_SOURCE_DIR)/../tflite-dist/libs/)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_library(imagesampler SHARED
+            src/core/helpers/saver.cpp
             src/core/sampling/ImageSampler.cpp
             src/core/helpers/imghelpers.cpp
-			src/core/helpers/saver.cpp
 			src/core/helpers/inireader.cpp
 			)
 
 add_library(imageprofiler SHARED
-            src/core/helpers/imghelpers.cpp
 			src/core/helpers/saver.cpp
+            src/core/helpers/imghelpers.cpp
 			src/core/helpers/inireader.cpp
 			src/core/profiles/imageprofile.cpp
 			)
 
 add_library(modelprofiler SHARED 
-	    src/core/helpers/saver.cpp
+            src/core/helpers/saver.cpp
             src/core/helpers/inireader.cpp
             src/core/profiles/modelprofile.cpp
             )	    

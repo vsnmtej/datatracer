@@ -35,7 +35,7 @@ public:
    * @param img_type The image type (implementation specific).
    * @param metrics The set of image metrics to be tracked (e.g., "contrast", "brightness").
    */
-  ImageProfile(std::string conf_path, Saver<distributionBox>& saver, int channels);
+  ImageProfile(std::string conf_path, Saver& saver, int channels);
 
   /**
    * @brief Logs image statistics for the provided image data.

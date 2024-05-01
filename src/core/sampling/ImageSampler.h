@@ -35,7 +35,7 @@ public:
    * @brief Constructor to initialize ImageSampler object with configuration file path
    * @param configFilePath Path to the configuration file
    */
-  explicit ImageSampler(std::string conf_path, Saver<distributionBox> &saver);
+  explicit ImageSampler(std::string conf_path, Saver &saver);
 
   /**
    * @brief Selects uncertain image samples based on configured criteria

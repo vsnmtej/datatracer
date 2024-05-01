@@ -31,7 +31,7 @@ public:
    * @param saver Reference to a Saver object used for saving model statistics
    */
   ModelProfile(std::string model_id, std::string conf_path,
-	       	Saver<distributionBox>& saver, int top_classes);
+	       	Saver& saver, int top_classes);
 
   /**
    * @brief Logs statistics for a classification model

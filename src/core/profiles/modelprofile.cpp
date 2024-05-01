@@ -13,7 +13,7 @@
  * @param saver Reference to a Saver object used for saving model statistics
  */
 ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
-	       	Saver<distributionBox>& saver, int top_classes) {
+	       	Saver& saver, int top_classes) {
   // Set member variables
   model_id_ = model_id;
   IniParser parser;
@@ -26,7 +26,7 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
   for (int cls = 0; cls < top_classes_; ++cls) {
     distributionBox dBox(200);		  
     boxes.push_back(dBox);
-    saver.AddObjectToSave(boxes[cls],
+    saver.AddObjectToSave((void *)(&(boxes[cls])), KLL_TYPE,
 		    filesSavePath["modelstats"]+model_id+std::to_string(cls)+".bin");  // Register with Saver for saving
   }
 }

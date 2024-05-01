@@ -14,7 +14,7 @@
    * @param conf_path Path to configuration file
    * @param saver Saver object for saving sampling statistics
    */
-ImageSampler::ImageSampler(std::string conf_path, Saver<distributionBox> &saver) {
+ImageSampler::ImageSampler(std::string conf_path, Saver &saver) {
   try {
     // Read configuration settings
     IniParser parser; // Assuming filename is correct
@@ -25,14 +25,14 @@ ImageSampler::ImageSampler(std::string conf_path, Saver<distributionBox> &saver)
     for (const auto& sampling_confidence : samplingConfidences) {
       std::string name = sampling_confidence.first;
       if (strcmp(name.c_str(), "MARGINCONFIDENCE")) {
-      saver.AddObjectToSave(marginConfidenceBox, filesSavePath["samplestats"]+"marginconfidence.bin");
+      saver.AddObjectToSave((void*)(&marginConfidenceBox), KLL_TYPE, filesSavePath["samplestats"]+"marginconfidence.bin");
       } else if(strcmp(name.c_str(), "LEASTCONFIDENCE") == 0) {
-      saver.AddObjectToSave(leastConfidenceBox, filesSavePath["samplestats"]+"leastconfidence.bin");
+      saver.AddObjectToSave((void*)(&leastConfidenceBox), KLL_TYPE, filesSavePath["samplestats"]+"leastconfidence.bin");
       } else if(strcmp(name.c_str(), "RATIOCONFIDENCE") == 0) {
       // ... Register other sampling statistics similarly
-      saver.AddObjectToSave(ratioConfidenceBox, filesSavePath["samplestats"]+"ratioconfidence.bin");
+      saver.AddObjectToSave((void*)(&ratioConfidenceBox), KLL_TYPE, filesSavePath["samplestats"]+"ratioconfidence.bin");
       } else if(strcmp(name.c_str(), "ENTROPYCONFIDENCE") == 0) {
-      saver.AddObjectToSave(entropyConfidenceBox, filesSavePath["samplestats"]+"entropyconfidence.bin");
+      saver.AddObjectToSave((void*)(&entropyConfidenceBox), KLL_TYPE, filesSavePath["samplestats"]+"entropyconfidence.bin");
       }
     }
   } catch (const std::runtime_error& e) {
