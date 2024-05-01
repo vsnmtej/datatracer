@@ -1,5 +1,5 @@
 #include "modelprofile.h"
-#include "helpers/inireader.h"
+#include "IniParser.h"
 
 /**
  * @class ModelProfile
@@ -12,18 +12,22 @@
  * @param no_of_classes Number of classes the model predicts
  * @param saver Reference to a Saver object used for saving model statistics
  */
-ModelProfile::ModelProfile(std::string model_id,
-	       	Saver<distributionBox>& saver, uint8 top_classes= 2) {
+ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
+	       	Saver<distributionBox>& saver, int top_classes) {
   // Set member variables
   model_id_ = model_id;
-  std::map<std::string, std::string> filesSavePath = parseIniFile(conf_path,
+  IniParser parser;
+  std::map<std::string, std::string> filesSavePath = parser.parseIniFile(conf_path,
                           "files.savepath", "");
   top_classes_ = top_classes;
+  sketch1 = new frequent_class_sketch(64);
+  //saver.AddObjectToSave(sketch1, 
   // Initialize model_classes_stat map with empty distributionBox objects for each class
-  for (unit8 cls = 0; cls < top_classes_; ++cls) {
-    boxes.push_back[cls] = distributionBox();
-    saver.AddObjectToSave(model_classes_stat_[cls],
-		    filesSavePath["modelstats"]+model_id+std::to_str(cls)+".bin");  // Register with Saver for saving
+  for (int cls = 0; cls < top_classes_; ++cls) {
+    distributionBox dBox(200);		  
+    boxes.push_back(dBox);
+    saver.AddObjectToSave(boxes[cls],
+		    filesSavePath["modelstats"]+model_id+std::to_string(cls)+".bin");  // Register with Saver for saving
   }
 }
 
@@ -37,11 +41,13 @@ ModelProfile::ModelProfile(std::string model_id,
  * It updates the `model_classes_stat` map with scores for each class.
  */
 int ModelProfile::log_classification_model_stats(float inference_latency,
-	       	const ClassificationResult& results) {
-  for (unit8 cls= 0; cls < top_classes_; ++cls) {
+	       	const ClassificationResults& results) {
+  	
+  for (int cls= 0; cls < top_classes_; ++cls) {
     // Logic for identifying frequent classes goes here 
-    frequent_class_.update(results[cls].second);  // Placeholder for storing frequent class IDs
-    model_classes_stat_.empalce(results[cls].first, boxes[cls].update(result.first));  // Update score statistics for each class
+    sketch1->update(std::to_string(results[cls].second));  // Placeholder for storing frequent class IDs
+    boxes[cls].update(results[cls].first);
+    model_classes_stat_.emplace(results[cls].second, boxes[cls]);  // Update score statistics for each class
   }
   return 0; // Assuming successful logging, replace with error handling if needed
 }

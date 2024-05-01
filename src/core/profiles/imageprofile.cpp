@@ -42,14 +42,18 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver,
 	  }
           else if (strcmp(name.c_str(), "MEAN") == 0){
 		  for (int i = 0; i < channels; ++i) {
+		       distributionBox dbox(200);	  
+		       meanBox.push_back(dbox); 	  
                        saver.AddObjectToSave(meanBox[i],
-				       filesSavePath["imgstats"]+"mean_"+std::to_str(i)+".bin"); 
+				       filesSavePath["imgstats"]+"mean_"+std::to_string(i)+".bin"); 
                    }
 	  } 
           else if (strcmp(name.c_str(), "HISTOGRAM") == 0) {
              for (int i = 0; i < channels; ++i) {
-                       saver.AddObjectToSave(pixelBox[i],
-				       filesSavePath["imgstats"]+"pixel_"+std::to_str(i)+".bin"); 
+		       distributionBox dbox(200);	
+                       pixelBox.push_back(dbox);
+		       saver.AddObjectToSave(pixelBox[i],
+				       filesSavePath["imgstats"]+"pixel_"+std::to_string(i)+".bin"); 
              } 
           }	     
        }
@@ -66,17 +70,16 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver,
    * @param save_sample Flag indicating whether to save samples exceeding thresholds
    * @return 1 on success, error code on failure
    */
-  int ImageProfile::profile(std::vector<cv::Mat> &imgv, bool save_sample = false) {
+  int ImageProfile::profile(cv::Mat &img, bool save_sample = false) {
     float stat_score;
-	for (cv::Mat img : imgv) {
     for (const auto& imgstat : samplingConfidences) {
 		// Access name and threshold from the pair
 		std::string name = imgstat.first;
 		double threshold = imgstat.second;
 		std::string baseName = name;
-		if (strcmp(name.c_str(), "NOISE") == 0) {
+	if (strcmp(name.c_str(), "NOISE") == 0) {
           // Compute noise statistic
-          stat_score = computeNoise(&img);
+          stat_score = calcSNR(img);
           // Update corresponding distribution box and save image if threshold exceeded
           noiseBox.update(stat_score);
           if (stat_score >= threshold && save_sample == true) {
@@ -84,52 +87,71 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver,
               std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
           }
         } else if (strcmp(name.c_str(), "BRIGHTNESS") == 0) {
-			stat_score = calcBrightness(&img);
+			stat_score = calcBrightness(img);
 			brightnessBox.update(stat_score);
 			if (stat_score >= threshold && save_sample==true){
 				std::string imagePath = filesSavePath["brightness"];
                 std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
           }
         } else if (strcmp(name.c_str(), "SHARPNESS") == 0) {
-			stat_score = calcSharpness(&img);
+			stat_score = calcSharpness(img);
 			sharpnessBox.update(stat_score);
 			if (stat_score >= threshold && save_sample==true){
-					std::string imagePath = filesSavePath["sharpness"];
-					std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
+			    std::string imagePath = filesSavePath["sharpness"];
+			    std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
 			}
         } else if (strcmp(name.c_str(), "MEAN") == 0) {
-		         cv::scalar mean_values = cv::mean(img);
-			 for (int i = 0; i < mean_value.rows; ++i) {
+		         cv::Scalar mean_values = cv::mean(img);
+			 for (int i = 0; i < mean_values.rows; ++i) {
 			      meanBox[i].update(mean_values[i]);	 
                          }    
         } else if (strcmp(name.c_str(), "CONTRAST") == 0) {
-			stat_score = calcContrast(&img);
+			stat_score = calcContrast(img);
 			contrastBox.update(stat_score);
 			if (stat_score >= threshold && save_sample==true){
-				std::string imagePath = filesSavePath["contrast"];
-				std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
+			    std::string imagePath = filesSavePath["contrast"];
+			    std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
 			}
         } else if (strcmp(name.c_str(), "HISTOGRAM") == 0) {
-			if (channel==3){
-				cv::MatIterator_<cv::Vec3b> it, end;
-				for (it = img.begin<cv::Vec3b>(); it != end; ++it) {
-					// Access pixel value through iterator
-					cv::Vec3b pixel_value = *it;
-					pixelBox[i].update(pixel_value[0]);
-					pixelBox[i].update(pixel_value[1]);
-					pixelBox[i].update(pixel_value[2]);
-				}
-			}
-			else if (channel==1){
-				cv::MatIterator_<uchar> it, end;
-				for (it = img.begin<uchar>(); it != end; ++it) {
-					// Access pixel value through iterator (assuming single-channel uchar data type)
-					uchar pixel_value = *it;
-					pixelBox.update(pixel_value);
-				}
-			}
-		}
+		std::function<void(const std::vector<int>&)> callback = [this](const std::vector<int>& pixelValues) {
+            this->updatePixelValues(pixelValues); // Use the class's method as the callback
+	    };
+	    iterateImage(img, callback);
         }
     }
     return 1; // Indicate success
   }
+
+
+// Function to iterate over an image and apply a callback for each pixel's values
+void ImageProfile::iterateImage(const cv::Mat& img, const std::function<void(const std::vector<int>&)>& callback) {
+    if (img.empty()) {
+        throw std::runtime_error("Image is empty.");
+    }
+
+    int channels = img.channels();
+
+    if (channels >= 1 && channels <= 4) {
+        // Use cv::Vec with dynamic size based on the number of channels
+        using VecType = cv::Vec<uchar, 4>;
+
+        // Iterate over the image and extract values for each pixel
+        for (auto it = img.begin<VecType>(); it != img.end<VecType>(); ++it) {
+            const VecType& pixel = *it;
+
+            // Collect only the relevant channel values based on the channel count
+            std::vector<int> pixelValues(pixel.val, pixel.val + channels);
+
+            // Apply the callback with the pixel values
+            callback(pixelValues);
+        }
+    } else {
+        throw std::runtime_error("Unsupported number of channels.");
+    }
+}
+
+void ImageProfile::updatePixelValues(const std::vector<int>& pixelValues) {
+     for (size_t i = 0; i < pixelValues.size(); ++i){
+            pixelBox[i].update(pixelValues[i]);
+    }
+}

@@ -43,6 +43,11 @@ add_library(imageprofiler SHARED
 			src/core/profiles/imageprofile.cpp
 			)
 
+add_library(modelprofiler SHARED 
+	    src/core/helpers/saver.cpp
+            src/core/helpers/inireader.cpp
+            src/core/profiles/modelprofile.cpp
+            )	    
 target_link_libraries(${CMAKE_PROJECT_NAME} ${OpenCV_LIBS} pthread)
 
 # Install the library

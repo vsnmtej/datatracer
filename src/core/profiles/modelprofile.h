@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "saver.h"
+#include <kll_sketch.hpp>
+#include <frequent_items_sketch.hpp>
 
 // Assuming declarations for Saver, distributionBox, ClassificationResult, and YoloDetection
 
@@ -17,6 +20,8 @@
  */
 typedef datasketches::kll_sketch<float> distributionBox;
 typedef std::vector<std::pair<float, int>> ClassificationResults;
+typedef datasketches::frequent_items_sketch<std::string> frequent_class_sketch;
+
 class ModelProfile {
 public:
   /**
@@ -25,7 +30,8 @@ public:
    * @param no_of_classes Number of classes the model predicts
    * @param saver Reference to a Saver object used for saving model statistics
    */
-  ModelProfile(std::string model_id, unit8 no_of_classes, Saver<distributionBox>& saver);
+  ModelProfile(std::string model_id, std::string conf_path,
+	       	Saver<distributionBox>& saver, int top_classes);
 
   /**
    * @brief Logs statistics for a classification model
@@ -33,7 +39,7 @@ public:
    * @param results Reference to the classification results
    * @return 0 on success, negative value on error
    */
-  int log_classification_model_stats(float inference_latency, const ClassificationResult& results);
+  int log_classification_model_stats(float inference_latency, const ClassificationResults& results);
 
   /**
    * @brief Logs statistics for a YOLOv5 model
@@ -43,16 +49,16 @@ public:
    */
   //int log_yolov5_model_stats(float inference_latency, const YoloDetections& results);
 
-private:
+  frequent_class_sketch *sketch1;
+  private:
   // Member variables (declarations only, definitions in .cpp file)
   std::string model_id_;
-  unit8 top_classes_;
+  int top_classes_;
   std::vector<float> inference_latency_;
   std::vector<int> no_detections_per_image_;
-  std::vector<unit8> frequent_class_;
   std::vector<double> objectnessbox_;
   std::vector<distributionBox> boxes;
-  std::map<unit8, distributionBox&>> model_classes_stat_;
+  std::map<int, distributionBox&> model_classes_stat_;
 };
 
 #endif // MODEL_STATS_H

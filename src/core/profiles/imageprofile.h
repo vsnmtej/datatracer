@@ -49,13 +49,16 @@ public:
    * @param imgprofile_map A map to store various image profile metrics (e.g., "contrast").
    */
 
-  int profile(std::vector<cv::Mat> &img, bool save_sample);
+  int profile(cv::Mat &img, bool save_sample);
 
   std::vector<std::pair<std::string, double>> samplingConfidences;
 
+  void iterateImage(const cv::Mat& img, const std::function<void(const std::vector<int>&)>& callback);
+
+  void updatePixelValues(const std::vector<int>& pixelValues);
+
 private:
 
-  float computeNoise(cv::Mat &img);
 
   /**
    * @brief KLL sketch for storing contrast distribution.
@@ -68,15 +71,11 @@ private:
   distributionBox brightnessBox;
   distributionBox sharpnessBox;
 
-  distributionBox histogramBox;
-  distributionBox histogramBox_r;
-  distributionBox histogramBox_g;
-  distributionBox histogramBox_b;
-
+  std::vector<distributionBox> pixelBox;
   /**
    * @brief KLL sketch for storing mean pixel value distribution.
    */
-  std::vector<distributionBox> channel_meanBox;
+  std::vector<distributionBox> meanBox;
   distributionBox entropyBox;
 
   /**
@@ -85,15 +84,9 @@ private:
   distributionBox noiseBox;
 
   // Per-channel KLL sketches (assuming pixelBox_r, etc. are for individual channels)
-  distributionBox pixelBox_r;
-  distributionBox pixelBox_g;
-  distributionBox pixelBox_b;
-
   /**
    * @brief KLL sketch for storing overall pixel value distribution.
    */
-  distributionBox pixelBox;
-
 	std::map<std::string, std::string> filesSavePath;
 	std::map<std::string, std::string> imagemetricsConfidence;
 };
