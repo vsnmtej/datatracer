@@ -8,10 +8,6 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <iostream>
-#include <cstring>
 
 using namespace cv;
 
@@ -25,7 +21,9 @@ double calcSharpness(Mat &img);
 double calcSNR(Mat &img);
 
 // Function to calculate the mean RGB values of an image
-int calcRGBMean(Mat &img, std::vector<double> &rgbMean);
+//int calcRGBMean(Mat &img, std::vector<double> &rgbMean);
+
+//double calcMean(const cv::Mat& img, int channelNumber);
 
 // Function to calculate the contrast of an image
 double calcContrast(Mat &img);
