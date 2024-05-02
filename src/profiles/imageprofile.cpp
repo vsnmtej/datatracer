@@ -110,6 +110,11 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver,
 				std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
 			}
         } else if (strcmp(name.c_str(), "HISTOGRAM") == 0) {
+		        try {
+        iterateImage(colorImage, printPixelValues);
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
 			if (channel==3){
 				cv::MatIterator_<cv::Vec3b> it, end;
 				for (it = img.begin<cv::Vec3b>(); it != end; ++it) {
@@ -133,3 +138,11 @@ ImageProfile::ImageProfile(std::string conf_path, Saver<distributionBox>& saver,
     }
     return 1; // Indicate success
   }
+
+    auto printPixelValues = [](const std::vector<int>& pixelValues) {
+        std::cout << "Pixel values: ";
+        for (int value : pixelValues) {
+            std::cout << value << " ";
+        }
+        std::cout << std::endl;
+    };
