@@ -12,7 +12,7 @@
 using namespace cv;
 
 // Function to convert an image to grayscale
-Mat convertGrayScale(Mat &img);
+int convertGrayScale(Mat &img, Mat &grayscale);
 
 // Function to calculate the sharpness of an image using the Laplacian operator
 double calcSharpness(Mat &img);
@@ -32,6 +32,6 @@ double calcContrast(Mat &img);
 double calcBrightness(Mat &img);
 
 // saveImagewithIncremental
-std::string saveImageWithIncrementalName(const cv::Mat& image, const std::string& path, const std::string& baseName);
+std::string saveImageWithIncrementalName(const cv::Mat& img, const std::string& path, const std::string& baseName);
 
 #endif

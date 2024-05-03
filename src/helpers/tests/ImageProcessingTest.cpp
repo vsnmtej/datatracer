@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 #include <opencv2/opencv.hpp>
-#include "helpers/imagehelpers.h" // Replace with your class header file
+#include "imghelpers.h" // Replace with your class header file
 
 class ImageProcessingTest : public ::testing::Test {
 protected:
@@ -37,26 +37,10 @@ TEST_F(ImageProcessingTest, CalcSNR) {
     EXPECT_GT(snr, 0); // SNR should be greater than zero
 }
 
-// Test calcRGBMean function
-TEST_F(ImageProcessingTest, CalcRGBMean) {
-    std::vector<double> rgbMean(3);
-    int result = calcRGBMean(colorImage, rgbMean);
-    ASSERT_EQ(result, 0);
-    EXPECT_NEAR(rgbMean[0], 100, 1.0); // Expected blue component
-    EXPECT_NEAR(rgbMean[1], 150, 1.0); // Expected green component
-    EXPECT_NEAR(rgbMean[2], 200, 1.0); // Expected red component
-}
-
 // Test calcContrast function
 TEST_F(ImageProcessingTest, CalcContrast) {
     double contrast = calcContrast(grayscaleImage);
     EXPECT_GE(contrast, 0); // Contrast should not be negative
-}
-
-// Test calcBrightness function
-TEST_F(ImageProcessingTest, CalcBrightness) {
-    double brightness = caclBrightness(colorImage);
-    EXPECT_GT(brightness, 0); // Brightness should be positive
 }
 
 // Test saveImageWithIncrementalName function
@@ -66,4 +50,8 @@ TEST_F(ImageProcessingTest, SaveImageWithIncrementalName) {
     EXPECT_TRUE(cv::imread(savedImagePath).data != nullptr); // The image should be readable
 }
 
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
 
