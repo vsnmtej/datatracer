@@ -50,10 +50,10 @@ add_executable(IniParserTest
                 src/helpers/tests/IniParserTest.cpp
               )
 
-#add_executable(SaverTest
-#                src/helpers/saver.cpp
-#                src/helpers/tests/SaverTest.cpp
-#              )
+add_executable(SaverTest
+                src/helpers/saver.cpp
+                src/helpers/tests/SaverTest.cpp
+              )
 
 #add_executable(image_profiler_test
 #                src/helpers/saver.cpp
@@ -73,7 +73,7 @@ add_executable(IniParserTest
 
 target_link_libraries(ImageProcessingTest gtest gtest_main ${OpenCV_LIBS} pthread)
 target_link_libraries(IniParserTest gtest gtest_main ${OpenCV_LIBS} pthread)
-#target_link_libraries(SaverTest gtest gtest_main ${OpenCV_LIBS} pthread)
+target_link_libraries(SaverTest gtest gtest_main ${OpenCV_LIBS} pthread)
 #target_link_libraries(image_profiler_test gtest gtest_main ${OpenCV_LIBS} pthread)
 #target_link_libraries(test_image_sampler gtest gtest_main ${OpenCV_LIBS} pthread)
 
@@ -88,3 +88,8 @@ enable_testing()
 #Test
 add_test(NAME ImageProcessingTest COMMAND ImageProcessingTest)
 add_test(NAME IniParserTest COMMAND IniParserTest)
+add_test(NAME SaverTest COMMAND SaverTest)
+#add_test(NAME image_profiler_test COMMAND image_profiler_test)
+#add_test(NAME test_image_sampler COMMAND test_image_sampler)
+#add_test(NAME  COMMAND )
+

@@ -7,6 +7,10 @@
 typedef datasketches::kll_sketch<float> distributionBox;
 typedef datasketches::frequent_items_sketch<std::string> frequent_class_sketch;
 
+Saver::Saver(int interval) {
+    save_interval_minutes_ = interval;
+}
+
 void Saver::AddObjectToSave(void *object, int type, const std::string& filename) {
   std::lock_guard<std::mutex> lock(queue_mutex_);
   data_object_t *tmp_obj = new data_object_t;
@@ -67,3 +71,8 @@ void Saver::SaveObjectToFile(data_object_t *object) {
     }
 }
 
+void Saver::StopSaving(void) {
+    if (save_thread_.joinable()) {
+        save_thread_.detach();
+    }
+}
