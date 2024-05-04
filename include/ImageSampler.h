@@ -83,8 +83,8 @@ private:
   distributionBox ratioConfidenceBox;
   distributionBox entropyConfidenceBox;
 
-	std::map<std::string, std::string> samplingConfidences;
-	std::map<std::string, std::string> filesSavePath;
+	std::map<std::string, std::string> samplingConfig;
+	std::string filesSavePath;
 };
 
 #endif // CONFIDENCE_METRICS_H

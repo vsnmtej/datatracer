@@ -18,21 +18,21 @@ ImageSampler::ImageSampler(std::string conf_path, Saver &saver) {
   try {
     // Read configuration settings
     IniParser parser; // Assuming filename is correct
-    samplingConfidences = parser.parseIniFile(conf_path, "sampling.confidence", "");
-    filesSavePath = parser.parseIniFile(conf_path, "files.savepath", "");
+    samplingConfig = parser.parseIniFile(conf_path, "sampling", "");
+    filesSavePath = samplingConfig["files"];
 
     // Register sampling statistics for saving based on configuration
-    for (const auto& sampling_confidence : samplingConfidences) {
+    for (const auto& sampling_confidence : samplingConfig) {
       std::string name = sampling_confidence.first;
       if (strcmp(name.c_str(), "MARGINCONFIDENCE")) {
-      saver.AddObjectToSave((void*)(&marginConfidenceBox), KLL_TYPE, filesSavePath["samplestats"]+"marginconfidence.bin");
+      saver.AddObjectToSave((void*)(&marginConfidenceBox), KLL_TYPE, filesSavePath+"marginconfidence.bin");
       } else if(strcmp(name.c_str(), "LEASTCONFIDENCE") == 0) {
-      saver.AddObjectToSave((void*)(&leastConfidenceBox), KLL_TYPE, filesSavePath["samplestats"]+"leastconfidence.bin");
+      saver.AddObjectToSave((void*)(&leastConfidenceBox), KLL_TYPE, filesSavePath+"leastconfidence.bin");
       } else if(strcmp(name.c_str(), "RATIOCONFIDENCE") == 0) {
       // ... Register other sampling statistics similarly
-      saver.AddObjectToSave((void*)(&ratioConfidenceBox), KLL_TYPE, filesSavePath["samplestats"]+"ratioconfidence.bin");
+      saver.AddObjectToSave((void*)(&ratioConfidenceBox), KLL_TYPE, filesSavePath+"ratioconfidence.bin");
       } else if(strcmp(name.c_str(), "ENTROPYCONFIDENCE") == 0) {
-      saver.AddObjectToSave((void*)(&entropyConfidenceBox), KLL_TYPE, filesSavePath["samplestats"]+"entropyconfidence.bin");
+      saver.AddObjectToSave((void*)(&entropyConfidenceBox), KLL_TYPE, filesSavePath+"entropyconfidence.bin");
       }
     }
   } catch (const std::runtime_error& e) {
@@ -56,9 +56,8 @@ int ImageSampler::sample(std::vector<std::pair<float, int>> &results, cv::Mat &i
 	for (const auto& pair : results) {
 		confidence.push_back(pair.first);
 	}
-
 	// Apply configured sampling criteria to identify uncertain samples
-	for (const auto& sampling_confidence : samplingConfidences) {
+	for (const auto& sampling_confidence : samplingConfig) {
 		std::string name = sampling_confidence.first;
 		double threshold = std::stod(sampling_confidence.second);
 		float confidence_score = -1.0f;
@@ -68,33 +67,31 @@ int ImageSampler::sample(std::vector<std::pair<float, int>> &results, cv::Mat &i
 			confidence_score = margin_confidence(confidence, false);
 			marginConfidenceBox.update(confidence_score);
 			if (confidence_score >= threshold) {
-				std::string imagePath = filesSavePath["marginconfidence"];
 				std::string baseName = "marginconfidence";
-				std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
+				std::string savedImagePath = saveImageWithIncrementalName(img, filesSavePath, baseName);
 			}
 		} else if (strcmp(name.c_str(), "leastconfidence") == 0) {
 			confidence_score = least_confidence(confidence, false);
 			leastConfidenceBox.update(confidence_score);
 			if (confidence_score >= threshold){
-				std::string imagePath = filesSavePath["leastconfidence"];
 				std::string baseName = "leastconfidence";
-				std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
+				std::string savedImagePath = saveImageWithIncrementalName(img, filesSavePath, baseName);
 			}
 		} else if (strcmp(name.c_str(), "ratioconfidence") == 0) {
 			confidence_score = ratio_confidence(confidence, false);
 			ratioConfidenceBox.update(confidence_score);
 			if (confidence_score >= threshold){
-				std::string imagePath = filesSavePath["ratioconfidence"];
+				std::string imagePath = filesSavePath;
 				std::string baseName = "ratioconfidence";
-				std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
+				std::string savedImagePath = saveImageWithIncrementalName(img, filesSavePath, baseName);
 			}
 		} else if (strcmp(name.c_str(), "entropyconfidence") == 0) {
 			confidence_score = entropy_confidence(confidence);
 			entropyConfidenceBox.update(confidence_score);
 			if (confidence_score >= threshold){
-				std::string imagePath = filesSavePath["entropyconfidence"];
+				std::string imagePath = filesSavePath;
 				std::string baseName = "entropyconfidence";
-				std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
+				std::string savedImagePath = saveImageWithIncrementalName(img, filesSavePath, baseName);
 			}
 		}
 	}

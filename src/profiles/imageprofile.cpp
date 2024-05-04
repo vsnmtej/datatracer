@@ -23,29 +23,28 @@ ImageProfile::ImageProfile(std::string conf_path, Saver& saver, int channels=1) 
     try {
       // Read configuration settings
 		IniParser parser; // Assuming filename is correct
-      imagemetricsConfidence = parser.parseIniFile(conf_path,
-		      "imagemetrics.confidence", "");
-      filesSavePath = parser.parseIniFile(conf_path,
-			  "files.savepath", "");
+      imageConfig = parser.parseIniFile(conf_path,
+		      "image", "");
+      filesSavePath = imageConfig["filepath"];
 
       // Register statistics for saving based on configuration
-      for (const auto& stat_confidence : imagemetricsConfidence) {
+      for (const auto& stat_confidence : imageConfig) {
         std::string name = stat_confidence.first;
           if (strcmp(name.c_str(), "NOISE") == 0){
-            saver.AddObjectToSave((void*)(&noiseBox), KLL_TYPE, filesSavePath["imgstats"]+"margin.bin");
+            saver.AddObjectToSave((void*)(&noiseBox), KLL_TYPE, filesSavePath+"margin.bin");
 	  }  
           else if (strcmp(name.c_str(), "BRIGHTNESS") == 0){
-            saver.AddObjectToSave((void*)(&brightnessBox), KLL_TYPE, filesSavePath["imgstats"]+"brightness.bin");
+            saver.AddObjectToSave((void*)(&brightnessBox), KLL_TYPE, filesSavePath+"brightness.bin");
 	  }  
           else if (strcmp(name.c_str(), "SHARPNESS") == 0){
-            saver.AddObjectToSave((void*)(&sharpnessBox), KLL_TYPE, filesSavePath["imgstats"]+"sharpness.bin");
+            saver.AddObjectToSave((void*)(&sharpnessBox), KLL_TYPE, filesSavePath+"sharpness.bin");
 	  }
           else if (strcmp(name.c_str(), "MEAN") == 0){
 		  for (int i = 0; i < channels; ++i) {
 		       distributionBox dbox(200);	  
 		       meanBox.push_back(dbox); 	  
                        saver.AddObjectToSave((void*)(&meanBox[i]),
-				       KLL_TYPE, filesSavePath["imgstats"]+"mean_"+std::to_string(i)+".bin"); 
+				       KLL_TYPE, filesSavePath+"mean_"+std::to_string(i)+".bin"); 
                    }
 	  } 
           else if (strcmp(name.c_str(), "HISTOGRAM") == 0) {
@@ -53,7 +52,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver& saver, int channels=1) 
 		       distributionBox dbox(200);	
                        pixelBox.push_back(dbox);
 		       saver.AddObjectToSave((void*)(&pixelBox[i]),
-				       KLL_TYPE, filesSavePath["imgstats"]+"pixel_"+std::to_string(i)+".bin"); 
+				       KLL_TYPE, filesSavePath+"pixel_"+std::to_string(i)+".bin"); 
              }
           }	     
        }
@@ -72,10 +71,10 @@ ImageProfile::ImageProfile(std::string conf_path, Saver& saver, int channels=1) 
    */
   int ImageProfile::profile(cv::Mat &img, bool save_sample = false) {
     float stat_score;
-    for (const auto& imgstat : samplingConfidences) {
+    for (const auto& imgstat : imageConfig) {
 		// Access name and threshold from the pair
 		std::string name = imgstat.first;
-		double threshold = imgstat.second;
+		float threshold = std::stof(imgstat.second);
 		std::string baseName = name;
 	if (strcmp(name.c_str(), "NOISE") == 0) {
           // Compute noise statistic
@@ -83,21 +82,21 @@ ImageProfile::ImageProfile(std::string conf_path, Saver& saver, int channels=1) 
           // Update corresponding distribution box and save image if threshold exceeded
           noiseBox.update(stat_score);
           if (stat_score >= threshold && save_sample == true) {
-			  std::string imagePath = filesSavePath["noise"];
+			  std::string imagePath = filesSavePath;
               std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
           }
         } else if (strcmp(name.c_str(), "BRIGHTNESS") == 0) {
 			stat_score = calcBrightness(img);
 			brightnessBox.update(stat_score);
 			if (stat_score >= threshold && save_sample==true){
-				std::string imagePath = filesSavePath["brightness"];
+				std::string imagePath = filesSavePath;
                 std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
           }
         } else if (strcmp(name.c_str(), "SHARPNESS") == 0) {
 			stat_score = calcSharpness(img);
 			sharpnessBox.update(stat_score);
 			if (stat_score >= threshold && save_sample==true){
-			    std::string imagePath = filesSavePath["sharpness"];
+			    std::string imagePath = filesSavePath;
 			    std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
 			}
         } else if (strcmp(name.c_str(), "MEAN") == 0) {
@@ -109,7 +108,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver& saver, int channels=1) 
 			stat_score = calcContrast(img);
 			contrastBox.update(stat_score);
 			if (stat_score >= threshold && save_sample==true){
-			    std::string imagePath = filesSavePath["contrast"];
+			    std::string imagePath = filesSavePath;
 			    std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
 			}
         } else if (strcmp(name.c_str(), "HISTOGRAM") == 0) {

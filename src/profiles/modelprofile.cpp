@@ -17,8 +17,9 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
   // Set member variables
   model_id_ = model_id;
   IniParser parser;
-  std::map<std::string, std::string> filesSavePath = parser.parseIniFile(conf_path,
-                          "files.savepath", "");
+  modelConfig = parser.parseIniFile(conf_path,
+                          "model", "");
+  filesSavePath = modelConfig["files"];
   top_classes_ = top_classes;
   sketch1 = new frequent_class_sketch(64);
   //saver.AddObjectToSave(sketch1, 
@@ -27,7 +28,7 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
     distributionBox dBox(200);		  
     boxes.push_back(dBox);
     saver.AddObjectToSave((void *)(&(boxes[cls])), KLL_TYPE,
-		    filesSavePath["modelstats"]+model_id+std::to_string(cls)+".bin");  // Register with Saver for saving
+		    filesSavePath+model_id+std::to_string(cls)+".bin");  // Register with Saver for saving
   }
 }
 

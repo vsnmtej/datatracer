@@ -54,6 +54,8 @@ public:
   // Member variables (declarations only, definitions in .cpp file)
   std::string model_id_;
   int top_classes_;
+  std::string filesSavePath;
+  std::map<std::string, std::string> modelConfig; 
   std::vector<float> inference_latency_;
   std::vector<int> no_detections_per_image_;
   std::vector<double> objectnessbox_;

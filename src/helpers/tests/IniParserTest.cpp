@@ -3,6 +3,7 @@
 #include <map>
 #include <fstream>
 
+
 // A utility function to create a temporary INI file for testing
 void createTestIniFile(const std::string& filename, const std::string& content) {
     std::ofstream outFile(filename);
@@ -17,13 +18,11 @@ protected:
     virtual void SetUp() override {
         // Creating a basic test INI file with sections and subsections
         std::string iniContent = R"(
-[sampling.confidence]
-  margincofidence.value = 0.5
-  least.value = 0.4
-
-[imagemetrics.confidence]
-  noise.value = 0.5
-  brightness.value = 0.4
+[sampling]
+marginconfidence = 0.5
+least = 0.4
+[imagemetrics]
+noise = 0.5
 )";
 
         createTestIniFile(testIniFilename, iniContent);
@@ -35,31 +34,40 @@ protected:
     }
 };
 
-TEST_F(IniParserTest, ParseValidSectionAndSubsection) {
-    std::map<std::string, std::string> result = IniParser::parseIniFile(testIniFilename, "sampling.confidence", "");
-    EXPECT_EQ(result["margincofidence"], "0.5");
-    EXPECT_EQ(result["least"], "0.4");
+TEST_F(IniParserTest, ParseSpecificKey) {
+    IniParser parser;
+    auto result = parser.parseIniFile(testIniFilename, "sampling", "marginconfidence");
+
+    ASSERT_EQ(result.size(), 1);
+    ASSERT_EQ(result["marginconfidence"], "0.5");
 }
 
-TEST_F(IniParserTest, ParseSectionAndSpecificSubsection) {
-    std::map<std::string, std::string> result = IniParser::parseIniFile(testIniFilename, "imagemetrics.confidence", "noise");
-    EXPECT_EQ(result["value"], "0.5");
+TEST_F(IniParserTest, ParseAllKeysInSection) {
+    IniParser parser;
+    auto result = parser.parseIniFile(testIniFilename, "sampling", "");
+
+    ASSERT_EQ(result.size(), 2);
+    ASSERT_EQ(result["marginconfidence"], "0.5");
+    ASSERT_EQ(result["least"], "0.4");
+}
+
+TEST_F(IniParserTest, ParseInvalidKey) {
+    IniParser parser;
+    auto result = parser.parseIniFile(testIniFilename, "sampling", "nonexistent_key");
+
+    ASSERT_EQ(result.size(), 0);
 }
 
 TEST_F(IniParserTest, ParseInvalidSection) {
-    std::map<std::string, std::string> result = IniParser::parseIniFile(testIniFilename, "invalid.section", "");
-    EXPECT_TRUE(result.empty()); // The result should be empty
-}
+    IniParser parser;
+    auto result = parser.parseIniFile(testIniFilename, "nonexistent_section", "");
 
-TEST_F(IniParserTest, ParseValidSectionButInvalidSubsection) {
-    std::map<std::string, std::string> result = IniParser::parseIniFile(testIniFilename, "sampling.confidence", "nonexistent");
-    EXPECT_TRUE(result.empty()); // The result should be empty
+    ASSERT_EQ(result.size(), 0);
 }
 
 TEST_F(IniParserTest, ParseEmptyIniFile) {
     createTestIniFile(testIniFilename, ""); // Overwriting with an empty content
-    std::map<std::string, std::string> result = IniParser::parseIniFile(testIniFilename, "any.section", "");
+    std::map<std::string, std::string> result = IniParser::parseIniFile(testIniFilename, "anysection", "");
     EXPECT_TRUE(result.empty()); // The result should be empty
 }
-
 

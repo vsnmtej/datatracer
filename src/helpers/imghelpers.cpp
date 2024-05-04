@@ -17,7 +17,14 @@ int convertGrayScale(Mat &img, Mat &grayscale){
 double calcSharpness(Mat &img){
     // convert the image in to grayscale
     Mat grayscale;
-    cvtColor(img, grayscale, COLOR_BGR2GRAY);
+    if (img.channels() == 3) {
+        cv::cvtColor(img, grayscale, cv::COLOR_BGR2GRAY);
+    } else if (img.channels() == 4) {
+        cv::cvtColor(img, grayscale, cv::COLOR_BGRA2GRAY);
+    } else {
+        // If the image is already grayscale
+        grayscale = img;
+    }
 
     // Apply the Laplacian operator to the grayscale image
     Mat laplacian;
@@ -36,13 +43,30 @@ double calcSharpness(Mat &img){
 double calcSNR(Mat &img){
     // Convert the image to grayscale
     Mat grayscale;
-    cvtColor(img, grayscale, COLOR_BGR2GRAY);
+    if (img.channels() == 3) {
+        cv::cvtColor(img, grayscale, cv::COLOR_BGR2GRAY);
+    } else if (img.channels() == 4) {
+        cv::cvtColor(img, grayscale, cv::COLOR_BGRA2GRAY);
+    } else {
+        // If the image is already grayscale
+        grayscale = img;
+    }
 
     Scalar mean, sigma;
     meanStdDev(grayscale, mean, sigma);
-    
-    // Calculate the signal to noise ration using the following formula
-    double snr = 10 * log10(mean.val[0] * mean.val[0] / sigma.val[0] * sigma.val[0]);
+   
+    // Calculate the Signal-to-Noise Ratio (SNR)
+    double signal = mean[0];
+    double noise = sigma[0];
+
+    if (noise == 0) {
+        // If noise is zero, return a high SNR (almost infinite)
+        return std::numeric_limits<double>::infinity();
+    }
+
+    // SNR in decibels (dB)
+    double snr = 20 * std::log10(signal / noise);
+ 
     return snr;    
 }
 
@@ -89,7 +113,15 @@ double calcMean(const cv::Mat& img, int channelNumber) {
 */
 double calcContrast(Mat &img){
     Mat grayscale;
-    cvtColor(img, grayscale, COLOR_BGR2GRAY);
+    if (img.channels() == 3) {
+        cv::cvtColor(img, grayscale, cv::COLOR_BGR2GRAY);
+    } else if (img.channels() == 4) {
+        cv::cvtColor(img, grayscale, cv::COLOR_BGRA2GRAY);
+    } else {
+        // If the image is already grayscale
+        grayscale = img;
+    }
+   
     double min_pixel_value, max_pixel_value;
     minMaxLoc(grayscale, &min_pixel_value, &max_pixel_value);
     return (max_pixel_value - min_pixel_value)/ max_pixel_value;  

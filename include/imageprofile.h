@@ -87,8 +87,8 @@ private:
   /**
    * @brief KLL sketch for storing overall pixel value distribution.
    */
-	std::map<std::string, std::string> filesSavePath;
-	std::map<std::string, std::string> imagemetricsConfidence;
+	std::string filesSavePath;
+	std::map<std::string, std::string> imageConfig;
 };
 
 #endif
