@@ -50,6 +50,9 @@ public:
   //int log_yolov5_model_stats(float inference_latency, const YoloDetections& results);
 
   frequent_class_sketch *sketch1;
+  int getNumDistributionBoxes() const;
+  const distributionBox& getDistributionBox(int index) const;
+
   private:
   // Member variables (declarations only, definitions in .cpp file)
   std::string model_id_;

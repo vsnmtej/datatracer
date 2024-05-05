@@ -32,6 +32,20 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
   }
 }
 
+
+// Public accessor to get the number of distribution boxes
+int ModelProfile::getNumDistributionBoxes() const {
+        return boxes.size();
+    }
+
+// Optional: Public accessor to return a reference to a specific distribution box
+const distributionBox& ModelProfile::getDistributionBox(int index) const {
+    if (index >= boxes.size()) {
+       throw std::out_of_range("Invalid index for distribution box");
+    }
+    return boxes[index];
+}
+
 /**
  * @brief Logs classification model statistics
  * @param inference_latency Time taken for model inference

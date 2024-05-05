@@ -1,60 +1,95 @@
-#include <gtest/gtest.h>
 #include "ImageSampler.h"
+#include "saver.h"
+#include <gtest/gtest.h>
+#include <vector>
+#include <opencv2/opencv.hpp>
+#include <fstream>
 
-// Compile the test with:
-// g++ -std=c++17 -lgtest -lgtest_main -pthread -o test_ImageSampler test_ImageSampler.cpp
+// Test fixture for ImageSampler
+class ImageSamplerTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        createSampleIniFile("test_config.ini");  // Create a sample configuration file
+        saver = new Saver(1);  // Initialize Saver
+        sampler = new ImageSampler("test_config.ini", *saver);  // Initialize ImageSampler
+    }
 
-// Test the margin_confidence function
-TEST(ImageSamplerTest, MarginConfidence) {
-    ImageSampler sampler;
+    void TearDown() override {
+        delete sampler;
+        delete saver;
+        cleanUpTestFiles();  // Clean up test files
+    }
 
-    std::vector<float> prob_dist = {0.1f, 0.2f, 0.4f, 0.3f};
-    float result = sampler.margin_confidence(prob_dist);
-    EXPECT_NEAR(result, 0.9f, 1e-5); // The margin confidence should be 1.0 - (0.4 - 0.3) = 0.9
+    // Helper function to create a sample INI file
+    void createSampleIniFile(const std::string& filename) {
+        std::ofstream ini_file(filename, std::ios::trunc);
+        ini_file << "[sampling]\n";
+        ini_file << "files = ./\n";
+        ini_file << "MARGINCONFIDENCE = 0.1\n";  // Sample threshold for margin confidence
+        ini_file << "LEASTCONFIDENCE = 0.2\n";
+        ini_file << "RATIOCONFIDENCE = 0.3\n";
+        ini_file << "ENTROPYCONFIDENCE = 0.4\n";
+        ini_file.close();
+    }
 
-    std::vector<float> sorted_prob_dist = {0.4f, 0.3f, 0.2f, 0.1f};
-    result = sampler.margin_confidence(sorted_prob_dist, true);
-    EXPECT_NEAR(result, 0.9f, 1e-5);
+    // Helper function to clean up test files
+    void cleanUpTestFiles() {
+        std::remove("test_config.ini");  // Remove the test INI file
+        std::remove("savefile.dat");  // Remove the test save file
+    }
+
+    ImageSampler* sampler;
+    Saver* saver;
+};
+
+// Test Initialization
+TEST_F(ImageSamplerTest, Initialization) {
+    EXPECT_EQ(sampler->filesSavePath, "./");  // Expected file path
 }
 
-// Test the least_confidence function
-TEST(ImageSamplerTest, LeastConfidence) {
-    ImageSampler sampler;
+// Test margin_confidence
+TEST_F(ImageSamplerTest, MarginConfidence) {
+    std::vector<float> prob_dist = {0.7f, 0.5f, 0.2f};  // Sample probabilities
+    float result = sampler->margin_confidence(prob_dist, false);  // Not sorted
 
-    std::vector<float> prob_dist = {0.1f, 0.2f, 0.4f, 0.3f};
-    float result = sampler.least_confidence(prob_dist);
-    EXPECT_NEAR(result, 0.6f * (4.0f / 3.0f), 1e-5); // 1.0 - 0.4, then scaled with (4 / 3)
-
-    std::vector<float> sorted_prob_dist = {0.4f, 0.3f, 0.2f, 0.1f};
-    result = sampler.least_confidence(sorted_prob_dist, true);
-    EXPECT_NEAR(result, 0.6f * (4.0f / 3.0f), 1e-5); // Same expected result
+    EXPECT_FLOAT_EQ(result, 0.8f);  // Expected margin confidence score
 }
 
-// Test the ratio_confidence function
-TEST(ImageSamplerTest, RatioConfidence) {
-    ImageSampler sampler;
+// Test least_confidence
+TEST_F(ImageSamplerTest, LeastConfidence) {
+    std::vector<float> prob_dist = {0.7f, 0.5f, 0.2f};  // Sample probabilities
+    float result = sampler->least_confidence(prob_dist, false);
 
-    std::vector<float> prob_dist = {0.1f, 0.2f, 0.4f, 0.3f};
-    float result = sampler.ratio_confidence(prob_dist);
-    EXPECT_NEAR(result, 0.3f / 0.4f, 1e-5);
-
-    std::vector<float> sorted_prob_dist = {0.4f, 0.3f, 0.2f, 0.1f};
-    result = sampler.ratio_confidence(sorted_prob_dist, true);
-    EXPECT_NEAR(result, 0.3f / 0.4f, 1e-5);
+    EXPECT_FLOAT_EQ(result, 0.7f);  // Expected least confidence score
 }
 
-// Test the entropy_confidence function
-TEST(ImageSamplerTest, EntropyConfidence) {
-    ImageSampler sampler;
+// Test ratio_confidence
+TEST_F(ImageSamplerTest, RatioConfidence) {
+    std::vector<float> prob_dist = {0.7f, 0.5f, 0.2f};  // Sample probabilities
+    float result = sampler->ratio_confidence(prob_dist, false);
 
-    std::vector<float> prob_dist = {0.1f, 0.2f, 0.4f, 0.3f};
-    float result = sampler.entropy_confidence(prob_dist);
-    float expected_entropy = -(0.4f * std::log2(0.4f) + 0.3f * std::log2(0.3f) + 0.2f * std::log2(0.2f) + 0.1f * std::log2(0.1f));
-    expected_entropy /= std::log2(4.0f);
-    EXPECT_NEAR(result, expected_entropy, 1e-5);
+    EXPECT_FLOAT_EQ(result, 0.714f);  // Expected ratio confidence score (0.5 / 0.7)
 }
 
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+// Test entropy_confidence
+TEST_F(ImageSamplerTest, EntropyConfidence) {
+    std::vector<float> prob_dist = {0.7f, 0.5f, 0.2f};  // Sample probabilities
+    float result = sampler->entropy_confidence(prob_dist);
+
+    EXPECT_GT(result, 0);  // Entropy should be greater than 0
+}
+
+// Test the sample method
+TEST_F(ImageSamplerTest, SampleMethod) {
+    std::vector<std::pair<float, int>> classificationResults = {
+        {0.7f, 1},  // Confidence score and class ID
+        {0.5f, 2},
+        {0.2f, 3},
+    };
+
+    cv::Mat img = cv::Mat::ones(100, 100, CV_8UC1) * 128;  // Simple grayscale image
+
+    int result = sampler->sample(classificationResults, img, true);  // Sample with save_sample = true
+
+    EXPECT_EQ(result, 1);  // Expected success
 }

@@ -61,22 +61,28 @@ add_executable(image_profiler_test
                 src/helpers/imghelpers.cpp
                 src/profiles/imageprofile.cpp
                 src/profiles/tests/image_profiler_test.cpp
-		src/profiles/tests/model_profile_test.cpp
               )
+add_executable(model_profiler_test
+	        src/helpers/saver.cpp
+                src/helpers/IniParser.cpp
+                src/profiles/modelprofile.cpp
+		src/profiles/tests/model_profile_test.cpp
+	      )
 
-#add_executable(test_image_sampler
-#                src/helpers/saver.cpp
-#                src/helpers/IniParser.cpp
-#                src/helpers/imghelpers.cpp
-#                src/sampling/ImageSampler.cpp
-#                src/sampling/tests/test_image_sampler.cpp
-#              )
+add_executable(image_sampler_test
+                src/helpers/saver.cpp
+                src/helpers/IniParser.cpp
+                src/helpers/imghelpers.cpp
+                src/sampling/ImageSampler.cpp
+                src/sampling/tests/test_image_sampler.cpp
+              )
 
 target_link_libraries(ImageProcessingTest gtest gtest_main ${OpenCV_LIBS} pthread)
 target_link_libraries(IniParserTest gtest gtest_main ${OpenCV_LIBS} pthread)
 target_link_libraries(SaverTest gtest gtest_main ${OpenCV_LIBS} pthread)
-#target_link_libraries(image_profiler_test gtest gtest_main ${OpenCV_LIBS} pthread)
-#target_link_libraries(test_image_sampler gtest gtest_main ${OpenCV_LIBS} pthread)
+target_link_libraries(image_profiler_test gtest gtest_main ${OpenCV_LIBS} pthread)
+target_link_libraries(image_sampler_test gtest gtest_main ${OpenCV_LIBS} pthread)
+target_link_libraries(model_profiler_test gtest gtest_main ${OpenCV_LIBS} pthread)
 
 # Install the library
 install(TARGETS ${CMAKE_PROJECT_NAME}
@@ -90,7 +96,8 @@ enable_testing()
 add_test(NAME ImageProcessingTest COMMAND ImageProcessingTest)
 add_test(NAME IniParserTest COMMAND IniParserTest)
 add_test(NAME SaverTest COMMAND SaverTest)
-#add_test(NAME image_profiler_test COMMAND image_profiler_test)
-#add_test(NAME test_image_sampler COMMAND test_image_sampler)
+add_test(NAME image_profiler_test COMMAND image_profiler_test)
+add_test(NAME image_sampler_test COMMAND image_sampler_test)
+add_test(NAME mode_profiler_test COMMAND model_profiler_test)
 #add_test(NAME  COMMAND )
 

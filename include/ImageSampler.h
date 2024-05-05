@@ -44,9 +44,8 @@ public:
    * @param saveSample Flag indicating whether to save sampled images
    */
    int sample(std::vector<std::pair<float, int>> &results, cv::Mat &img, bool save_sample);
-
-private:
-  /**
+  
+   /**
    * @brief Calculates margin confidence (difference between top two probabilities)
    * @param probabilityDistribution Vector of class probabilities
    * @param sorted Flag indicating if probabilities are already sorted (default: false)
@@ -76,7 +75,8 @@ private:
    * @return Entropy-based confidence score
    */
    float entropy_confidence(std::vector<float>& prob_dist);
-
+   std::string filesSavePath;
+private:   
   // Member variables for storing confidence metric statistics
   distributionBox marginConfidenceBox;
   distributionBox leastConfidenceBox;
@@ -84,7 +84,6 @@ private:
   distributionBox entropyConfidenceBox;
 
 	std::map<std::string, std::string> samplingConfig;
-	std::string filesSavePath;
 };
 
 #endif // CONFIDENCE_METRICS_H
