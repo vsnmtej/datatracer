@@ -55,13 +55,13 @@ add_executable(SaverTest
                 src/helpers/tests/SaverTest.cpp
               )
 
-#add_executable(image_profiler_test
-#                src/helpers/saver.cpp
-#                src/helpers/IniParser.cpp
-#                src/helpers/imghelpers.cpp
-#                src/profiles/imageprofile.cpp
-#                src/profiles/tests/image_profiler_test.cpp
-#              )
+add_executable(image_profiler_test
+                src/helpers/saver.cpp
+                src/helpers/IniParser.cpp
+                src/helpers/imghelpers.cpp
+                src/profiles/imageprofile.cpp
+                src/profiles/tests/image_profiler_test.cpp
+              )
 
 #add_executable(test_image_sampler
 #                src/helpers/saver.cpp
