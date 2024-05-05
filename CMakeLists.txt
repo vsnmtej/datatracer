@@ -61,6 +61,7 @@ add_executable(image_profiler_test
                 src/helpers/imghelpers.cpp
                 src/profiles/imageprofile.cpp
                 src/profiles/tests/image_profiler_test.cpp
+		src/profiles/tests/model_profile_test.cpp
               )
 
 #add_executable(test_image_sampler
