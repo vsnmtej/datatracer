@@ -56,9 +56,10 @@ TEST_F(ImageProfileTest, Initialization) {
 TEST_F(ImageProfileTest, ProfileMethod) {
     // Create a simple grayscale image for testing
     cv::Mat img = cv::Mat::ones(100, 100, CV_8UC1) * 128;  // 100x100 grayscale image with pixel value 128
-
+    saver->StartSaving();
     int result = image_profile->profile(img, true);  // Test with save_sample = true
-
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    saver->StopSaving();
     EXPECT_EQ(result, 1);  // Expected success
 
     // Check that statistics are updated correctly
@@ -75,7 +76,7 @@ TEST_F(ImageProfileTest, IterateImageInvalidImage) {
     );
 }
 
-/* Test the StartSaving and TriggerSave methods for threading behavior
+//Test the StartSaving and TriggerSave methods for threading behavior
 TEST_F(ImageProfileTest, ThreadingBehavior) {
     saver->StartSaving();  // Start the saving process
     
@@ -90,7 +91,6 @@ TEST_F(ImageProfileTest, ThreadingBehavior) {
     
     // Further checks can include more detailed validation of queue processing
 }
-*/
 
 // Test SaveObjectToFile to ensure correct data is written to files
 TEST_F(ImageProfileTest, SaveObjectToFile) {

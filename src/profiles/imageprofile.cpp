@@ -74,12 +74,11 @@ ImageProfile::ImageProfile(std::string conf_path, Saver& saver, int channels=1) 
     for (const auto& imgstat : imageConfig) {
 		// Access name and threshold from the pair
 		std::string name = imgstat.first;
-		std::cout << "Second" << imgstat.second;
-		float threshold = std::stof(imgstat.second);
 		std::string baseName = name;
 	if (strcmp(name.c_str(), "NOISE") == 0) {
           // Compute noise statistic
           stat_score = calcSNR(img);
+	  float threshold = std::stof(imgstat.second);
           // Update corresponding distribution box and save image if threshold exceeded
           noiseBox.update(stat_score);
           if (stat_score >= threshold && save_sample == true) {
@@ -88,6 +87,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver& saver, int channels=1) 
           }
         } else if (strcmp(name.c_str(), "BRIGHTNESS") == 0) {
 			stat_score = calcBrightness(img);
+		        float threshold = std::stof(imgstat.second);
 			brightnessBox.update(stat_score);
 			if (stat_score >= threshold && save_sample==true){
 				std::string imagePath = filesSavePath;
@@ -95,6 +95,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver& saver, int channels=1) 
           }
         } else if (strcmp(name.c_str(), "SHARPNESS") == 0) {
 			stat_score = calcSharpness(img);
+		        float threshold = std::stof(imgstat.second);
 			sharpnessBox.update(stat_score);
 			if (stat_score >= threshold && save_sample==true){
 			    std::string imagePath = filesSavePath;
@@ -107,6 +108,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver& saver, int channels=1) 
                          }    
         } else if (strcmp(name.c_str(), "CONTRAST") == 0) {
 			stat_score = calcContrast(img);
+		        float threshold = std::stof(imgstat.second);
 			contrastBox.update(stat_score);
 			if (stat_score >= threshold && save_sample==true){
 			    std::string imagePath = filesSavePath;
