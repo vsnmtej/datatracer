@@ -79,7 +79,7 @@ TEST_F(ModelProfileTest, EmptyClassificationResults) {
     EXPECT_EQ(result, 0); // Should return success even with empty results
 }
 
-// Test if objects are registered with Saver
+//Test if objects are registered with Saver
 TEST_F(ModelProfileTest, ObjectsRegisteredWithSaver) {
     EXPECT_EQ(saver->objects_to_save_.size(), 3); // Should have 3 objects to save
 }

@@ -74,6 +74,7 @@ ImageProfile::ImageProfile(std::string conf_path, Saver& saver, int channels=1) 
     for (const auto& imgstat : imageConfig) {
 		// Access name and threshold from the pair
 		std::string name = imgstat.first;
+		std::cout << "Second" << imgstat.second;
 		float threshold = std::stof(imgstat.second);
 		std::string baseName = name;
 	if (strcmp(name.c_str(), "NOISE") == 0) {

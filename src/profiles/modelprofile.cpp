@@ -57,13 +57,14 @@ const distributionBox& ModelProfile::getDistributionBox(int index) const {
  */
 int ModelProfile::log_classification_model_stats(float inference_latency,
 	       	const ClassificationResults& results) {
-  	
-  for (int cls= 0; cls < top_classes_; ++cls) {
-    // Logic for identifying frequent classes goes here 
-    sketch1->update(std::to_string(results[cls].second));  // Placeholder for storing frequent class IDs
-    boxes[cls].update(results[cls].first);
-    model_classes_stat_.emplace(results[cls].second, boxes[cls]);  // Update score statistics for each class
-  }
+  for (auto it = results.begin(); it != results.end(); ++it) {
+	// Logic for identifying frequent classes goes here
+    int cls = it->first;
+    float score = it->second;
+    sketch1->update(std::to_string(cls));  // Placeholder for storing frequent class IDs
+    boxes[cls].update(score);
+    model_classes_stat_.emplace(cls, boxes[cls]);  // Update score statistics for each class
+    }
   return 0; // Assuming successful logging, replace with error handling if needed
 }
 

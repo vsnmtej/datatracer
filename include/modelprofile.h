@@ -19,7 +19,7 @@
  * @brief Class for managing and logging model statistics
  */
 typedef datasketches::kll_sketch<float> distributionBox;
-typedef std::vector<std::pair<float, int>> ClassificationResults;
+typedef std::map<int, float> ClassificationResults;
 typedef datasketches::frequent_items_sketch<std::string> frequent_class_sketch;
 
 class ModelProfile {
