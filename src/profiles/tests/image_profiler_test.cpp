@@ -40,7 +40,7 @@ protected:
     // Helper function to clean up test files
     void cleanUpTestFiles() {
         std::remove("test_config.ini");  // Remove the test INI file
-        std::remove("test_savefile.dat");  // Clean up any output files
+        std::remove("test_savefile.bin");  // Clean up any output files
     }
 
     ImageProfile* image_profile;  // Pointer to ImageProfile
@@ -99,9 +99,9 @@ TEST_F(ImageProfileTest, SaveObjectToFile) {
     data_object_t data_object;
     data_object.obj = &testBox;
     data_object.type = KLL_TYPE;
-    data_object.filename = "test_savefile.dat";
+    data_object.filename = "test_savefile.bin";
     
-    saver->AddObjectToSave(&data_object, KLL_TYPE, "test_savefile.dat");
+    saver->AddObjectToSave(&data_object, KLL_TYPE, "test_savefile.bin");
     
     saver->StartSaving();  // Start the saving process
     
@@ -109,7 +109,7 @@ TEST_F(ImageProfileTest, SaveObjectToFile) {
     std::this_thread::sleep_for(std::chrono::seconds(2));
     
     // Check if the file was created and contains data
-    std::ifstream infile("test_savefile.dat");
+    std::ifstream infile("test_savefile.bin");
     EXPECT_TRUE(infile.is_open());  // The file should exist
     
     // Additional checks can include validating the content of the file

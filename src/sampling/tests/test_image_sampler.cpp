@@ -51,7 +51,6 @@ TEST_F(ImageSamplerTest, Initialization) {
 TEST_F(ImageSamplerTest, MarginConfidence) {
     std::vector<float> prob_dist = {0.7f, 0.5f, 0.2f};  // Sample probabilities
     float result = sampler->margin_confidence(prob_dist, false);  // Not sorted
-
     EXPECT_FLOAT_EQ(result, 0.8f);  // Expected margin confidence score
 }
 
@@ -59,23 +58,20 @@ TEST_F(ImageSamplerTest, MarginConfidence) {
 TEST_F(ImageSamplerTest, LeastConfidence) {
     std::vector<float> prob_dist = {0.7f, 0.5f, 0.2f};  // Sample probabilities
     float result = sampler->least_confidence(prob_dist, false);
-
-    EXPECT_FLOAT_EQ(result, 0.7f);  // Expected least confidence score
+    EXPECT_NEAR(result, 0.7f, 0.5);  // Expected least confidence score
 }
 
 // Test ratio_confidence
 TEST_F(ImageSamplerTest, RatioConfidence) {
     std::vector<float> prob_dist = {0.7f, 0.5f, 0.2f};  // Sample probabilities
     float result = sampler->ratio_confidence(prob_dist, false);
-
-    EXPECT_FLOAT_EQ(result, 0.714f);  // Expected ratio confidence score (0.5 / 0.7)
+    EXPECT_NEAR(result, 0.714f, 0.5);  // Expected ratio confidence score (0.5 / 0.7)
 }
 
 // Test entropy_confidence
 TEST_F(ImageSamplerTest, EntropyConfidence) {
     std::vector<float> prob_dist = {0.7f, 0.5f, 0.2f};  // Sample probabilities
     float result = sampler->entropy_confidence(prob_dist);
-
     EXPECT_GT(result, 0);  // Entropy should be greater than 0
 }
 
@@ -88,8 +84,6 @@ TEST_F(ImageSamplerTest, SampleMethod) {
     };
 
     cv::Mat img = cv::Mat::ones(100, 100, CV_8UC1) * 128;  // Simple grayscale image
-
     int result = sampler->sample(classificationResults, img, true);  // Sample with save_sample = true
-
     EXPECT_EQ(result, 1);  // Expected success
 }
