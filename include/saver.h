@@ -35,11 +35,13 @@ public:
 
   void StopSaving();
 
-  std::queue<data_object_t *> objects_to_save_;  // Queue of objects to be saved
+#ifndef TEST
 private:
+#endif
   // Function to be executed in the background thread
   void SaveLoop();
 
+  std::queue<data_object_t *> objects_to_save_;  // Queue of objects to be saved
   int save_interval_minutes_;     // Interval between saves in minutes
   std::thread save_thread_;        // Thread object for saving
   std::mutex queue_mutex_;         // Mutex for queue access

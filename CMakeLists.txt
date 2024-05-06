@@ -5,20 +5,14 @@ project(imagesampler)
 set(OpenCV_DIR "/usr")
 find_package(OpenCV REQUIRED)
 
-# Try to find DataSketches
-set(DataSketches_DIR "/usr/local/")
-find_package(DataSketches 5.1 REQUIRED)
-
-#find_package(GTest REQUIRED)
-
 include_directories(${GTEST_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(/usr/local/include/)
-INCLUDE_DIRECTORIES(/usr/local/include/DataSketches)
 INCLUDE_DIRECTORIES(/usr/local/libs/)
 
 # Include Directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/include/datasketches)
 
 add_library(imagesampler SHARED
             src/helpers/saver.cpp
@@ -76,6 +70,13 @@ add_executable(image_sampler_test
                 src/sampling/ImageSampler.cpp
                 src/sampling/tests/test_image_sampler.cpp
               )
+
+target_compile_definitions(ImageProcessingTest PRIVATE TEST)
+target_compile_definitions(IniParserTest PRIVATE TEST)
+target_compile_definitions(SaverTest PRIVATE TEST)
+target_compile_definitions(image_profiler_test PRIVATE TEST)
+target_compile_definitions(image_sampler_test PRIVATE TEST)
+target_compile_definitions(model_profiler_test PRIVATE TEST)
 
 target_link_libraries(ImageProcessingTest gtest gtest_main ${OpenCV_LIBS} pthread)
 target_link_libraries(IniParserTest gtest gtest_main ${OpenCV_LIBS} pthread)
