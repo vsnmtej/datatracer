@@ -43,14 +43,14 @@ TEST_F(ModelProfileTest, Initialization) {
 // Test log_classification_model_stats with proper data
 TEST_F(ModelProfileTest, LogClassificationModelStats) {
     ClassificationResults results = {
-        {0.9f, 1}, // Score and class ID
-        {0.8f, 2},
-        {0.7f, 3},
+        {1, 0.9f}, // Score and class ID
+        {2, 0.8f},
+        {3, 0.7f},
     };
-
+    saver->StartSaving();
     float latency = 1.5f;
     int result = model_profile->log_classification_model_stats(latency, results);
-
+    saver->StopSaving();
     EXPECT_EQ(result, 0); // Successful logging
 
     // Validate that the boxes have been updated
