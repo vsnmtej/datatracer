@@ -31,7 +31,7 @@ public:
    * @param saver Reference to a Saver object used for saving model statistics
    */
   ModelProfile(std::string model_id, std::string conf_path,
-	       	Saver& saver, int top_classes);
+	       	int save_interval, int top_classes);
 
   /**
    * @brief Logs statistics for a classification model
@@ -53,7 +53,11 @@ public:
   int getNumDistributionBoxes() const;
   const distributionBox& getDistributionBox(int index) const;
 
+#ifndef TEST
   private:
+#endif
+
+  Saver *saver;
   // Member variables (declarations only, definitions in .cpp file)
   std::string model_id_;
   int top_classes_;

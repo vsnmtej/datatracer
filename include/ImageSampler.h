@@ -35,7 +35,7 @@ public:
    * @brief Constructor to initialize ImageSampler object with configuration file path
    * @param configFilePath Path to the configuration file
    */
-  explicit ImageSampler(std::string conf_path, Saver &saver);
+  explicit ImageSampler(std::string conf_path, int save_interval);
 
   /**
    * @brief Selects uncertain image samples based on configured criteria
@@ -82,7 +82,7 @@ private:
   distributionBox leastConfidenceBox;
   distributionBox ratioConfidenceBox;
   distributionBox entropyConfidenceBox;
-
+    Saver *saver;
 	std::map<std::string, std::string> samplingConfig;
 };
 

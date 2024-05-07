@@ -35,7 +35,7 @@ public:
    * @param img_type The image type (implementation specific).
    * @param metrics The set of image metrics to be tracked (e.g., "contrast", "brightness").
    */
-  ImageProfile(std::string conf_path, Saver& saver, int channels);
+  ImageProfile(std::string conf_path, int save_interval, int channels);
 
   /**
    * @brief Logs image statistics for the provided image data.
@@ -57,8 +57,11 @@ public:
 
   void updatePixelValues(const std::vector<int>& pixelValues);
 
+#ifndef TEST
 private:
+#endif
 
+    Saver *saver;
 
   /**
    * @brief KLL sketch for storing contrast distribution.

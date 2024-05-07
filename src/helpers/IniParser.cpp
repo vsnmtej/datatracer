@@ -27,6 +27,7 @@ std::map<std::string, std::string> IniParser::parseIniFile(const std::string& fi
             }
         } catch (const std::exception& e) {
             std::cerr << "Error fetching from section: " << section << ". Error: " << e.what() << std::endl;
+            result.clear();
         }
 
         return result;

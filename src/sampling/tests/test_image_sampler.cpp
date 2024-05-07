@@ -10,13 +10,11 @@ class ImageSamplerTest : public ::testing::Test {
 protected:
     void SetUp() override {
         createSampleIniFile("test_config.ini");  // Create a sample configuration file
-        saver = new Saver(1);  // Initialize Saver
-        sampler = new ImageSampler("test_config.ini", *saver);  // Initialize ImageSampler
+        sampler = new ImageSampler("test_config.ini", 1);  // Initialize ImageSampler
     }
 
     void TearDown() override {
         delete sampler;
-        delete saver;
         cleanUpTestFiles();  // Clean up test files
     }
 
@@ -39,7 +37,6 @@ protected:
     }
 
     ImageSampler* sampler;
-    Saver* saver;
 };
 
 // Test Initialization

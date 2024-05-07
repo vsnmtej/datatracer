@@ -13,16 +13,12 @@ protected:
         // Create a sample INI file for testing
         createSampleIniFile("test_config.ini");
         
-        // Initialize a Saver object
-        saver = new Saver(1);  // 1-minute interval
-        
         // Create an ImageProfile object with a sample INI file and a Saver instance
-        image_profile = new ImageProfile("test_config.ini", *saver, 1);
+        image_profile = new ImageProfile("test_config.ini", 1, 1);
     }
 
     void TearDown() override {
         delete image_profile;  // Clean up the ImageProfile instance
-        delete saver;  // Clean up the Saver instance
         cleanUpTestFiles();  // Clean up the test files
     }
 
@@ -44,7 +40,6 @@ protected:
     }
 
     ImageProfile* image_profile;  // Pointer to ImageProfile
-    Saver* saver;  // Pointer to Saver
 };
 
 /* Test that the ImageProfile object is initialized properly
@@ -56,10 +51,8 @@ TEST_F(ImageProfileTest, Initialization) {
 TEST_F(ImageProfileTest, ProfileMethod) {
     // Create a simple grayscale image for testing
     cv::Mat img = cv::Mat::ones(100, 100, CV_8UC1) * 128;  // 100x100 grayscale image with pixel value 128
-    saver->StartSaving();
     int result = image_profile->profile(img, true);  // Test with save_sample = true
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    saver->StopSaving();
     EXPECT_EQ(result, 1);  // Expected success
 
     // Check that statistics are updated correctly
@@ -78,16 +71,14 @@ TEST_F(ImageProfileTest, IterateImageInvalidImage) {
 
 //Test the StartSaving and TriggerSave methods for threading behavior
 TEST_F(ImageProfileTest, ThreadingBehavior) {
-    saver->StartSaving();  // Start the saving process
     
     // Trigger the save
-    saver->TriggerSave();  // Ensure proper synchronization
     
     // Allow some time for the SaveLoop to process
     std::this_thread::sleep_for(std::chrono::seconds(2));  // Wait for thread processing
     
     // Check if the save thread is still running
-    EXPECT_TRUE(saver->save_thread_.joinable());
+    EXPECT_TRUE(image_profile->saver->save_thread_.joinable());
     
     // Further checks can include more detailed validation of queue processing
 }
@@ -95,18 +86,22 @@ TEST_F(ImageProfileTest, ThreadingBehavior) {
 // Test SaveObjectToFile to ensure correct data is written to files
 TEST_F(ImageProfileTest, SaveObjectToFile) {
     // Simulate adding objects to the saver
-    distributionBox testBox(100);  // Example distribution box
+    distributionBox testBox;  // Example distribution box
     data_object_t data_object;
     data_object.obj = &testBox;
     data_object.type = KLL_TYPE;
     data_object.filename = "test_savefile.bin";
-    
-    saver->AddObjectToSave(&data_object, KLL_TYPE, "test_savefile.bin");
-    
-    saver->StartSaving();  // Start the saving process
+  
+    do {
+        std::lock_guard<std::mutex> lock(image_profile->saver->queue_mutex_);
+        while (!(image_profile->saver->objects_to_save_.empty())) {
+            image_profile->saver->objects_to_save_.pop();
+        }
+    }while(0);
+    image_profile->saver->AddObjectToSave(&data_object, KLL_TYPE, "test_savefile.bin");
     
     // Allow some time for the SaveLoop to process
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(62));
     
     // Check if the file was created and contains data
     std::ifstream infile("test_savefile.bin");

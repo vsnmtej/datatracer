@@ -19,9 +19,10 @@
    */
 
 
-ImageProfile::ImageProfile(std::string conf_path, Saver& saver, int channels=1) {
+ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channels=1) {
     try {
       // Read configuration settings
+        saver = new Saver(save_interval);
 		IniParser parser; // Assuming filename is correct
       imageConfig = parser.parseIniFile(conf_path,
 		      "image", "");
@@ -31,19 +32,19 @@ ImageProfile::ImageProfile(std::string conf_path, Saver& saver, int channels=1) 
       for (const auto& stat_confidence : imageConfig) {
         std::string name = stat_confidence.first;
           if (strcmp(name.c_str(), "NOISE") == 0){
-            saver.AddObjectToSave((void*)(&noiseBox), KLL_TYPE, filesSavePath+"margin.bin");
+            saver->AddObjectToSave((void*)(&noiseBox), KLL_TYPE, filesSavePath+"margin.bin");
 	  }  
           else if (strcmp(name.c_str(), "BRIGHTNESS") == 0){
-            saver.AddObjectToSave((void*)(&brightnessBox), KLL_TYPE, filesSavePath+"brightness.bin");
+            saver->AddObjectToSave((void*)(&brightnessBox), KLL_TYPE, filesSavePath+"brightness.bin");
 	  }  
           else if (strcmp(name.c_str(), "SHARPNESS") == 0){
-            saver.AddObjectToSave((void*)(&sharpnessBox), KLL_TYPE, filesSavePath+"sharpness.bin");
+            saver->AddObjectToSave((void*)(&sharpnessBox), KLL_TYPE, filesSavePath+"sharpness.bin");
 	  }
           else if (strcmp(name.c_str(), "MEAN") == 0){
 		  for (int i = 0; i < channels; ++i) {
 		       distributionBox dbox(200);	  
 		       meanBox.push_back(dbox); 	  
-                       saver.AddObjectToSave((void*)(&meanBox[i]),
+                       saver->AddObjectToSave((void*)(&meanBox[i]),
 				       KLL_TYPE, filesSavePath+"mean_"+std::to_string(i)+".bin"); 
                    }
 	  } 
@@ -51,11 +52,12 @@ ImageProfile::ImageProfile(std::string conf_path, Saver& saver, int channels=1) 
              for (int i = 0; i < channels; ++i) {
 		       distributionBox dbox(200);	
                        pixelBox.push_back(dbox);
-		       saver.AddObjectToSave((void*)(&pixelBox[i]),
+		       saver->AddObjectToSave((void*)(&pixelBox[i]),
 				       KLL_TYPE, filesSavePath+"pixel_"+std::to_string(i)+".bin"); 
              }
           }	     
        }
+    saver->StartSaving();
     } catch (const std::runtime_error& e) {
       std::cerr << e.what() << std::endl;
     }

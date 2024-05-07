@@ -14,9 +14,10 @@
    * @param conf_path Path to configuration file
    * @param saver Saver object for saving sampling statistics
    */
-ImageSampler::ImageSampler(std::string conf_path, Saver &saver) {
+ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
   try {
     // Read configuration settings
+    saver = new Saver(save_interval);
     IniParser parser; // Assuming filename is correct
     samplingConfig = parser.parseIniFile(conf_path, "sampling", "");
     filesSavePath = samplingConfig["files"];
@@ -25,16 +26,17 @@ ImageSampler::ImageSampler(std::string conf_path, Saver &saver) {
     for (const auto& sampling_confidence : samplingConfig) {
       std::string name = sampling_confidence.first;
       if (strcmp(name.c_str(), "MARGINCONFIDENCE")) {
-      saver.AddObjectToSave((void*)(&marginConfidenceBox), KLL_TYPE, filesSavePath+"marginconfidence.bin");
+      saver->AddObjectToSave((void*)(&marginConfidenceBox), KLL_TYPE, filesSavePath+"marginconfidence.bin");
       } else if(strcmp(name.c_str(), "LEASTCONFIDENCE") == 0) {
-      saver.AddObjectToSave((void*)(&leastConfidenceBox), KLL_TYPE, filesSavePath+"leastconfidence.bin");
+      saver->AddObjectToSave((void*)(&leastConfidenceBox), KLL_TYPE, filesSavePath+"leastconfidence.bin");
       } else if(strcmp(name.c_str(), "RATIOCONFIDENCE") == 0) {
       // ... Register other sampling statistics similarly
-      saver.AddObjectToSave((void*)(&ratioConfidenceBox), KLL_TYPE, filesSavePath+"ratioconfidence.bin");
+      saver->AddObjectToSave((void*)(&ratioConfidenceBox), KLL_TYPE, filesSavePath+"ratioconfidence.bin");
       } else if(strcmp(name.c_str(), "ENTROPYCONFIDENCE") == 0) {
-      saver.AddObjectToSave((void*)(&entropyConfidenceBox), KLL_TYPE, filesSavePath+"entropyconfidence.bin");
+      saver->AddObjectToSave((void*)(&entropyConfidenceBox), KLL_TYPE, filesSavePath+"entropyconfidence.bin");
       }
     }
+    saver->StartSaving();
   } catch (const std::runtime_error& e) {
     std::cerr << e.what() << std::endl;
   }

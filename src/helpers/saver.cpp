@@ -57,6 +57,7 @@ void Saver::SaveLoop() {
 
 void Saver::SaveObjectToFile(data_object_t *object) {
     std::ofstream os(object->filename.c_str());
+    try {
     switch(object->type) {
         case KLL_TYPE:{
             distributionBox *obj = (distributionBox *)(object->obj);
@@ -68,6 +69,9 @@ void Saver::SaveObjectToFile(data_object_t *object) {
             obj->serialize(os);
             break;
         }
+    }
+    } catch (const std::exception& e) {
+            std::cerr << "Error saving file: " << e.what() << std::endl;
     }
 }
 
