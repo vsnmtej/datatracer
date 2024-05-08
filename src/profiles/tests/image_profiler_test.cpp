@@ -87,21 +87,17 @@ TEST_F(ImageProfileTest, ThreadingBehavior) {
 TEST_F(ImageProfileTest, SaveObjectToFile) {
     // Simulate adding objects to the saver
     distributionBox testBox;  // Example distribution box
-    data_object_t data_object;
-    data_object.obj = &testBox;
-    data_object.type = KLL_TYPE;
-    data_object.filename = "test_savefile.bin";
-  
+    std::remove("test_savefile.bin");  // Clean up any output files
     do {
         std::lock_guard<std::mutex> lock(image_profile->saver->queue_mutex_);
         while (!(image_profile->saver->objects_to_save_.empty())) {
             image_profile->saver->objects_to_save_.pop();
         }
     }while(0);
-    image_profile->saver->AddObjectToSave(&data_object, KLL_TYPE, "test_savefile.bin");
+    image_profile->saver->AddObjectToSave((void*)(&testBox), KLL_TYPE, "test_savefile.bin");
     
     // Allow some time for the SaveLoop to process
-    std::this_thread::sleep_for(std::chrono::seconds(62));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     
     // Check if the file was created and contains data
     std::ifstream infile("test_savefile.bin");
