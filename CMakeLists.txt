@@ -34,6 +34,11 @@ add_library(modelprofiler SHARED
             src/profiles/modelprofile.cpp
             )	    
 
+add_executable(Tar_GZ_test
+            src/helpers/tar_gz_creator.cpp
+            src/helpers/tests/test_tar_gz_creator.cpp
+            )
+
 add_executable(ImageProcessingTest
                 src/helpers/imghelpers.cpp
                 src/helpers/tests/ImageProcessingTest.cpp
