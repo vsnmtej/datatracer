@@ -39,6 +39,13 @@ add_executable(Tar_GZ_test
             src/helpers/tests/test_tar_gz_creator.cpp
             )
 
+
+add_executable(Http_uploader_test
+	    src/helpers/http_uploader.cpp
+            src/helpers/tests/test_http_uploader.cpp	    
+	    )   
+
+
 add_executable(ImageProcessingTest
                 src/helpers/imghelpers.cpp
                 src/helpers/tests/ImageProcessingTest.cpp

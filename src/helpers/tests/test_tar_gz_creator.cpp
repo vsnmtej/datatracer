@@ -2,13 +2,16 @@
 #include "tar_gz_creator.h"
 #include <boost/filesystem.hpp>
 
+namespace fs = boost::filesystem;
+
+
 // Test for collecting files from folders
 TEST(TarGzCreatorTest, CollectFiles) {
     TarGzCreator creator;
 
     // Create a test folder with dummy files
     std::string testFolder = "test_folder";
-    std::filesystem::create_directory(testFolder);
+    fs::create_directory(testFolder);
 
     std::ofstream(testFolder + "/file1.txt") << "File 1 content";
     std::ofstream(testFolder + "/file2.txt") << "File 2 content";
@@ -18,11 +21,11 @@ TEST(TarGzCreatorTest, CollectFiles) {
 
     // Check that the collected files are as expected
     ASSERT_EQ(collectedFiles.size(), 2);
-    ASSERT_TRUE(std::filesystem::exists(collectedFiles[0]));
-    ASSERT_TRUE(std::filesystem::exists(collectedFiles[1]));
+    ASSERT_TRUE(fs::exists(collectedFiles[0]));
+    ASSERT_TRUE(fs::exists(collectedFiles[1]));
 
     // Cleanup test folder after test
-    std::filesystem::remove_all(testFolder);
+    fs::remove_all(testFolder);
 }
 
 // Test for creating a tarball
@@ -42,12 +45,12 @@ TEST(TarGzCreatorTest, CreateTar) {
     ASSERT_TRUE(creator.createTar(tarFilePath, filesToTar));
 
     // Check that the tarball was created
-    ASSERT_TRUE(std::filesystem::exists(tarFilePath));
+    ASSERT_TRUE(fs::exists(tarFilePath));
 
     // Cleanup the created files and tarball after test
     std::remove(testFile1.c_str());
     std::remove(testFile2.c_str());
-    std::filesystem::remove(tarFilePath);
+    fs::remove(tarFilePath);
 }
 
 // Test for compressing a tarball to gz
@@ -63,11 +66,11 @@ TEST(TarGzCreatorTest, CompressToGz) {
     ASSERT_TRUE(creator.compressToGz(tarFilePath, gzFilePath));
 
     // Check that the gzipped file was created
-    ASSERT_TRUE(std::filesystem::exists(gzFilePath));
+    ASSERT_TRUE(fs::exists(gzFilePath));
 
     // Cleanup created files after test
-    std::filesystem::remove(tarFilePath);
-    std::filesystem::remove(gzFilePath);
+    fs::remove(tarFilePath);
+    fs::remove(gzFilePath);
 }
 
 // Test case to decompress, unpack tarball, and verify file content
@@ -150,8 +153,8 @@ TEST(DecompressionAndUnpackTest, DecompressAndUnpack) {
     ASSERT_EQ(content2, "File 2 content");
 
     // Cleanup test files and folders
-    std::filesystem::remove_all(outputFolderPath);
-    std::filesystem::remove(decompressedFilePath);
-    std::filesystem::remove(tarFilePath);
-    std::filesystem::remove(gzFilePath);
+    fs::remove_all(outputFolderPath);
+    fs::remove(decompressedFilePath);
+    fs::remove(tarFilePath);
+    fs::remove(gzFilePath);
 }
