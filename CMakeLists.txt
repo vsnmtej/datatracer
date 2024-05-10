@@ -1,8 +1,34 @@
 cmake_minimum_required(VERSION 3.10)
 project(imagesampler)
+# Ensure builds on Windows export all symbols
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+#set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_MACOSX_RPATH ON)
+
+set(CMAKE_CXX_STANDARD 14)
+
+# enable compiler warnings globally
+# derived from https://foonathan.net/blog/2018/10/17/cmake-warnings.html
+# and https://arne-mertz.de/2018/07/cmake-properties-options/
+if (MSVC)
+  add_compile_options(/W4)
+  set(CMAKE_DEBUG_POSTFIX "d")
+else()
+  add_compile_options(-Wall -pedantic -W -Wextra)
+endif()
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.0")
+  add_compile_options(-Wimplicit-fallthrough=3)
+endif()
+
+# Code generation options, to ensure shaerd libraries work and are portable
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_C_EXTENSIONS OFF)
+set(CMAKE_CXX_EXTENSIONS OFF)
 # Try to find OpenCV
-set(OpenCV_DIR "/usr")
+
+set(OpenCV_DIR "/Users/venkatapydialli/Projects/Edgetpu/install/lib/cmake/opencv4")
 find_package(OpenCV REQUIRED)
 
 include_directories(${GTEST_INCLUDE_DIRS})
@@ -96,6 +122,10 @@ target_link_libraries(SaverTest gtest gtest_main ${OpenCV_LIBS} pthread)
 target_link_libraries(image_profiler_test gtest gtest_main ${OpenCV_LIBS} pthread)
 target_link_libraries(image_sampler_test gtest gtest_main ${OpenCV_LIBS} pthread)
 target_link_libraries(model_profiler_test gtest gtest_main ${OpenCV_LIBS} pthread)
+
+target_link_libraries(imagesampler ${OpenCV_LIBS} pthread)
+target_link_libraries(imageprofiler ${OpenCV_LIBS} pthread)
+target_link_libraries(modelprofiler ${OpenCV_LIBS} pthread)
 
 # Install the library
 install(TARGETS ${CMAKE_PROJECT_NAME}
