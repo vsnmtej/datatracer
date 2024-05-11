@@ -65,7 +65,7 @@ bool TarGzCreator::createTar(const std::string& tarFilePath, const std::vector<s
 
         snprintf(header.size, sizeof(header.size), "%011o", static_cast<int>(size));
         snprintf(header.mode, sizeof(header.mode), "%07o", 0644);
-        snprintf(header.mtime, sizeof(header.mtime), "%011o", std::time(nullptr));
+        snprintf(header.mtime, sizeof(header.mtime), "%011ld", std::time(nullptr));
         header.typeflag = '0';
 
         unsigned int checksum = 0;

@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "tar_gz_creator.h"
 #include <boost/filesystem.hpp>
+#include <libtar.h>
 
 namespace fs = boost::filesystem;
 
@@ -75,6 +76,7 @@ TEST(TarGzCreatorTest, CompressToGz) {
 
 // Test case to decompress, unpack tarball, and verify file content
 TEST(DecompressionAndUnpackTest, DecompressAndUnpack) {
+    TarGzCreator creator;
     // Create gzipped tarball for testing
     std::string gzFilePath = "test.tar.gz";
     std::string tarFilePath = "test.tar";
@@ -124,7 +126,6 @@ TEST(DecompressionAndUnpackTest, DecompressAndUnpack) {
         std::ifstream tarFile(tarFilePath, std::ios::binary);
 
         char buffer[4096]; // Buffer size for compression
-        int bytesRead;
         while (tarFile.read(buffer, sizeof(buffer))) {
             gzwrite(gzOutput, buffer, tarFile.gcount());
         }
@@ -135,10 +136,10 @@ TEST(DecompressionAndUnpackTest, DecompressAndUnpack) {
 
     // Test decompression
     std::string decompressedFilePath = "decompressed.tar";
-    ASSERT_TRUE(decompressGz(gzFilePath, decompressedFilePath));
+    ASSERT_TRUE(creator.decompressGz(gzFilePath, decompressedFilePath));
 
     // Test unpacking tarball
-    ASSERT_TRUE(unpackTar(decompressedFilePath, outputFolderPath));
+    ASSERT_TRUE(creator.unpackTar(decompressedFilePath, outputFolderPath));
 
     // Verify content of extracted files
     std::string extractedFile1 = outputFolderPath + "/file1.txt";

@@ -41,7 +41,7 @@ int ModelProfile::getNumDistributionBoxes() const {
     }
 
 // Optional: Public accessor to return a reference to a specific distribution box
-const distributionBox& ModelProfile::getDistributionBox(int index) const {
+const distributionBox& ModelProfile::getDistributionBox(unsigned int index) const {
     if (index >= boxes.size()) {
        throw std::out_of_range("Invalid index for distribution box");
     }
@@ -57,7 +57,7 @@ const distributionBox& ModelProfile::getDistributionBox(int index) const {
  * This function iterates through the provided results and logs statistics for the most frequent classes.
  * It updates the `model_classes_stat` map with scores for each class.
  */
-int ModelProfile::log_classification_model_stats(float inference_latency,
+int ModelProfile::log_classification_model_stats(float inference_latency __attribute__((unused)),
 	       	const ClassificationResults& results) {
   for (auto it = results.begin(); it != results.end(); ++it) {
 	// Logic for identifying frequent classes goes here

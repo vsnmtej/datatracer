@@ -1,4 +1,6 @@
 #include <gtest/gtest.h>
+#include <fstream>
+
 #include "http_uploader.h"
 
 // Basic test for successful POST request

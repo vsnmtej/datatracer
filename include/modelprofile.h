@@ -51,7 +51,7 @@ public:
 
   frequent_class_sketch *sketch1;
   int getNumDistributionBoxes() const;
-  const distributionBox& getDistributionBox(int index) const;
+  const distributionBox& getDistributionBox(unsigned int index) const;
 
 #ifndef TEST
   private:

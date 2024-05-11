@@ -105,6 +105,8 @@ int ImageSampler::sample(std::vector<std::pair<float, int>> &results, cv::Mat &i
 			}
 		}
 	}
+	if (save_sample == false)
+		saver->StopSaving();
 	return 1; // Indicate success
 }
 
