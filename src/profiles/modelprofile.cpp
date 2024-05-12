@@ -14,7 +14,14 @@
  */
 ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
 	       	int save_interval, int top_classes) {
+    Aws::Auth::AWSCredentials credentials;
+    Aws::String region;
+    std::string bucketName;
+    std::string objectKey;
+    std::chrono::milliseconds interval;
+
   // Set member variables
+    uploader = new ImageUploader(credentials, region);
   saver = new Saver(save_interval);
   model_id_ = model_id;
   IniParser parser;
@@ -32,6 +39,7 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
 		    filesSavePath+model_id+std::to_string(cls)+".bin");  // Register with Saver for saving
   }
     saver->StartSaving();
+    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
 }
 
 

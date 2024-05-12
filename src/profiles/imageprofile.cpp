@@ -21,8 +21,16 @@
 
 ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channels=1) {
     try {
-      // Read configuration settings
+        Aws::Auth::AWSCredentials credentials;
+        Aws::String region;
+        std::string bucketName;
+        std::string objectKey;
+        std::chrono::milliseconds interval;
+
+        uploader = new ImageUploader(credentials, region);
         saver = new Saver(save_interval);
+
+      // Read configuration settings
 		IniParser parser; // Assuming filename is correct
       imageConfig = parser.parseIniFile(conf_path,
 		      "image", "");
@@ -58,6 +66,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
           }	     
        }
     saver->StartSaving();
+    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
     } catch (const std::runtime_error& e) {
       std::cerr << e.what() << std::endl;
     }

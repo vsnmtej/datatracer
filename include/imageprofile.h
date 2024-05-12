@@ -12,7 +12,7 @@
 #include "imghelpers.h"
 #include "saver.h"
 #include <kll_sketch.hpp>
-
+#include "objectuploader.h"
 
 // Typedef for distribution box data structure (assuming datasketches::kll_sketch<float>)
 typedef datasketches::kll_sketch<float> distributionBox;
@@ -62,6 +62,7 @@ private:
 #endif
 
     Saver *saver;
+    ImageUploader *uploader;
 
   /**
    * @brief KLL sketch for storing contrast distribution.

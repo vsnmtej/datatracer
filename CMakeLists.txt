@@ -28,6 +28,12 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_CXX_COMPILER_VERSION VERS
   add_compile_options(-Wimplicit-fallthrough=3)
 endif()
 
+# Set the AWS service components used by this project.
+set(SERVICE_COMPONENTS s3)
+
+# Find the AWS SDK for C++ package.
+find_package(AWSSDK REQUIRED COMPONENTS ${SERVICE_COMPONENTS})
+
 # Find libcurl
 find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIRS})
@@ -49,6 +55,7 @@ add_library(imagesampler SHARED
             src/helpers/saver.cpp
             src/helpers/IniParser.cpp
             src/helpers/imghelpers.cpp
+            src/helpers/objectuploader.cpp
             src/sampling/ImageSampler.cpp
 			)
 
@@ -56,12 +63,14 @@ add_library(imageprofiler SHARED
 			src/helpers/saver.cpp
 			src/helpers/IniParser.cpp
             src/helpers/imghelpers.cpp
+            src/helpers/objectuploader.cpp
 			src/profiles/imageprofile.cpp
 			)
 
 add_library(modelprofiler SHARED 
             src/helpers/saver.cpp
             src/helpers/IniParser.cpp
+            src/helpers/objectuploader.cpp
             src/profiles/modelprofile.cpp
             )	    
 
@@ -96,20 +105,23 @@ add_executable(image_profiler_test
                 src/helpers/saver.cpp
                 src/helpers/IniParser.cpp
                 src/helpers/imghelpers.cpp
+                src/helpers/objectuploader.cpp
                 src/profiles/imageprofile.cpp
                 src/profiles/tests/image_profiler_test.cpp
               )
 add_executable(model_profiler_test
-	        src/helpers/saver.cpp
+                src/helpers/saver.cpp
                 src/helpers/IniParser.cpp
+                src/helpers/objectuploader.cpp
                 src/profiles/modelprofile.cpp
-		src/profiles/tests/model_profile_test.cpp
+                src/profiles/tests/model_profile_test.cpp
 	      )
 
 add_executable(image_sampler_test
                 src/helpers/saver.cpp
                 src/helpers/IniParser.cpp
                 src/helpers/imghelpers.cpp
+                src/helpers/objectuploader.cpp
                 src/sampling/ImageSampler.cpp
                 src/sampling/tests/test_image_sampler.cpp
               )
@@ -126,9 +138,9 @@ target_compile_definitions(Tar_GZ_test PRIVATE TEST)
 target_link_libraries(ImageProcessingTest gtest gtest_main ${OpenCV_LIBS} pthread)
 target_link_libraries(IniParserTest gtest gtest_main ${OpenCV_LIBS} pthread)
 target_link_libraries(SaverTest gtest gtest_main ${OpenCV_LIBS} pthread)
-target_link_libraries(image_profiler_test gtest gtest_main ${OpenCV_LIBS} pthread)
-target_link_libraries(image_sampler_test gtest gtest_main ${OpenCV_LIBS} pthread)
-target_link_libraries(model_profiler_test gtest gtest_main ${OpenCV_LIBS} pthread)
+target_link_libraries(image_profiler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} pthread)
+target_link_libraries(image_sampler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} pthread)
+target_link_libraries(model_profiler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} pthread)
 target_link_libraries(Http_uploader_test gtest gtest_main ${OpenCV_LIBS} ${CURL_LIBRARIES} pthread)
 target_link_libraries(Tar_GZ_test gtest gtest_main tar z boost_filesystem boost_system pthread)
 

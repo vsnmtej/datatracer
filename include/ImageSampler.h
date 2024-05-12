@@ -21,6 +21,7 @@
 
 #include "IniParser.h"
 #include "saver.h"
+#include "objectuploader.h"
 
 // Typedef for distribution box data structure (assuming datasketches::kll_sketch<unit>)
 typedef datasketches::kll_sketch<float> distributionBox;
@@ -83,6 +84,7 @@ private:
   distributionBox ratioConfidenceBox;
   distributionBox entropyConfidenceBox;
     Saver *saver;
+    ImageUploader *uploader;
 	std::map<std::string, std::string> samplingConfig;
 };
 

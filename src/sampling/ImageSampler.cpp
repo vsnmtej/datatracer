@@ -16,8 +16,16 @@
    */
 ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
   try {
-    // Read configuration settings
+    Aws::Auth::AWSCredentials credentials;
+    Aws::String region;
+    std::string bucketName;
+    std::string objectKey;
+    std::chrono::milliseconds interval;
+
+    uploader = new ImageUploader(credentials, region);
     saver = new Saver(save_interval);
+
+    // Read configuration settings
     IniParser parser; // Assuming filename is correct
     samplingConfig = parser.parseIniFile(conf_path, "sampling", "");
     filesSavePath = samplingConfig["files"];
@@ -36,7 +44,9 @@ ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
       saver->AddObjectToSave((void*)(&entropyConfidenceBox), KLL_TYPE, filesSavePath+"entropyconfidence.bin");
       }
     }
+
     saver->StartSaving();
+    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
   } catch (const std::runtime_error& e) {
     std::cerr << e.what() << std::endl;
   }

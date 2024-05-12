@@ -8,6 +8,7 @@
 
 #include <aws/core/utils/threading/Executor.h>
 #include <aws/transfer/TransferManager.h>
+#include <aws/core/auth/AWSCredentials.h>
 #include <chrono>
 #include <mutex>
 

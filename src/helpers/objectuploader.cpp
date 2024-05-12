@@ -3,7 +3,7 @@
  * @brief Implementation file for the ImageUploader class
  */
 
-#include "ImageUploader.h"
+#include "objectuploader.h"
 #include <aws/core/Aws.h>
 #include <aws/core/utils/threading/PooledThreadExecutor.h>
 #include <aws/s3/S3Client.h>
