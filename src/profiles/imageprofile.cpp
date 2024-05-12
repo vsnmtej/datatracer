@@ -26,8 +26,10 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
         std::string bucketName;
         std::string objectKey;
         std::chrono::milliseconds interval;
+        int uploadtype=1;
+        std::string endpointUrl="";
+        std::string token="";
 
-        uploader = new ImageUploader(credentials, region);
         saver = new Saver(save_interval);
 
       // Read configuration settings
@@ -66,6 +68,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
           }	     
        }
     saver->StartSaving();
+    uploader = new ImageUploader(uploadtype, endpointUrl, token, credentials, region, NULL);
     uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
     } catch (const std::runtime_error& e) {
       std::cerr << e.what() << std::endl;

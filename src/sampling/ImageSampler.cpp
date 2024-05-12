@@ -21,8 +21,10 @@ ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
     std::string bucketName;
     std::string objectKey;
     std::chrono::milliseconds interval;
+    int uploadtype=1;
+    std::string endpointUrl="";
+    std::string token="";
 
-    uploader = new ImageUploader(credentials, region);
     saver = new Saver(save_interval);
 
     // Read configuration settings
@@ -46,6 +48,7 @@ ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
     }
 
     saver->StartSaving();
+    uploader = new ImageUploader(uploadtype, endpointUrl, token, credentials, region, nullptr);
     uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
   } catch (const std::runtime_error& e) {
     std::cerr << e.what() << std::endl;

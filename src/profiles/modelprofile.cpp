@@ -19,9 +19,11 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
     std::string bucketName;
     std::string objectKey;
     std::chrono::milliseconds interval;
+    int uploadtype=1;
+    std::string endpointUrl="";
+    std::string token="";
 
   // Set member variables
-    uploader = new ImageUploader(credentials, region);
   saver = new Saver(save_interval);
   model_id_ = model_id;
   IniParser parser;
@@ -39,6 +41,7 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
 		    filesSavePath+model_id+std::to_string(cls)+".bin");  // Register with Saver for saving
   }
     saver->StartSaving();
+    uploader = new ImageUploader(uploadtype, endpointUrl, token, credentials, region, nullptr);
     uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
 }
 
