@@ -68,8 +68,10 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
           }	     
        }
     saver->StartSaving();
+#ifndef TEST
     uploader = new ImageUploader(uploadtype, endpointUrl, token, credentials, region, NULL);
     uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
+#endif
     } catch (const std::runtime_error& e) {
       std::cerr << e.what() << std::endl;
     }
