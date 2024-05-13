@@ -14,12 +14,11 @@
  */
 ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
 	       	int save_interval, int top_classes) {
-    Aws::Auth::AWSCredentials credentials;
-    Aws::String region;
+    s3_client_config_t s3_client_config; 
     std::string bucketName;
     std::string objectKey;
     std::chrono::milliseconds interval;
-    int uploadtype=1;
+    int uploadtype=0;
     std::string endpointUrl="";
     std::string token="";
 
@@ -41,8 +40,10 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
 		    filesSavePath+model_id+std::to_string(cls)+".bin");  // Register with Saver for saving
   }
     saver->StartSaving();
-    uploader = new ImageUploader(uploadtype, endpointUrl, token, credentials, region, nullptr);
+#ifndef TEST
+    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
     uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
+#endif
 }
 
 

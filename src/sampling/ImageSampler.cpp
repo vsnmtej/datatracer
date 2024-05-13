@@ -16,8 +16,7 @@
    */
 ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
   try {
-    Aws::Auth::AWSCredentials credentials;
-    Aws::String region;
+    s3_client_config_t s3_client_config;
     std::string bucketName;
     std::string objectKey;
     std::chrono::milliseconds interval;
@@ -48,7 +47,7 @@ ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
     }
 
     saver->StartSaving();
-    uploader = new ImageUploader(uploadtype, endpointUrl, token, credentials, region, nullptr);
+    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
     uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
   } catch (const std::runtime_error& e) {
     std::cerr << e.what() << std::endl;

@@ -29,10 +29,10 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_CXX_COMPILER_VERSION VERS
 endif()
 
 # Set the AWS service components used by this project.
-set(SERVICE_COMPONENTS s3)
+#set(SERVICE_COMPONENTS s3)
 
 # Find the AWS SDK for C++ package.
-find_package(AWSSDK REQUIRED COMPONENTS ${SERVICE_COMPONENTS})
+#find_package(AWSSDK REQUIRED COMPONENTS ${SERVICE_COMPONENTS})
 
 # Find libcurl
 find_package(CURL REQUIRED)
@@ -50,6 +50,8 @@ INCLUDE_DIRECTORIES(/usr/local/libs/)
 # Include Directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/include/datasketches)
+
+add_subdirectory(examples/TFLite_Check)
 
 add_library(imagesampler SHARED
             src/helpers/saver.cpp

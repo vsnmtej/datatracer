@@ -2,6 +2,7 @@
 #include "tar_gz_creator.h"
 #include <boost/filesystem.hpp>
 #include <libtar.h>
+#include <fstream>
 
 namespace fs = boost::filesystem;
 

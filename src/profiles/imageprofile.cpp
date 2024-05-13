@@ -21,8 +21,7 @@
 
 ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channels=1) {
     try {
-        Aws::Auth::AWSCredentials credentials;
-        Aws::String region;
+        s3_client_config_t s3_client_config;
         std::string bucketName;
         std::string objectKey;
         std::chrono::milliseconds interval;
@@ -69,7 +68,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
        }
     saver->StartSaving();
 #ifndef TEST
-    uploader = new ImageUploader(uploadtype, endpointUrl, token, credentials, region, NULL);
+    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
     uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
 #endif
     } catch (const std::runtime_error& e) {

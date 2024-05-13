@@ -5,6 +5,7 @@
 #include <thread>
 #include <condition_variable>
 #include <queue>
+#include <string>
 
 //#include "MyObject.h" // Include your object header
 typedef struct {

@@ -10,6 +10,7 @@ protected:
         createSampleIniFile("test_config.ini");
 
         model_profile = new ModelProfile("test_model", "test_config.ini", 1, 3);
+        model_profile->saver->StopSaving();
     }
 
     void TearDown() override {
