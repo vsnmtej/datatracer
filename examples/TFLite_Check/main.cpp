@@ -8,7 +8,7 @@
 #include "tensorflow/lite/examples/label_image/get_top_n.h"
 #include "tensorflow/lite/model.h"
 #include <frequent_items_sketch.hpp>
-#include <imagesampler.h>
+#include <ImageSampler.h>
 #include <imageprofile.h>
 #include <modelprofile.h>
 
