@@ -152,6 +152,10 @@ target_link_libraries(model_profiler_test gtest gtest_main ${OpenCV_LIBS} ${AWSS
 target_link_libraries(Http_uploader_test gtest gtest_main ${OpenCV_LIBS} ${CURL_LIBRARIES} curl pthread)
 target_link_libraries(Tar_GZ_test gtest gtest_main tar z boost_filesystem boost_system pthread)
 
+target_link_libraries(imagesampler ${OpenCV_LIBS} pthread)
+target_link_libraries(imageprofiler ${OpenCV_LIBS} pthread)
+target_link_libraries(modelprofiler ${OpenCV_LIBS} pthread)
+
 # Install the library
 install(TARGETS ${CMAKE_PROJECT_NAME}
         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
