@@ -95,12 +95,14 @@ TEST_F(ImageProfileTest, SaveObjectToFile) {
     // Simulate adding objects to the saver
     distributionBox testBox;  // Example distribution box
     std::remove("test_savefile.bin");  // Clean up any output files
+    image_profile->saver->StopSaving();
     do {
         std::lock_guard<std::mutex> lock(image_profile->saver->queue_mutex_);
         while (!(image_profile->saver->objects_to_save_.empty())) {
             image_profile->saver->objects_to_save_.pop();
         }
     }while(0);
+    image_profile->saver->StartSaving();
     image_profile->saver->AddObjectToSave((void*)(&testBox), KLL_TYPE, "test_savefile.bin");
     
     // Allow some time for the SaveLoop to process
@@ -109,6 +111,7 @@ TEST_F(ImageProfileTest, SaveObjectToFile) {
     // Check if the file was created and contains data
     std::ifstream infile("test_savefile.bin");
     EXPECT_TRUE(infile.is_open());  // The file should exist
+    image_profile->saver->StopSaving();
     
     // Additional checks can include validating the content of the file
 }

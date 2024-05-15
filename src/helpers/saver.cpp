@@ -17,6 +17,7 @@ void Saver::AddObjectToSave(void *object, int type, const std::string& filename)
   tmp_obj->obj = object;
   tmp_obj->type = type;
   tmp_obj->filename = filename;
+  std::cout << __func__ << "-" << tmp_obj->filename << std::endl;
   objects_to_save_.push(tmp_obj);
   cv_.notify_one(); // Notify the waiting thread about a new object
 }
@@ -57,6 +58,7 @@ void Saver::SaveLoop() {
 
 void Saver::SaveObjectToFile(data_object_t *object) {
     std::ofstream os(object->filename.c_str());
+    std::cout << __func__ << "-" << object->filename << std::endl;
     try {
     switch(object->type) {
         case KLL_TYPE:{
