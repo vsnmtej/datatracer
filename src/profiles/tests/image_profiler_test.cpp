@@ -57,6 +57,12 @@ TEST_F(ImageProfileTest, ProfileMethod) {
 
     // Check that statistics are updated correctly
     // This part of the test validates the logic of the profile method
+    std::ifstream infile1("noise.bin");
+    EXPECT_TRUE(infile1.is_open());  // The file should exist
+    std::ifstream infile2("brightness.bin");
+    EXPECT_TRUE(infile2.is_open());  // The file should exist
+    std::ifstream infile3("sharpness.bin");
+    EXPECT_TRUE(infile3.is_open());  // The file should exist
 }
 
 // Test the handling of empty images in iterateImage method

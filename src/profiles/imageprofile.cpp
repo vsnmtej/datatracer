@@ -41,7 +41,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
       for (const auto& stat_confidence : imageConfig) {
         std::string name = stat_confidence.first;
           if (strcmp(name.c_str(), "NOISE") == 0){
-            saver->AddObjectToSave((void*)(&noiseBox), KLL_TYPE, filesSavePath+"margin.bin");
+            saver->AddObjectToSave((void*)(&noiseBox), KLL_TYPE, filesSavePath+"noise.bin");
 	  }  
           else if (strcmp(name.c_str(), "BRIGHTNESS") == 0){
             saver->AddObjectToSave((void*)(&brightnessBox), KLL_TYPE, filesSavePath+"brightness.bin");
