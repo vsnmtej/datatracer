@@ -19,62 +19,75 @@
    */
 
 
+ImageProfile::~ImageProfile() {
+    if(saver)
+        delete saver;
+    if (uploader)
+        delete uploader;
+    for (auto ptr : meanBox) {
+        delete ptr;
+    }
+    meanBox.clear();
+    for (auto ptr : pixelBox) {
+        delete ptr;
+    }
+    pixelBox.clear();
+}
 ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channels=1) {
     try {
         s3_client_config_t s3_client_config;
         std::string bucketName;
         std::string objectKey;
-        std::chrono::milliseconds interval;
         int uploadtype=1;
         std::string endpointUrl="";
         std::string token="";
 
         saver = new Saver(save_interval);
 
-      // Read configuration settings
-		IniParser parser; // Assuming filename is correct
-      imageConfig = parser.parseIniFile(conf_path,
-		      "image", "");
-      filesSavePath = imageConfig["filepath"];
+        // Read configuration settings
+        IniParser parser; // Assuming filename is correct
+        imageConfig = parser.parseIniFile(conf_path, "image", "");
+        filesSavePath = imageConfig["filepath"];
 
-      // Register statistics for saving based on configuration
-      for (const auto& stat_confidence : imageConfig) {
-        std::string name = stat_confidence.first;
-          if (strcmp(name.c_str(), "NOISE") == 0){
-            saver->AddObjectToSave((void*)(&noiseBox), KLL_TYPE, filesSavePath+"noise.bin");
-	  }  
-          else if (strcmp(name.c_str(), "BRIGHTNESS") == 0){
-            saver->AddObjectToSave((void*)(&brightnessBox), KLL_TYPE, filesSavePath+"brightness.bin");
-	  }  
-          else if (strcmp(name.c_str(), "SHARPNESS") == 0){
-            saver->AddObjectToSave((void*)(&sharpnessBox), KLL_TYPE, filesSavePath+"sharpness.bin");
-	  }
-          else if (strcmp(name.c_str(), "MEAN") == 0){
-		  for (int i = 0; i < channels; ++i) {
-		       distributionBox dbox(200);	  
-		       meanBox.push_back(dbox); 	  
-                       saver->AddObjectToSave((void*)(&meanBox[i]),
-				       KLL_TYPE, filesSavePath+"mean_"+std::to_string(i)+".bin"); 
-                   }
-	  } 
-          else if (strcmp(name.c_str(), "HISTOGRAM") == 0) {
-             for (int i = 0; i < channels; ++i) {
-		       distributionBox dbox(200);	
-                       pixelBox.push_back(dbox);
-		       saver->AddObjectToSave((void*)(&pixelBox[i]),
-				       KLL_TYPE, filesSavePath+"pixel_"+std::to_string(i)+".bin"); 
-             }
-          }	     
-       }
-    saver->StartSaving();
-#ifndef TEST
-    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
-    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
-#endif
+        // Register statistics for saving based on configuration
+        for (const auto& stat_confidence : imageConfig) {
+            std::string name = stat_confidence.first;
+            if (strcmp(name.c_str(), "NOISE") == 0){
+                saver->AddObjectToSave((void*)(&noiseBox), KLL_TYPE, filesSavePath+"noise.bin");
+            }  
+            else if (strcmp(name.c_str(), "BRIGHTNESS") == 0){
+                saver->AddObjectToSave((void*)(&brightnessBox), KLL_TYPE, filesSavePath+"brightness.bin");
+            }  
+            else if (strcmp(name.c_str(), "SHARPNESS") == 0){
+                saver->AddObjectToSave((void*)(&sharpnessBox), KLL_TYPE, filesSavePath+"sharpness.bin");
+            }
+            else if (strcmp(name.c_str(), "MEAN") == 0){
+                for (char i = '0'; i < ('0'+channels); ++i) {
+                    distributionBox *dbox = new distributionBox(200);
+                    meanBox.push_back(dbox);
+                    saver->AddObjectToSave((void*)dbox, KLL_TYPE, filesSavePath+"meanBox_"+i+".bin");
+                }
+            }
+            else if (strcmp(name.c_str(), "HISTOGRAM") == 0) {
+                for (char i = '0'; i < ('0'+channels); ++i) {
+                    distributionBox *dbox = new distributionBox(200);
+                    pixelBox.push_back(dbox);
+                        saver->AddObjectToSave((void*)dbox,
+                        KLL_TYPE, filesSavePath+"pixel_"+std::to_string(i)+".bin"); 
+                }
+            }
+        }
+        saver->StartSaving();
+        uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
+        #ifndef TEST
+        std::chrono::milliseconds interval;
+        uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
+        #endif
     } catch (const std::runtime_error& e) {
-      std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
     }
-  }
+    std::cout << __func__ << "-" << __LINE__ << std::endl;
+}
 
 
   /**
@@ -119,8 +132,8 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
         } else if (strcmp(name.c_str(), "MEAN") == 0) {
 		         cv::Scalar mean_values = cv::mean(img);
 			 for (int i = 0; i < mean_values.rows; ++i) {
-			      meanBox[i].update(mean_values[i]);	 
-                         }    
+			      meanBox[i]->update(mean_values[i]);	 
+                         }
         } else if (strcmp(name.c_str(), "CONTRAST") == 0) {
 			stat_score = calcContrast(img);
 		        float threshold = std::stof(imgstat.second);
@@ -142,9 +155,11 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
 
 // Function to iterate over an image and apply a callback for each pixel's values
 void ImageProfile::iterateImage(const cv::Mat& img, const std::function<void(const std::vector<int>&)>& callback) {
+      std::cout << __func__ << "-" << __LINE__ << std::endl;
     if (img.empty()) {
         throw std::runtime_error("Image is empty.");
     }
+      std::cout << __func__ << "-" << __LINE__ << std::endl;
 
     int channels = img.channels();
 
@@ -169,6 +184,6 @@ void ImageProfile::iterateImage(const cv::Mat& img, const std::function<void(con
 
 void ImageProfile::updatePixelValues(const std::vector<int>& pixelValues) {
      for (size_t i = 0; i < pixelValues.size(); ++i){
-            pixelBox[i].update(pixelValues[i]);
+            pixelBox[i]->update(pixelValues[i]);
     }
 }

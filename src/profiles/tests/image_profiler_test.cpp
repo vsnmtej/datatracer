@@ -30,7 +30,7 @@ protected:
         ini_file << "NOISE = 0.5\n";  // Thresholds
         ini_file << "BRIGHTNESS = 0.4\n";
         ini_file << "SHARPNESS = 0.6\n";
-	ini_file << "MEAN = 0.2\n";
+        ini_file << "MEAN = 0.2\n";
         ini_file.close();
     }
 
