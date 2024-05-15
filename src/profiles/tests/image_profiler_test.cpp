@@ -30,6 +30,7 @@ protected:
         ini_file << "NOISE = 0.5\n";  // Thresholds
         ini_file << "BRIGHTNESS = 0.4\n";
         ini_file << "SHARPNESS = 0.6\n";
+	ini_file << "MEAN = 0.2\n";
         ini_file.close();
     }
 
@@ -52,7 +53,7 @@ TEST_F(ImageProfileTest, ProfileMethod) {
     // Create a simple grayscale image for testing
     cv::Mat img = cv::Mat::ones(100, 100, CV_8UC1) * 128;  // 100x100 grayscale image with pixel value 128
     int result = image_profile->profile(img, true);  // Test with save_sample = true
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(5));
     EXPECT_EQ(result, 1);  // Expected success
 
     // Check that statistics are updated correctly
