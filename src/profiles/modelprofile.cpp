@@ -40,8 +40,8 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
 		    filesSavePath+model_id+std::to_string(cls)+".bin");  // Register with Saver for saving
   }
     saver->StartSaving();
-    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
 #ifndef TEST
+    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
     uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
 #endif
 }

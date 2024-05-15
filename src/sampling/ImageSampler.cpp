@@ -48,9 +48,7 @@ ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
 
     saver->StartSaving();
     uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
-#ifndef TEST
     uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
-#endif
   } catch (const std::runtime_error& e) {
     std::cerr << e.what() << std::endl;
   }
