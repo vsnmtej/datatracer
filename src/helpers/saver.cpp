@@ -41,15 +41,16 @@ void Saver::SaveLoop() {
       break; // Thread termination condition
     }
 
+    data_object_t *start_object = objects_to_save_.front();
     // Save only the first object in the queue and overwrite in the file
-    if (!objects_to_save_.empty()) {
+    do{
       data_object_t *object = objects_to_save_.front();
       SaveObjectToFile(object);
 
       // Rotate the queue by one element (circular approach)
       objects_to_save_.push(objects_to_save_.front());
       objects_to_save_.pop();
-    }
+    }while(start_object != objects_to_save_.front());
 
     std::this_thread::sleep_for(std::chrono::minutes(save_interval_minutes_));
   }

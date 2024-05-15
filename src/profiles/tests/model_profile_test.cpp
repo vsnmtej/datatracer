@@ -10,10 +10,10 @@ protected:
         createSampleIniFile("test_config.ini");
 
         model_profile = new ModelProfile("test_model", "test_config.ini", 1, 3);
-        model_profile->saver->StopSaving();
     }
 
     void TearDown() override {
+        model_profile->saver->StopSaving();
         delete model_profile;
         cleanUpTestFiles();
     }
@@ -35,6 +35,7 @@ protected:
 
 // Test Initialization
 TEST_F(ModelProfileTest, Initialization) {
+    std::this_thread::sleep_for(std::chrono::seconds(5));
     EXPECT_EQ(model_profile->getNumDistributionBoxes(), 3); // Should create 3 distribution boxes
 }
 

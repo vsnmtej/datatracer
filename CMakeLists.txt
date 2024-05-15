@@ -21,7 +21,7 @@ if (MSVC)
   add_compile_options(/W4)
   set(CMAKE_DEBUG_POSTFIX "d")
 else()
-  add_compile_options(-Wall -pedantic -W -Wextra -lstdc++fs)
+  add_compile_options(-g3 -Wall -pedantic -W -Wextra -lstdc++fs)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.0")

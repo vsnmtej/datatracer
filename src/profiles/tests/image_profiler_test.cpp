@@ -18,6 +18,7 @@ protected:
     }
 
     void TearDown() override {
+        image_profile->saver->StopSaving();
         delete image_profile;  // Clean up the ImageProfile instance
         cleanUpTestFiles();  // Clean up the test files
     }
@@ -38,6 +39,13 @@ protected:
     void cleanUpTestFiles() {
         std::remove("test_config.ini");  // Remove the test INI file
         std::remove("test_savefile.bin");  // Clean up any output files
+    }
+
+    void empty_q(void) {
+        std::lock_guard<std::mutex> lock(image_profile->saver->queue_mutex_);
+        while (!(image_profile->saver->objects_to_save_.empty())) {
+            image_profile->saver->objects_to_save_.pop();
+        }
     }
 
     ImageProfile* image_profile;  // Pointer to ImageProfile
@@ -78,15 +86,8 @@ TEST_F(ImageProfileTest, IterateImageInvalidImage) {
 
 //Test the StartSaving and TriggerSave methods for threading behavior
 TEST_F(ImageProfileTest, ThreadingBehavior) {
-    
-    // Trigger the save
-    
-    // Allow some time for the SaveLoop to process
-    std::this_thread::sleep_for(std::chrono::seconds(2));  // Wait for thread processing
-    
     // Check if the save thread is still running
     EXPECT_TRUE(image_profile->saver->save_thread_.joinable());
-    
     // Further checks can include more detailed validation of queue processing
 }
 
@@ -94,21 +95,15 @@ TEST_F(ImageProfileTest, ThreadingBehavior) {
 TEST_F(ImageProfileTest, SaveObjectToFile) {
     // Simulate adding objects to the saver
     distributionBox testBox;  // Example distribution box
-    std::remove("test_savefile.bin");  // Clean up any output files
-    do {
-        std::lock_guard<std::mutex> lock(image_profile->saver->queue_mutex_);
-        while (!(image_profile->saver->objects_to_save_.empty())) {
-            image_profile->saver->objects_to_save_.pop();
-        }
-    }while(0);
+    empty_q();
     image_profile->saver->AddObjectToSave((void*)(&testBox), KLL_TYPE, "test_savefile.bin");
-    
     // Allow some time for the SaveLoop to process
     std::this_thread::sleep_for(std::chrono::seconds(2));
     
     // Check if the file was created and contains data
     std::ifstream infile("test_savefile.bin");
     EXPECT_TRUE(infile.is_open());  // The file should exist
+        image_profile->saver->StopSaving();
     
     // Additional checks can include validating the content of the file
 }
