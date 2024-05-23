@@ -1,53 +1,154 @@
-cmake_minimum_required(VERSION 3.17)
-project(datum_logs)
-set(CMAKE_CXX_STANDARD 14)
+cmake_minimum_required(VERSION 3.10)
+project(imagesampler)
+
+# Ensure builds on Windows export all symbols
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+#set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_MACOSX_RPATH ON)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Code generation options, to ensure shaerd libraries work and are portable
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_C_EXTENSIONS OFF)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# enable compiler warnings globally
+# derived from https://foonathan.net/blog/2018/10/17/cmake-warnings.html
+# and https://arne-mertz.de/2018/07/cmake-properties-options/
+if (MSVC)
+  add_compile_options(/W4)
+  set(CMAKE_DEBUG_POSTFIX "d")
+else()
+  add_compile_options(-Wall -pedantic -W -Wextra -lstdc++fs)
+endif()
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.0")
+  add_compile_options(-Wimplicit-fallthrough=3)
+endif()
+
+# Set the AWS service components used by this project.
+set(SERVICE_COMPONENTS s3)
+
+# Find the AWS SDK for C++ package.
+find_package(AWSSDK REQUIRED COMPONENTS ${SERVICE_COMPONENTS})
+
+# Find libcurl
+find_package(CURL REQUIRED)
+include_directories(${CURL_INCLUDE_DIRS})
 
 # Try to find OpenCV
-# set(OpenCV_DIR ....)
-set(OpenCV_DIR "/Users/venkatapydialli/Projects/Edgetpu/build_opencv/")
+set(OpenCV_DIR "/usr")
 find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
 
-find_package(Datasketches 3.2 REQUIRED)
-INCLUDE_DIRECTORIES(/tmp/install/DataSketches/include/)
-INCLUDE_DIRECTORIES(/tmp/install/DataSketches/libs/)
-
-# TensorFlow Lite Integration
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../tflite-dist/include/)
-INCLUDE_DIRECTORIES($(CMAKE_CURRENT_SOURCE_DIR)/../tflite-dist/libs/)
-
-ADD_LIBRARY(tensorflowlite SHARED IMPORTED)
-set_property(TARGET tensorflowlite PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/../tflite-dist/libs/mac/libtensorflowlite.dylib)
-
-# lib has 1 file: libtensorflowlite.so
-
-#Add Subdirectories
-add_subdirectory(src)
-#add_subdirectory(src/core)
-#add_subdirectory(src/test)
-#add_subdirectory(src/utils)
-
-#add_subdirectory(src/core/helpers)
-#add_subdirectory(src/core/sampling)
-#add_subdirectory(src/core/sketches)
+include_directories(${GTEST_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(/usr/local/include/)
+INCLUDE_DIRECTORIES(/usr/local/libs/)
 
 # Include Directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/include/datasketches)
 
-# file(GLOB SOURCE_FILES src/*.cpp)
-# add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
+add_library(imagesampler SHARED
+            src/helpers/saver.cpp
+            src/helpers/IniParser.cpp
+            src/helpers/imghelpers.cpp
+            src/helpers/http_uploader.cpp
+            src/helpers/objectuploader.cpp
+            src/sampling/ImageSampler.cpp
+			)
 
-add_library(datum_logs SHARED
-            src/core/core.cpp
-            src/core/helpers/image_helper.cpp
-            src/core/sampling/uncertainity:sampling.cpp
-            src/core/sketches/kll.cpp)
+add_library(imageprofiler SHARED
+			src/helpers/saver.cpp
+			src/helpers/IniParser.cpp
+            src/helpers/imghelpers.cpp
+            src/helpers/http_uploader.cpp
+            src/helpers/objectuploader.cpp
+			src/profiles/imageprofile.cpp
+			)
 
-target_link_libraries(datum_logs core::core)
-target_link_libraries(my_library core::helpers::helpers)
-target_link_libraries(my_library core::sampling::sampling)
-target_link_libraries(my_library core::sketches::sketches)
-target_link_libraries(${CMAKE_PROJECT_NAME} tensorflowlite ${OpenCV_LIBS} datasketches pthread)
+add_library(modelprofiler SHARED 
+            src/helpers/saver.cpp
+            src/helpers/IniParser.cpp
+            src/helpers/http_uploader.cpp
+            src/helpers/objectuploader.cpp
+            src/profiles/modelprofile.cpp
+            )	    
+
+add_executable(Tar_GZ_test
+            src/helpers/tar_gz_creator.cpp
+            src/helpers/tests/test_tar_gz_creator.cpp
+            )
+
+
+add_executable(Http_uploader_test
+	    src/helpers/http_uploader.cpp
+            src/helpers/tests/test_http_uploader.cpp	    
+	    )   
+
+
+add_executable(ImageProcessingTest
+                src/helpers/imghelpers.cpp
+                src/helpers/tests/ImageProcessingTest.cpp
+              )
+
+add_executable(IniParserTest
+                src/helpers/IniParser.cpp
+                src/helpers/tests/IniParserTest.cpp
+              )
+
+add_executable(SaverTest
+                src/helpers/saver.cpp
+                src/helpers/tests/SaverTest.cpp
+              )
+
+add_executable(image_profiler_test
+                src/helpers/saver.cpp
+                src/helpers/IniParser.cpp
+                src/helpers/imghelpers.cpp
+                src/helpers/http_uploader.cpp
+                src/helpers/objectuploader.cpp
+                src/profiles/imageprofile.cpp
+                src/profiles/tests/image_profiler_test.cpp
+              )
+add_executable(model_profiler_test
+                src/helpers/saver.cpp
+                src/helpers/IniParser.cpp
+                src/helpers/http_uploader.cpp
+                src/helpers/objectuploader.cpp
+                src/profiles/modelprofile.cpp
+                src/profiles/tests/model_profile_test.cpp
+	      )
+
+add_executable(image_sampler_test
+                src/helpers/saver.cpp
+                src/helpers/IniParser.cpp
+                src/helpers/imghelpers.cpp
+                src/helpers/http_uploader.cpp
+                src/helpers/objectuploader.cpp
+                src/sampling/ImageSampler.cpp
+                src/sampling/tests/test_image_sampler.cpp
+              )
+
+target_compile_definitions(ImageProcessingTest PRIVATE TEST)
+target_compile_definitions(IniParserTest PRIVATE TEST)
+target_compile_definitions(SaverTest PRIVATE TEST)
+target_compile_definitions(image_profiler_test PRIVATE TEST)
+target_compile_definitions(image_sampler_test PRIVATE TEST)
+target_compile_definitions(model_profiler_test PRIVATE TEST)
+target_compile_definitions(Http_uploader_test PRIVATE TEST)
+target_compile_definitions(Tar_GZ_test PRIVATE TEST)
+
+target_link_libraries(ImageProcessingTest gtest gtest_main ${OpenCV_LIBS} pthread)
+target_link_libraries(IniParserTest gtest gtest_main ${OpenCV_LIBS} pthread)
+target_link_libraries(SaverTest gtest gtest_main ${OpenCV_LIBS} pthread)
+target_link_libraries(image_profiler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} curl pthread)
+target_link_libraries(image_sampler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} curl pthread)
+target_link_libraries(model_profiler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} curl pthread)
+target_link_libraries(Http_uploader_test gtest gtest_main ${OpenCV_LIBS} ${CURL_LIBRARIES} curl pthread)
+target_link_libraries(Tar_GZ_test gtest gtest_main tar z boost_filesystem boost_system pthread)
 
 # Install the library
 install(TARGETS ${CMAKE_PROJECT_NAME}
@@ -55,3 +156,14 @@ install(TARGETS ${CMAKE_PROJECT_NAME}
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include
         DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+
+enable_testing()
+#Test
+add_test(NAME ImageProcessingTest COMMAND ImageProcessingTest)
+add_test(NAME IniParserTest COMMAND IniParserTest)
+add_test(NAME SaverTest COMMAND SaverTest)
+add_test(NAME image_profiler_test COMMAND image_profiler_test)
+add_test(NAME image_sampler_test COMMAND image_sampler_test)
+add_test(NAME mode_profiler_test COMMAND model_profiler_test)
+#add_test(NAME  COMMAND )
+
