@@ -39,24 +39,11 @@ INCLUDE_DIRECTORIES(${SOURCE_DIR}/../tflite_v2/flatbuffers/include/)
 endif()
 add_executable(${PROJECT_NAME} main.cpp)
 
+    target_link_directories(${PROJECT_NAME} PRIVATE ${SOURCE_DIR}/build/)
 if(APPLE)
-    ADD_LIBRARY(tensorflowlite SHARED IMPORTED)
-    set_property(TARGET tensorflowlite PROPERTY IMPORTED_LOCATION ${SOURCE_DIR}/../tflite-dist/libs/mac/libtensorflowlite.dylib)
-
-    ADD_LIBRARY(imagesampler SHARED IMPORTED)
-    set_property(TARGET imagesampler PROPERTY IMPORTED_LOCATION ${SOURCE_DIR}/build/libimagesampler.dylib)
-
-    ADD_LIBRARY(imageprofiler SHARED IMPORTED)
-    set_property(TARGET imageprofiler PROPERTY IMPORTED_LOCATION ${SOURCE_DIR}/build/libimageprofiler.dylib)
+    target_link_directories(${PROJECT_NAME} PRIVATE ${SOURCE_DIR}/../tflite-dist/libs/mac/)
 else()
-    ADD_LIBRARY(imagesampler SHARED IMPORTED)
-    set_property(TARGET imagesampler PROPERTY IMPORTED_LOCATION ${SOURCE_DIR}/build/libimagesampler.so)
-
-    ADD_LIBRARY(imageprofiler SHARED IMPORTED)
-    set_property(TARGET imageprofiler PROPERTY IMPORTED_LOCATION ${SOURCE_DIR}/build/libimageprofiler.so)
-
-    ADD_LIBRARY(tensorflowlite SHARED IMPORTED)
-    set_property(TARGET tensorflowlite PROPERTY IMPORTED_LOCATION ${SOURCE_DIR}/../tflite_v2/libtensorflowlite.so)
+    target_link_directories(${PROJECT_NAME} PRIVATE ${SOURCE_DIR}/../tflite_v2/)
 endif()
     target_link_libraries(TFLiteCheck tensorflowlite ${OpenCV_LIBS} imagesampler imageprofiler)
 
