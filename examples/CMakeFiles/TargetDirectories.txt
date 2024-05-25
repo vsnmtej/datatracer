@@ -1,0 +1,10 @@
+/Users/venkatapydialli/Projects/Edgetpu/datatracer/examples/CMakeFiles/imagesampler.dir
+/Users/venkatapydialli/Projects/Edgetpu/datatracer/examples/CMakeFiles/imageprofiler.dir
+/Users/venkatapydialli/Projects/Edgetpu/datatracer/examples/CMakeFiles/modelprofiler.dir
+/Users/venkatapydialli/Projects/Edgetpu/datatracer/examples/CMakeFiles/test.dir
+/Users/venkatapydialli/Projects/Edgetpu/datatracer/examples/CMakeFiles/edit_cache.dir
+/Users/venkatapydialli/Projects/Edgetpu/datatracer/examples/CMakeFiles/rebuild_cache.dir
+/Users/venkatapydialli/Projects/Edgetpu/datatracer/examples/CMakeFiles/list_install_components.dir
+/Users/venkatapydialli/Projects/Edgetpu/datatracer/examples/CMakeFiles/install.dir
+/Users/venkatapydialli/Projects/Edgetpu/datatracer/examples/CMakeFiles/install/local.dir
+/Users/venkatapydialli/Projects/Edgetpu/datatracer/examples/CMakeFiles/install/strip.dir

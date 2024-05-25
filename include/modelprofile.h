@@ -20,7 +20,7 @@
  * @brief Class for managing and logging model statistics
  */
 typedef datasketches::kll_sketch<float> distributionBox;
-typedef std::map<int, float> ClassificationResults;
+typedef std::vector<std::pair<float, int>> ClassificationResults;
 typedef datasketches::frequent_items_sketch<std::string> frequent_class_sketch;
 
 class ModelProfile {
@@ -68,8 +68,8 @@ public:
   std::vector<float> inference_latency_;
   std::vector<int> no_detections_per_image_;
   std::vector<double> objectnessbox_;
-  std::vector<distributionBox> boxes;
-  std::map<int, distributionBox&> model_classes_stat_;
+  distributionBox *dBox;
+  std::map<int, distributionBox*> model_classes_stat_;
 };
 
 #endif // MODEL_STATS_H

@@ -68,8 +68,8 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
        }
     saver->StartSaving();
 #ifndef TEST
-    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
-    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
+    //uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
+    //uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
 #endif
     } catch (const std::runtime_error& e) {
       std::cerr << e.what() << std::endl;
@@ -93,6 +93,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
 	if (strcmp(name.c_str(), "NOISE") == 0) {
           // Compute noise statistic
           stat_score = calcSNR(img);
+	  std::cout << name.c_str() << std::endl;
 	  float threshold = std::stof(imgstat.second);
           // Update corresponding distribution box and save image if threshold exceeded
           noiseBox.update(stat_score);
@@ -104,6 +105,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
 			stat_score = calcBrightness(img);
 		        float threshold = std::stof(imgstat.second);
 			brightnessBox.update(stat_score);
+			std::cout << "updated brightness box" <<std::endl;
 			if (stat_score >= threshold && save_sample==true){
 				std::string imagePath = filesSavePath;
                 std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);

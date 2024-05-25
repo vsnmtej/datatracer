@@ -14,6 +14,7 @@ Saver::Saver(int interval) {
 void Saver::AddObjectToSave(void *object, int type, const std::string& filename) {
   std::lock_guard<std::mutex> lock(queue_mutex_);
   data_object_t *tmp_obj = new data_object_t;
+  std::cout << filename << std::endl;
   tmp_obj->obj = object;
   tmp_obj->type = type;
   tmp_obj->filename = filename;

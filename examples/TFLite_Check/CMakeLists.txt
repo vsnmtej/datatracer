@@ -11,16 +11,14 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 message(STATUS "OpenCV_DIR: ${OpenCV_DIR}")
 
 if(APPLE)
-find_package(Datasketches  REQUIRED)
-INCLUDE_DIRECTORIES(/tmp/install/DataSketches/include/)
-INCLUDE_DIRECTORIES(/tmp/install/DataSketches/libs/)
+INCLUDE_DIRECTORIES(/Users/venkatapydialli/Projects/Edgetpu/datatracer/include/datasketches)
 
 INCLUDE_DIRECTORIES(/Users/venkatapydialli/Projects/Edgetpu/datatracer/include/)
 INCLUDE_DIRECTORIES(/Users/venkatapydialli/Projects/Edgetpu/datatracer/build/)
 
 # TensorFlow Lite Integration
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../tflite-dist/include/)
-INCLUDE_DIRECTORIES($(CMAKE_CURRENT_SOURCE_DIR)/../tflite-dist/libs/)
+INCLUDE_DIRECTORIES(/Users/venkatapydialli/Projects/Edgetpu//tflite-dist/include/)
+INCLUDE_DIRECTORIES(/Users/venkatapydialli/Projects/Edgetpu//tflite-dist/libs/)
 else()
 message(STATUS "NOT apple: ${OpenCV_DIR}")
 INCLUDE_DIRECTORIES(/usr/local/include/DataSketches)
@@ -34,13 +32,16 @@ add_executable(${PROJECT_NAME} main.cpp)
 
 if(APPLE)
     ADD_LIBRARY(tensorflowlite SHARED IMPORTED)
-    set_property(TARGET tensorflowlite PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/../tflite-dist/libs/mac/libtensorflowlite.dylib)
+    set_property(TARGET tensorflowlite PROPERTY IMPORTED_LOCATION /Users/venkatapydialli/Projects/Edgetpu/tflite-dist/libs/mac/libtensorflowlite.dylib)
 
     ADD_LIBRARY(imagesampler SHARED IMPORTED)
     set_property(TARGET imagesampler PROPERTY IMPORTED_LOCATION /Users/venkatapydialli/Projects/Edgetpu/datatracer/build/libimagesampler.dylib)
 
     ADD_LIBRARY(imageprofiler SHARED IMPORTED)
     set_property(TARGET imageprofiler PROPERTY IMPORTED_LOCATION /Users/venkatapydialli/Projects/Edgetpu/datatracer/build/libimageprofiler.dylib)
+
+    ADD_LIBRARY(modelprofiler SHARED IMPORTED)
+    set_property(TARGET modelprofiler PROPERTY IMPORTED_LOCATION /Users/venkatapydialli/Projects/Edgetpu/datatracer/build/libmodelprofiler.dylib)
 else()
     ADD_LIBRARY(imagesampler SHARED IMPORTED)
     set_property(TARGET imagesampler PROPERTY IMPORTED_LOCATION /home/user/project/datatracer/build/libimagesampler.so)
@@ -50,8 +51,11 @@ else()
 
     ADD_LIBRARY(tensorflowlite SHARED IMPORTED)
     set_property(TARGET tensorflowlite PROPERTY IMPORTED_LOCATION /home/user/project/tflite_v2/libtensorflowlite.so)
+
+    ADD_LIBRARY(modelprofiler SHARED IMPORTED)
+    set_property(TARGET modelprofiler PROPERTY IMPORTED_LOCATION /home/user/project/datatracer/build/libmodelprofiler.so)
 endif()
-    target_link_libraries(TFLiteCheck tensorflowlite ${OpenCV_LIBS} imagesampler imageprofiler)
+    target_link_libraries(TFLiteCheck tensorflowlite ${OpenCV_LIBS} imagesampler imageprofiler modelprofiler)
 
 if(WIN32)
     add_custom_command(

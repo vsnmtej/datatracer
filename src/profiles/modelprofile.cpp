@@ -28,18 +28,10 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
   IniParser parser;
   modelConfig = parser.parseIniFile(conf_path,
                           "model", "");
-  filesSavePath = modelConfig["files"];
+  filesSavePath = modelConfig["filepath"];
   top_classes_ = top_classes;
   sketch1 = new frequent_class_sketch(64);
-  //saver.AddObjectToSave(sketch1, 
-  // Initialize model_classes_stat map with empty distributionBox objects for each class
-  for (int cls = 0; cls < top_classes_; ++cls) {
-    distributionBox dBox(200);		  
-    boxes.push_back(dBox);
-    saver->AddObjectToSave((void *)(&(boxes[cls])), KLL_TYPE,
-		    filesSavePath+model_id+std::to_string(cls)+".bin");  // Register with Saver for saving
-  }
-    saver->StartSaving();
+  saver->StartSaving();
 #ifndef TEST
     uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
     uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
@@ -49,16 +41,16 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
 
 // Public accessor to get the number of distribution boxes
 int ModelProfile::getNumDistributionBoxes() const {
-        return boxes.size();
+        return top_classes_;
     }
 
-// Optional: Public accessor to return a reference to a specific distribution box
+/* Optional: Public accessor to return a reference to a specific distribution box
 const distributionBox& ModelProfile::getDistributionBox(unsigned int index) const {
     if (index >= boxes.size()) {
        throw std::out_of_range("Invalid index for distribution box");
     }
     return boxes[index];
-}
+}*/
 
 /**
  * @brief Logs classification model statistics
@@ -71,16 +63,29 @@ const distributionBox& ModelProfile::getDistributionBox(unsigned int index) cons
  */
 int ModelProfile::log_classification_model_stats(float inference_latency __attribute__((unused)),
 	       	const ClassificationResults& results) {
-  for (auto it = results.begin(); it != results.end(); ++it) {
-	// Logic for identifying frequent classes goes here
-    int cls = it->first;
-    float score = it->second;
-    sketch1->update(std::to_string(cls));  // Placeholder for storing frequent class IDs
-    boxes[cls].update(score);
-    model_classes_stat_.emplace(cls, boxes[cls]);  // Update score statistics for each class
+    for (const auto& result : results) {
+        int cls = result.second;
+        float score = result.first;
+        auto it = model_classes_stat_.find(cls);
+        if (it != model_classes_stat_.end()) {
+            // Key exists, update the value
+            it->second->update(score);
+        } else {
+            // Key does not exist, add the key-value pair
+            dBox = new distributionBox(200);
+            model_classes_stat_[cls] = dBox;
+            model_classes_stat_[cls]->update(score);
+            saver->AddObjectToSave((void *)(&(model_classes_stat_[cls])), KLL_TYPE,
+                                   filesSavePath + model_id_ + std::to_string(cls) + ".bin");  // Register with Saver for saving
+        }
+        sketch1->update(std::to_string(cls));  // Placeholder for storing frequent class IDs
     }
   return 0; // Assuming successful logging, replace with error handling if needed
 }
+
+// {dbox1, dbox2, ...} - 5 top_classes
+// [23, 56, 2 , 7 , 9]
+// (23, &dbox1), (56, &dbox2)
 
 /**
  * @brief Logs YOLOv5 model statistics
