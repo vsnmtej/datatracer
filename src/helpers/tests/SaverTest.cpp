@@ -39,7 +39,7 @@ TEST_F(SaverTest, StartSavingAndTriggerSave) {
     Saver saver(5); // Save interval of 5 minutes
     distributionBox noiseBox;
 
-    saver.StartSaving(); // Start the save loop
+    saver.StartSaving("SaverTest"); // Start the save loop
     saver.AddObjectToSave((void*)(&noiseBox), KLL_TYPE, testFilename);
     
     // Trigger save manually

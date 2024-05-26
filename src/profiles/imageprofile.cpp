@@ -66,7 +66,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
              }
           }	     
        }
-    saver->StartSaving();
+    saver->StartSaving("ImageProfile");
 #ifndef TEST
     //uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
     //uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);

@@ -31,10 +31,10 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
   filesSavePath = modelConfig["filepath"];
   top_classes_ = top_classes;
   sketch1 = new frequent_class_sketch(64);
-  saver->StartSaving();
+  saver->StartSaving("ModelProfile");
 #ifndef TEST
-    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
-    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
+    //uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
+    //uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
 #endif
 }
 
@@ -79,7 +79,7 @@ int ModelProfile::log_classification_model_stats(float inference_latency __attri
             model_classes_stat_[cls] = dBox;
             model_classes_stat_[cls]->update(score);
       std::cout << __func__ << ":" << __LINE__ << std::endl;
-            saver->AddObjectToSave((void *)(&(model_classes_stat_[cls])), KLL_TYPE,
+            saver->AddObjectToSave((void *)(dBox), KLL_TYPE,
                                    filesSavePath + model_id_ + std::to_string(cls) + ".bin");  // Register with Saver for saving
       std::cout << __func__ << ":" << __LINE__ << std::endl;
         }

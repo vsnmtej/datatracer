@@ -46,9 +46,9 @@ ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
       }
     }
 
-    saver->StartSaving();
-    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
-    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
+    saver->StartSaving("ImageSampler");
+//    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
+//    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
   } catch (const std::runtime_error& e) {
     std::cerr << e.what() << std::endl;
   }

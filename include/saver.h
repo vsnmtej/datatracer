@@ -29,7 +29,7 @@ public:
   void AddObjectToSave(void *object, int type, const std::string& filename);
 
   // Start the background thread to save objects from the queue periodically
-  void StartSaving();
+  void StartSaving(std::string class_name);
 
   // Manual trigger to save all objects in the queue immediately
   void TriggerSave();
@@ -40,6 +40,7 @@ public:
 private:
 #endif
   // Function to be executed in the background thread
+  std::string parent_name;
   void SaveLoop();
 
   std::queue<data_object_t *> objects_to_save_;  // Queue of objects to be saved
