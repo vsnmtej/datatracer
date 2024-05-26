@@ -12,7 +12,7 @@ Saver::Saver(int interval) {
 }
 
 void Saver::AddObjectToSave(void *object, int type, const std::string& filename) {
-      std::cout << __func__ << ":" << __LINE__ << std::endl;
+      std::cout << __func__ << ":" << __LINE__ << ":" << filename << std::endl;
   std::lock_guard<std::mutex> lock(queue_mutex_);
   data_object_t *tmp_obj = new data_object_t;
   std::cout << filename << std::endl;
@@ -21,7 +21,7 @@ void Saver::AddObjectToSave(void *object, int type, const std::string& filename)
   tmp_obj->filename = filename;
   objects_to_save_.push(tmp_obj);
   cv_.notify_one(); // Notify the waiting thread about a new object
-      std::cout << __func__ << ":" << __LINE__ << std::endl;
+      std::cout << __func__ << ":" << __LINE__ << ":" << (long long int)object << std::endl;
 }
 
 void Saver::StartSaving() {
@@ -75,12 +75,13 @@ void Saver::SaveLoop() {
 void Saver::SaveObjectToFile(data_object_t *object) {
       std::cout << __func__ << ":" << __LINE__ << std::endl;
     std::ofstream os(object->filename.c_str());
-      std::cout << __func__ << ":" << __LINE__ << std::endl;
+      std::cout << __func__ << ":" << __LINE__ << ":" << object->filename << std::endl;
     try {
     switch(object->type) {
         case KLL_TYPE:{
       std::cout << __func__ << ":" << __LINE__ << std::endl;
             distributionBox *obj = (distributionBox *)(object->obj);
+      std::cout << __func__ << ":" << __LINE__ << ":" << (long long int)obj << std::endl;
             obj->serialize(os);
       std::cout << __func__ << ":" << __LINE__ << std::endl;
             break;
