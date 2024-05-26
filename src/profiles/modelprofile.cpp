@@ -63,10 +63,13 @@ const distributionBox& ModelProfile::getDistributionBox(unsigned int index) cons
  */
 int ModelProfile::log_classification_model_stats(float inference_latency __attribute__((unused)),
 	       	const ClassificationResults& results) {
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
     for (const auto& result : results) {
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
         int cls = result.second;
         float score = result.first;
         auto it = model_classes_stat_.find(cls);
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
         if (it != model_classes_stat_.end()) {
             // Key exists, update the value
             it->second->update(score);
@@ -75,11 +78,15 @@ int ModelProfile::log_classification_model_stats(float inference_latency __attri
             dBox = new distributionBox(200);
             model_classes_stat_[cls] = dBox;
             model_classes_stat_[cls]->update(score);
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
             saver->AddObjectToSave((void *)(dBox), KLL_TYPE,
                                    filesSavePath + model_id_ + std::to_string(cls) + ".bin");  // Register with Saver for saving
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
         }
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
         sketch1->update(std::to_string(cls));  // Placeholder for storing frequent class IDs
     }
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
   return 0; // Assuming successful logging, replace with error handling if needed
 }
 
