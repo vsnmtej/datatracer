@@ -35,6 +35,8 @@ void Saver::TriggerSave() {
 
 void Saver::SaveLoop() {
   while (true) {
+    do {
+
     std::unique_lock<std::mutex> lock(queue_mutex_);
     cv_.wait(lock, [&] { return !objects_to_save_.empty() || !save_thread_.joinable(); }); // Wait for a new object or thread termination
 
@@ -53,6 +55,7 @@ void Saver::SaveLoop() {
       objects_to_save_.pop();
     }while(start_object != objects_to_save_.front());
 
+    }while(0); //scope of queue_mutex_
     std::this_thread::sleep_for(std::chrono::minutes(save_interval_minutes_));
   }
 }
