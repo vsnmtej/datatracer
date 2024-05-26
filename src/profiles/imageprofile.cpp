@@ -51,9 +51,9 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
 	  }
           else if (strcmp(name.c_str(), "MEAN") == 0){
 		  for (int i = 0; i < channels; ++i) {
-		       distributionBox dbox(200);	  
-		       meanBox.push_back(dbox); 	  
-                       saver->AddObjectToSave((void*)(&meanBox[i]),
+		       distributionBox *dbox = new distributionBox(200);	  
+		       meanBox.push_back(dbox);
+                       saver->AddObjectToSave((void*)(dbox),
 				       KLL_TYPE, filesSavePath+"mean_"+std::to_string(i)+".bin"); 
                    }
 	  } 
@@ -121,7 +121,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
         } else if (strcmp(name.c_str(), "MEAN") == 0) {
 		         cv::Scalar mean_values = cv::mean(img);
 			 for (int i = 0; i < mean_values.rows; ++i) {
-			      meanBox[i].update(mean_values[i]);	 
+			      meanBox[i]->update(mean_values[i]);	 
                          }    
         } else if (strcmp(name.c_str(), "CONTRAST") == 0) {
 			stat_score = calcContrast(img);
