@@ -67,7 +67,7 @@ void Saver::SaveLoop() {
 
     }while(0); //scope of queue_mutex_
       std::cout << __func__ << ":" << __LINE__ << std::endl;
-    std::this_thread::sleep_for(std::chrono::minutes(save_interval_minutes_));
+    std::this_thread::sleep_for(std::chrono::seconds(10));
       std::cout << __func__ << ":" << __LINE__ << std::endl;
   }
 }
