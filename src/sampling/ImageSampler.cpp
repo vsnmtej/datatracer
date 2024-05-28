@@ -5,6 +5,10 @@
 #include "ImageSampler.h"
 #include "imghelpers.h"
 
+ImageSampler::~ImageSampler() {
+    delete saver;
+}
+
 /**
  * @class ImageSampler
  * @brief Class for selecting uncertain image samples for further analysis

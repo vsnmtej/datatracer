@@ -33,6 +33,7 @@ public:
    */
   ModelProfile(std::string model_id, std::string conf_path,
 	       	int save_interval, int top_classes);
+  ~ModelProfile();
 
   /**
    * @brief Logs statistics for a classification model

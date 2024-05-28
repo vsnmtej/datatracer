@@ -8,6 +8,12 @@
 #include "imageprofile.h"
 #include "IniParser.h"
 
+ImageProfile::~ImageProfile() {
+    delete saver;
+    for (const auto& obj :  meanBox)
+        delete obj;
+}
+
 /**
  * @class ImageProfile
  * @brief Class for computing and managing various image statistics

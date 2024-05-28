@@ -6,6 +6,7 @@
 #include <condition_variable>
 #include <queue>
 #include <string>
+#include <atomic>
 
 //#include "MyObject.h" // Include your object header
 typedef struct {
@@ -24,6 +25,7 @@ class Saver {
 public:
   // Constructor to specify filename and save interval
   Saver(int interval);
+  ~Saver();
 
   // Add an object to the queue for saving
   void AddObjectToSave(void *object, int type, const std::string& filename);
@@ -43,6 +45,7 @@ private:
   std::string parent_name;
   void SaveLoop();
 
+  std::atomic<bool> exitSaveLoop;
   std::queue<data_object_t *> objects_to_save_;  // Queue of objects to be saved
   int save_interval_minutes_;     // Interval between saves in minutes
   std::thread save_thread_;        // Thread object for saving

@@ -1,6 +1,14 @@
 #include "modelprofile.h"
 #include "IniParser.h"
 
+ModelProfile::~ModelProfile() {
+    delete saver;
+    for (const auto& pair : model_classes_stat_) {
+        delete pair.second;
+    }
+    delete sketch1;
+}
+
 /**
  * @class ModelProfile
  * @brief Class for computing and managing various model statistics

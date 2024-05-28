@@ -37,6 +37,7 @@ public:
    * @param configFilePath Path to the configuration file
    */
   explicit ImageSampler(std::string conf_path, int save_interval);
+  ~ImageSampler();
 
   /**
    * @brief Selects uncertain image samples based on configured criteria
