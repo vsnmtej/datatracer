@@ -201,23 +201,23 @@ int main(int argc, char **argv)
     //Saver<distributionBox>& saver = Saver<distributionBox>::GetInstance(save_interval);
     ///////////////Profile Image///////////////////////////////////////////////////////
     std::cout << " entering image profile " << std::endl;
-    ImageProfile image_profile("config.ini", 1, 4);
+    ImageProfile *image_profile = new ImageProfile("config.ini", 1, 4);
     std::cout << "profiling image profile" <<std::endl;
-    image_profile.profile(frame, true);
+    image_profile->profile(frame, true);
     //imgstats.profile(&img, sample=true);
     ////////////////////////////////////////////////////////////////////////////////////    
     
     ///////////////////Log Model Metrics/////////////////////////////////////////
       std::cout << __func__ << ":" << __LINE__ << std::endl;
-    ModelProfile modelprofile("test_model", "config.ini", 1, 3);
+    ModelProfile *modelprofile = new ModelProfile("test_model", "config.ini", 1, 3);
     std::cout << "Logging classification models" <<std::endl;
-    modelprofile.log_classification_model_stats(10.0, top_results);
+    modelprofile->log_classification_model_stats(10.0, top_results);
       std::cout << __func__ << ":" << __LINE__ << std::endl;
     //modelstats(&outputTensor);
     ///////////////// Log Uncertainity Samples /////////////////////////////////
       std::cout << __func__ << ":" << __LINE__ << std::endl;
-    ImageSampler img_sampler("config.ini", 1);
-    img_sampler.sample(top_results, image, true);
+    ImageSampler *img_sampler= new ImageSampler("config.ini", 1);
+    img_sampler->sample(top_results, image, true);
       std::cout << __func__ << ":" << __LINE__ << std::endl;
     //std::vector<std::pair<int, bool>> uncertainity_sampling;
     //img_sampler.sampling(&top_results, &uncertainity_sampling);
@@ -227,6 +227,9 @@ int main(int argc, char **argv)
     std::this_thread::sleep_for( dura ); 
       std::cout << __func__ << ":" << __LINE__ << std::endl;
     //////////////////////////////////// Custom Log /////////////////////////////////
+    delete image_profile;
+    delete modelprofile;
+    delete img_sampler;
     //custom_log(x);
 
 
