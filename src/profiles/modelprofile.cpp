@@ -31,7 +31,7 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
     std::string token="";
 
   // Set member variables
-  saver = new Saver(save_interval);
+  saver = new Saver(save_interval, "ModelProfile");
   model_id_ = model_id;
   IniParser parser;
   modelConfig = parser.parseIniFile(conf_path,
@@ -39,7 +39,7 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
   filesSavePath = modelConfig["filepath"];
   top_classes_ = top_classes;
   sketch1 = new frequent_class_sketch(64);
-  saver->StartSaving("ModelProfile");
+  saver->StartSaving();
 #ifndef TEST
     //uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
     //uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);

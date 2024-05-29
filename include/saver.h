@@ -24,14 +24,14 @@ typedef enum {
 class Saver {
 public:
   // Constructor to specify filename and save interval
-  Saver(int interval);
+  Saver(int interval, std::string class_name);
   ~Saver();
 
   // Add an object to the queue for saving
   void AddObjectToSave(void *object, int type, const std::string& filename);
 
   // Start the background thread to save objects from the queue periodically
-  void StartSaving(std::string class_name);
+  void StartSaving();
 
   // Manual trigger to save all objects in the queue immediately
   void TriggerSave();

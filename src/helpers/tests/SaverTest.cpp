@@ -27,7 +27,7 @@ protected:
 };
 
 TEST_F(SaverTest, AddObjectToSave) {
-    Saver saver(5); // Save interval of 5 minutes
+    Saver saver(5, "SaverTest"); // Save interval of 5 minutes
     distributionBox noiseBox;
 
     saver.AddObjectToSave((void*)(&noiseBox), KLL_TYPE, testFilename);
@@ -36,10 +36,10 @@ TEST_F(SaverTest, AddObjectToSave) {
 }
 
 TEST_F(SaverTest, StartSavingAndTriggerSave) {
-    Saver saver(5); // Save interval of 5 minutes
+    Saver saver(5, "SaverTest"); // Save interval of 5 minutes
     distributionBox noiseBox;
 
-    saver.StartSaving("SaverTest"); // Start the save loop
+    saver.StartSaving(); // Start the save loop
     saver.AddObjectToSave((void*)(&noiseBox), KLL_TYPE, testFilename);
     
     // Trigger save manually

@@ -1,5 +1,6 @@
 #include "saver.h"
 #include <fstream>
+#include "datatracer_log.h"
 
 #include <kll_sketch.hpp>
 #include <frequent_items_sketch.hpp>
@@ -17,32 +18,33 @@ Saver::~Saver(){
     }
     StopSaving();
 }
-Saver::Saver(int interval) {
+Saver::Saver(int interval, std::string class_name) {
     save_interval_ = interval;
+    parent_name = class_name;
     exitSaveLoop.store(false);
 }
 
 void Saver::AddObjectToSave(void *object, int type, const std::string& filename) {
   std::lock_guard<std::mutex> lock(queue_mutex_);
   data_object_t *tmp_obj = new data_object_t;
-  std::cout << filename << std::endl;
   tmp_obj->obj = object;
   tmp_obj->type = type;
   tmp_obj->filename = filename;
   objects_to_save_.push(tmp_obj);
   cv_.notify_one(); // Notify the waiting thread about a new object
+  log_info << parent_name << ": added " << filename << " into saver" << std::endl;
 }
 
-void Saver::StartSaving(std::string class_name) {
+void Saver::StartSaving() {
   save_thread_ = std::thread(&Saver::SaveLoop, this);
-  parent_name = class_name;
+  log_debug << parent_name << ": saver thread started" << std::endl;
 }
 
 // Trigger method is to asynchronously trigger the object save
 void Saver::TriggerSave() {
   std::lock_guard<std::mutex> lock(queue_mutex_);
-
   cv_.notify_one(); // Notify the waiting thread to process the queue manually
+  log_debug << parent_name << ": save notification sent to saver thread" << std::endl;
 }
 
 void Saver::SaveLoop() {
@@ -50,6 +52,7 @@ void Saver::SaveLoop() {
     do {
 
     if (exitSaveLoop.load()) {
+      log_debug << parent_name << ": exited from saver thread" << std::endl;
       pthread_exit(nullptr);// Thread termination condition
     }
 
@@ -57,6 +60,7 @@ void Saver::SaveLoop() {
     cv_.wait(lock, [&] { return !objects_to_save_.empty() || exitSaveLoop.load();}); // Wait for a new object or thread termination
 
     if (exitSaveLoop.load()) {
+      log_debug << parent_name << ": exited from saver thread" << std::endl;
       pthread_exit(nullptr);// Thread termination condition
     }
 
@@ -74,6 +78,7 @@ void Saver::SaveLoop() {
     }while(0); //scope of queue_mutex_
     for (int i = 0; i < save_interval_; i++) {
         if (exitSaveLoop.load()) {
+            log_debug << parent_name << ": exited from saver thread" << std::endl;
             pthread_exit(nullptr);// Thread termination condition
         }
         std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -97,7 +102,7 @@ void Saver::SaveObjectToFile(data_object_t *object) {
         }
     }
     } catch (const std::exception& e) {
-            std::cerr << parent_name << " : Error saving file: " << e.what() << std::endl;
+            log_err << parent_name << " : Error saving file: " << e.what() << std::endl;
     }
 }
 

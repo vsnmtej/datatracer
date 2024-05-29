@@ -8,6 +8,7 @@
 #include <algorithm> // For std::max
 #include <iostream> // For std::cerr and std::endl
 #include <cstdio> // For perror
+#include "datatracer_log.h"
 
 int convertGrayScale(Mat &img, Mat &grayscale){
 	cvtColor(img, grayscale, COLOR_BGR2GRAY);

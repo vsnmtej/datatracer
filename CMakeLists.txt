@@ -1,8 +1,14 @@
 cmake_minimum_required(VERSION 3.10)
 project(imagesampler)
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+
 # Ensure builds on Windows export all symbols
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+set(CMAKE_CXX_FLAGS_DEBUG "-g3 -DDEBUG=1")
+set(CMAKE_CXX_FLAGS_RELEASE "-DDEBUG=0")
 
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_MACOSX_RPATH ON)
@@ -21,7 +27,7 @@ if (MSVC)
   add_compile_options(/W4)
   set(CMAKE_DEBUG_POSTFIX "d")
 else()
-  add_compile_options(-g3 -Wall -pedantic -W -Wextra -lstdc++fs)
+  add_compile_options(-Wall -pedantic -W -Wextra -lstdc++fs)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.0")

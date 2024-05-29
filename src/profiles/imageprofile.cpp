@@ -35,7 +35,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
         std::string endpointUrl="";
         std::string token="";
 
-        saver = new Saver(save_interval);
+        saver = new Saver(save_interval, "ImageProfile");
 
       // Read configuration settings
 		IniParser parser; // Assuming filename is correct
@@ -72,7 +72,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
              }
           }	     
        }
-    saver->StartSaving("ImageProfile");
+    saver->StartSaving();
 #ifndef TEST
     //uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
     //uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);

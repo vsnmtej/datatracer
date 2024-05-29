@@ -28,7 +28,7 @@ ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
     std::string endpointUrl="";
     std::string token="";
 
-    saver = new Saver(save_interval);
+    saver = new Saver(save_interval, "ImageSampler");
 
     // Read configuration settings
     IniParser parser; // Assuming filename is correct
@@ -50,7 +50,7 @@ ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
       }
     }
 
-    saver->StartSaving("ImageSampler");
+    saver->StartSaving();
 //    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
 //    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
   } catch (const std::runtime_error& e) {
