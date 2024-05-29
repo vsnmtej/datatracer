@@ -18,22 +18,15 @@ else()
     set(SOURCE_DIR ${CMAKE_SOURCE_DIR})
 endif()
 
-if(APPLE)
-find_package(Datasketches  REQUIRED)
-INCLUDE_DIRECTORIES(/tmp/install/DataSketches/include/)
-INCLUDE_DIRECTORIES(/tmp/install/DataSketches/libs/)
-
-INCLUDE_DIRECTORIES(/Users/venkatapydialli/Projects/Edgetpu/datatracer/include/)
-INCLUDE_DIRECTORIES(/Users/venkatapydialli/Projects/Edgetpu/datatracer/build/)
-
-# TensorFlow Lite Integration
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../tflite-dist/include/)
-INCLUDE_DIRECTORIES($(CMAKE_CURRENT_SOURCE_DIR)/../tflite-dist/libs/)
-else()
-message(STATUS "NOT apple: ${OpenCV_DIR}")
 INCLUDE_DIRECTORIES(${SOURCE_DIR}/include/datasketches)
 INCLUDE_DIRECTORIES(${SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${SOURCE_DIR}/build)
+if(APPLE)
+# TensorFlow Lite Integration
+INCLUDE_DIRECTORIES(${SOURCE_DIR}/../tflite-dist/include/)
+INCLUDE_DIRECTORIES(${SOURCE_DIR}/../tflite-dist/libs/)
+else()
+message(STATUS "NOT apple: ${OpenCV_DIR}")
 INCLUDE_DIRECTORIES(${SOURCE_DIR}/../tensorflow_src/)
 INCLUDE_DIRECTORIES(${SOURCE_DIR}/../tflite_v2/flatbuffers/include/)
 endif()
@@ -45,7 +38,7 @@ if(APPLE)
 else()
     target_link_directories(${PROJECT_NAME} PRIVATE ${SOURCE_DIR}/../tflite_v2/)
 endif()
-    target_link_libraries(TFLiteCheck tensorflowlite ${OpenCV_LIBS} imagesampler imageprofiler)
+    target_link_libraries(TFLiteCheck tensorflowlite ${OpenCV_LIBS} imagesampler imageprofiler modelprofiler)
 
 if(WIN32)
     add_custom_command(

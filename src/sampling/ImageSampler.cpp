@@ -5,6 +5,10 @@
 #include "ImageSampler.h"
 #include "imghelpers.h"
 
+ImageSampler::~ImageSampler() {
+    delete saver;
+}
+
 /**
  * @class ImageSampler
  * @brief Class for selecting uncertain image samples for further analysis
@@ -29,12 +33,12 @@ ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
     // Read configuration settings
     IniParser parser; // Assuming filename is correct
     samplingConfig = parser.parseIniFile(conf_path, "sampling", "");
-    filesSavePath = samplingConfig["files"];
-
+    filesSavePath = samplingConfig["filepath"];
+    samplingConfig.erase("filepath");
     // Register sampling statistics for saving based on configuration
     for (const auto& sampling_confidence : samplingConfig) {
       std::string name = sampling_confidence.first;
-      if (strcmp(name.c_str(), "MARGINCONFIDENCE")) {
+      if (strcmp(name.c_str(), "MARGINCONFIDENCE") == 0) {
       saver->AddObjectToSave((void*)(&marginConfidenceBox), KLL_TYPE, filesSavePath+"marginconfidence.bin");
       } else if(strcmp(name.c_str(), "LEASTCONFIDENCE") == 0) {
       saver->AddObjectToSave((void*)(&leastConfidenceBox), KLL_TYPE, filesSavePath+"leastconfidence.bin");
@@ -46,9 +50,9 @@ ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
       }
     }
 
-    saver->StartSaving();
-    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
-    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
+    saver->StartSaving("ImageSampler");
+//    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
+//    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
   } catch (const std::runtime_error& e) {
     std::cerr << e.what() << std::endl;
   }

@@ -36,6 +36,7 @@ public:
    * @param metrics The set of image metrics to be tracked (e.g., "contrast", "brightness").
    */
   ImageProfile(std::string conf_path, int save_interval, int channels);
+  ~ImageProfile();
 
   /**
    * @brief Logs image statistics for the provided image data.
@@ -79,7 +80,7 @@ private:
   /**
    * @brief KLL sketch for storing mean pixel value distribution.
    */
-  std::vector<distributionBox> meanBox;
+  std::vector<distributionBox *> meanBox;
   distributionBox entropyBox;
 
   /**

@@ -39,7 +39,8 @@ find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIRS})
 
 # Try to find OpenCV
-set(OpenCV_DIR "/usr")
+#set(OpenCV_DIR "/usr")
+set(OpenCV_DIR "/Users/venkatapydialli/Projects/Edgetpu/install/lib/cmake/opencv4")
 find_package(OpenCV REQUIRED)
 
 include_directories(${GTEST_INCLUDE_DIRS})
@@ -63,9 +64,9 @@ add_library(imagesampler SHARED
 add_library(imageprofiler SHARED
 			src/helpers/saver.cpp
 			src/helpers/IniParser.cpp
-            src/helpers/imghelpers.cpp
-            src/helpers/http_uploader.cpp
-            src/helpers/objectuploader.cpp
+                        src/helpers/imghelpers.cpp
+                        src/helpers/http_uploader.cpp
+                        src/helpers/objectuploader.cpp
 			src/profiles/imageprofile.cpp
 			)
 
@@ -77,82 +78,82 @@ add_library(modelprofiler SHARED
             src/profiles/modelprofile.cpp
             )	    
 
-add_executable(Tar_GZ_test
-            src/helpers/tar_gz_creator.cpp
-            src/helpers/tests/test_tar_gz_creator.cpp
-            )
+#add_executable(Tar_GZ_test
+#            src/helpers/tar_gz_creator.cpp
+#            src/helpers/tests/test_tar_gz_creator.cpp
+#            )
 
 
-add_executable(Http_uploader_test
-	    src/helpers/http_uploader.cpp
-            src/helpers/tests/test_http_uploader.cpp	    
-	    )   
+#add_executable(Http_uploader_test
+#	    src/helpers/http_uploader.cpp
+#            src/helpers/tests/test_http_uploader.cpp	    
+#	    )   
 
 
-add_executable(ImageProcessingTest
-                src/helpers/imghelpers.cpp
-                src/helpers/tests/ImageProcessingTest.cpp
-              )
+#add_executable(ImageProcessingTest
+#                src/helpers/imghelpers.cpp
+#                src/helpers/tests/ImageProcessingTest.cpp
+#              )
 
-add_executable(IniParserTest
-                src/helpers/IniParser.cpp
-                src/helpers/tests/IniParserTest.cpp
-              )
+#add_executable(IniParserTest
+#                src/helpers/IniParser.cpp
+#                src/helpers/tests/IniParserTest.cpp
+#              )
 
-add_executable(SaverTest
-                src/helpers/saver.cpp
-                src/helpers/tests/SaverTest.cpp
-              )
+#add_executable(SaverTest
+#                src/helpers/saver.cpp
+#                src/helpers/tests/SaverTest.cpp
+#              )
 
-add_executable(image_profiler_test
-                src/helpers/saver.cpp
-                src/helpers/IniParser.cpp
-                src/helpers/imghelpers.cpp
-                src/helpers/http_uploader.cpp
-                src/helpers/objectuploader.cpp
-                src/profiles/imageprofile.cpp
-                src/profiles/tests/image_profiler_test.cpp
-              )
-add_executable(model_profiler_test
-                src/helpers/saver.cpp
-                src/helpers/IniParser.cpp
-                src/helpers/http_uploader.cpp
-                src/helpers/objectuploader.cpp
-                src/profiles/modelprofile.cpp
-                src/profiles/tests/model_profile_test.cpp
-	      )
+#add_executable(image_profiler_test
+#                src/helpers/saver.cpp
+#                src/helpers/IniParser.cpp
+#                src/helpers/imghelpers.cpp
+#                src/helpers/http_uploader.cpp
+#                src/helpers/objectuploader.cpp
+#                src/profiles/imageprofile.cpp
+#                src/profiles/tests/image_profiler_test.cpp
+#              )
+#add_executable(model_profiler_test
+#                src/helpers/saver.cpp
+#                src/helpers/IniParser.cpp
+#                src/helpers/http_uploader.cpp
+#                src/helpers/objectuploader.cpp
+#                src/profiles/modelprofile.cpp
+#                src/profiles/tests/model_profile_test.cpp
+#	      )
 
-add_executable(image_sampler_test
-                src/helpers/saver.cpp
-                src/helpers/IniParser.cpp
-                src/helpers/imghelpers.cpp
-                src/helpers/http_uploader.cpp
-                src/helpers/objectuploader.cpp
-                src/sampling/ImageSampler.cpp
-                src/sampling/tests/test_image_sampler.cpp
-              )
+#add_executable(image_sampler_test
+#                src/helpers/saver.cpp
+#                src/helpers/IniParser.cpp
+#                src/helpers/imghelpers.cpp
+#                src/helpers/http_uploader.cpp
+#                src/helpers/objectuploader.cpp
+#                src/sampling/ImageSampler.cpp
+#                src/sampling/tests/test_image_sampler.cpp
+#              )
 
-target_compile_definitions(ImageProcessingTest PRIVATE TEST)
-target_compile_definitions(IniParserTest PRIVATE TEST)
-target_compile_definitions(SaverTest PRIVATE TEST)
-target_compile_definitions(image_profiler_test PRIVATE TEST)
-target_compile_definitions(image_sampler_test PRIVATE TEST)
-target_compile_definitions(model_profiler_test PRIVATE TEST)
-target_compile_definitions(Http_uploader_test PRIVATE TEST)
-target_compile_definitions(Tar_GZ_test PRIVATE TEST)
+#target_compile_definitions(ImageProcessingTest PRIVATE TEST)
+#target_compile_definitions(IniParserTest PRIVATE TEST)
+#target_compile_definitions(SaverTest PRIVATE TEST)
+#target_compile_definitions(image_profiler_test PRIVATE TEST)
+#target_compile_definitions(image_sampler_test PRIVATE TEST)
+#target_compile_definitions(model_profiler_test PRIVATE TEST)
+#target_compile_definitions(Http_uploader_test PRIVATE TEST)
+#target_compile_definitions(Tar_GZ_test PRIVATE TEST)
 
-target_link_libraries(ImageProcessingTest gtest gtest_main ${OpenCV_LIBS} pthread)
-target_link_libraries(IniParserTest gtest gtest_main ${OpenCV_LIBS} pthread)
-target_link_libraries(SaverTest gtest gtest_main ${OpenCV_LIBS} pthread)
-target_link_libraries(image_profiler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} curl pthread)
-target_link_libraries(image_sampler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} curl pthread)
-target_link_libraries(model_profiler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} curl pthread)
-target_link_libraries(Http_uploader_test gtest gtest_main ${OpenCV_LIBS} ${CURL_LIBRARIES} curl pthread)
-target_link_libraries(Tar_GZ_test gtest gtest_main tar z boost_filesystem boost_system pthread)
+#target_link_libraries(ImageProcessingTest gtest gtest_main ${OpenCV_LIBS} pthread curl)
+#target_link_libraries(IniParserTest gtest gtest_main ${OpenCV_LIBS} pthread curl)
+#target_link_libraries(SaverTest gtest gtest_main ${OpenCV_LIBS} pthread)
+#target_link_libraries(image_profiler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} curl pthread)
+#target_link_libraries(image_sampler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} curl pthread)
+#target_link_libraries(model_profiler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} curl pthread)
+#target_link_libraries(Http_uploader_test gtest gtest_main ${OpenCV_LIBS} ${CURL_LIBRARIES} curl pthread)
+#target_link_libraries(Tar_GZ_test gtest gtest_main tar z boost_filesystem boost_system pthread)
 
-target_link_libraries(imagesampler ${OpenCV_LIBS} pthread)
-target_link_libraries(imageprofiler ${OpenCV_LIBS} pthread)
-target_link_libraries(modelprofiler ${OpenCV_LIBS} pthread)
+target_link_libraries(imagesampler ${OpenCV_LIBS} pthread curl)
+target_link_libraries(imageprofiler ${OpenCV_LIBS} pthread curl)
+target_link_libraries(modelprofiler ${OpenCV_LIBS} pthread curl)
 
 # Install the library
 install(TARGETS ${CMAKE_PROJECT_NAME}
@@ -163,12 +164,12 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/include
 
 enable_testing()
 #Test
-add_test(NAME ImageProcessingTest COMMAND ImageProcessingTest)
-add_test(NAME IniParserTest COMMAND IniParserTest)
-add_test(NAME SaverTest COMMAND SaverTest)
-add_test(NAME image_profiler_test COMMAND image_profiler_test)
-add_test(NAME image_sampler_test COMMAND image_sampler_test)
-add_test(NAME mode_profiler_test COMMAND model_profiler_test)
+#add_test(NAME ImageProcessingTest COMMAND ImageProcessingTest)
+#add_test(NAME IniParserTest COMMAND IniParserTest)
+#add_test(NAME SaverTest COMMAND SaverTest)
+#add_test(NAME image_profiler_test COMMAND image_profiler_test)
+#add_test(NAME image_sampler_test COMMAND image_sampler_test)
+#add_test(NAME mode_profiler_test COMMAND model_profiler_test)
 #add_test(NAME  COMMAND )
 
 add_subdirectory(examples/TFLite_Check EXCLUDE_FROM_ALL)

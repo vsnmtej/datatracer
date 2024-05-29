@@ -187,7 +187,7 @@ int main(int argc, char **argv)
     // Load Labels
     auto labels = load_labels(labelFile);
 
-    // Print labels with confidence in input image
+    /* Print labels with confidence in input image
     for (const auto &result : top_results)
     {
         const float confidence = result.first;
@@ -195,28 +195,37 @@ int main(int argc, char **argv)
 	std::cout << result.first << " " <<result.second << " " << std::endl;
         std::string output_txt = "Label :" + labels[index] + " Confidence : " + std::to_string(confidence);
         cv::putText(frame, output_txt, cv::Point(10, 60), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 0, 255), 2);
-    }
+    }*/
 
     int save_interval = 2000; // seconds
     //Saver<distributionBox>& saver = Saver<distributionBox>::GetInstance(save_interval);
     ///////////////Profile Image///////////////////////////////////////////////////////
-    ImageProfile image_profile("config.ini", 1, 3);
-    image_profile.profile(frame, false);
-    //ImageProfile imgstats("config.ini", &saver);
+    std::cout << " entering image profile " << std::endl;
+    ImageProfile image_profile("config.ini", 1, 4);
+    std::cout << "profiling image profile" <<std::endl;
+    image_profile.profile(frame, true);
     //imgstats.profile(&img, sample=true);
     ////////////////////////////////////////////////////////////////////////////////////    
     
     ///////////////////Log Model Metrics/////////////////////////////////////////
-    //ModelProfile modelstats("config.ini", model_id, no_of_classes, &saver);
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
+    ModelProfile modelprofile("test_model", "config.ini", 1, 3);
+    std::cout << "Logging classification models" <<std::endl;
+    modelprofile.log_classification_model_stats(10.0, top_results);
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
     //modelstats(&outputTensor);
-    ////////////////////////////////////////////////////////////////////////////
-    
     ///////////////// Log Uncertainity Samples /////////////////////////////////
-    //ImageSampler img_sampler("config.ini", &saver);
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
+    ImageSampler img_sampler("config.ini", 1);
+    img_sampler.sample(top_results, image, true);
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
     //std::vector<std::pair<int, bool>> uncertainity_sampling;
     //img_sampler.sampling(&top_results, &uncertainity_sampling);
     ////////////////////////////////////////////////////////////////////////////
-     
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
+    std::chrono::seconds dura( 5);
+    std::this_thread::sleep_for( dura ); 
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
     //////////////////////////////////// Custom Log /////////////////////////////////
     //custom_log(x);
 
@@ -226,8 +235,10 @@ int main(int argc, char **argv)
     //custom_log(x);
 
     // Display image
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
     cv::imshow("Output", frame);
     cv::waitKey(0);
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
 
     return 0;
 }

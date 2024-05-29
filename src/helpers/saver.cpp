@@ -6,14 +6,24 @@
 
 typedef datasketches::kll_sketch<float> distributionBox;
 typedef datasketches::frequent_items_sketch<std::string> frequent_class_sketch;
-
+Saver::~Saver(){
+    std::unique_lock<std::mutex> lock(queue_mutex_);
+    while (!(objects_to_save_.empty())) {
+      data_object_t *object = objects_to_save_.front();
+      objects_to_save_.pop();
+      delete object;
+    }
+    StopSaving();
+}
 Saver::Saver(int interval) {
     save_interval_minutes_ = interval;
+    exitSaveLoop.store(false);
 }
 
 void Saver::AddObjectToSave(void *object, int type, const std::string& filename) {
   std::lock_guard<std::mutex> lock(queue_mutex_);
   data_object_t *tmp_obj = new data_object_t;
+  std::cout << filename << std::endl;
   tmp_obj->obj = object;
   tmp_obj->type = type;
   tmp_obj->filename = filename;
@@ -21,8 +31,9 @@ void Saver::AddObjectToSave(void *object, int type, const std::string& filename)
   cv_.notify_one(); // Notify the waiting thread about a new object
 }
 
-void Saver::StartSaving() {
+void Saver::StartSaving(std::string class_name) {
   save_thread_ = std::thread(&Saver::SaveLoop, this);
+  parent_name = class_name;
 }
 
 // Trigger method is to asynchronously trigger the object save
@@ -36,11 +47,15 @@ void Saver::SaveLoop() {
   while (true) {
     do {
 
-    std::unique_lock<std::mutex> lock(queue_mutex_);
-    cv_.wait(lock, [&] { return !objects_to_save_.empty() || !save_thread_.joinable(); }); // Wait for a new object or thread termination
+    if (exitSaveLoop.load()) {
+      pthread_exit(nullptr);// Thread termination condition
+    }
 
-    if (!save_thread_.joinable()) {
-      break; // Thread termination condition
+    std::unique_lock<std::mutex> lock(queue_mutex_);
+    cv_.wait(lock, [&] { return !objects_to_save_.empty() || exitSaveLoop.load();}); // Wait for a new object or thread termination
+
+    if (exitSaveLoop.load()) {
+      pthread_exit(nullptr);// Thread termination condition
     }
 
     data_object_t *start_object = objects_to_save_.front();
@@ -55,7 +70,7 @@ void Saver::SaveLoop() {
     }while(start_object != objects_to_save_.front());
 
     }while(0); //scope of queue_mutex_
-    std::this_thread::sleep_for(std::chrono::minutes(save_interval_minutes_));
+    std::this_thread::sleep_for(std::chrono::seconds(10));
   }
 }
 
@@ -75,12 +90,13 @@ void Saver::SaveObjectToFile(data_object_t *object) {
         }
     }
     } catch (const std::exception& e) {
-            std::cerr << "Error saving file: " << e.what() << std::endl;
+            std::cerr << parent_name << " : Error saving file: " << e.what() << std::endl;
     }
 }
 
 void Saver::StopSaving(void) {
     if (save_thread_.joinable()) {
-        save_thread_.detach();
+        exitSaveLoop.store(true);
+        save_thread_.join();
     }
 }

@@ -103,7 +103,36 @@ TEST_F(ImageProfileTest, SaveObjectToFile) {
     // Check if the file was created and contains data
     std::ifstream infile("test_savefile.bin");
     EXPECT_TRUE(infile.is_open());  // The file should exist
-        image_profile->saver->StopSaving();
-    
+    image_profile->saver->StopSaving();
     // Additional checks can include validating the content of the file
+    distributionBox loadedBox;
+    loadedBox.deserialize(infile);
+    infile.close();
+    EXPECT_EQ(testBox, loadedBox);  // Validate that the deserialized box matches the original
+    // Additional checks can include validating the content of the file
+}
+
+// Test updating and re-saving functionality
+TEST_F(ImageProfileTest, UpdateAndResave) {
+    // Create a simple grayscale image for testing
+    cv::Mat img = cv::Mat::ones(100, 100, CV_8UC1) * 128;  // 100x100 grayscale image with pixel value 128
+    
+    // Profile the image and save initially
+    image_profile->profile(img, true);
+    std::this_thread::sleep_for(std::chrono::seconds(2));  // Wait for the first save
+    
+    // Update the distributionBox and re-save
+    distributionBox* testBox = &(image_profile->saver->GetObjectToSave<distributionBox>(0));
+    testBox->update(256);  // Example update to the distribution box
+    image_profile->saver->TriggerSave();  // Trigger a re-save
+    std::this_thread::sleep_for(std::chrono::seconds(2));  // Wait for the re-save to complete
+    
+    // Validate the re-saved file
+    std::ifstream infile("test_savefile.bin");
+    EXPECT_TRUE(infile.is_open());  // The file should exist
+
+    distributionBox loadedBox;
+    loadedBox.deserialize(infile);
+    infile.close();
+    EXPECT_EQ(*testBox, loadedBox);  // Validate that the deserialized box matches the updated box
 }
