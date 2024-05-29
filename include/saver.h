@@ -47,7 +47,7 @@ private:
 
   std::atomic<bool> exitSaveLoop;
   std::queue<data_object_t *> objects_to_save_;  // Queue of objects to be saved
-  int save_interval_minutes_;     // Interval between saves in minutes
+  int save_interval_;     // Interval between saves in minutes
   std::thread save_thread_;        // Thread object for saving
   std::mutex queue_mutex_;         // Mutex for queue access
   std::condition_variable cv_;     // Condition variable for thread synchronization

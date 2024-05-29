@@ -7,16 +7,18 @@
 typedef datasketches::kll_sketch<float> distributionBox;
 typedef datasketches::frequent_items_sketch<std::string> frequent_class_sketch;
 Saver::~Saver(){
-    std::unique_lock<std::mutex> lock(queue_mutex_);
-    while (!(objects_to_save_.empty())) {
-      data_object_t *object = objects_to_save_.front();
-      objects_to_save_.pop();
-      delete object;
+    {
+        std::unique_lock<std::mutex> lock(queue_mutex_);
+        while (!(objects_to_save_.empty())) {
+          data_object_t *object = objects_to_save_.front();
+          objects_to_save_.pop();
+          delete object;
+        }
     }
     StopSaving();
 }
 Saver::Saver(int interval) {
-    save_interval_minutes_ = interval;
+    save_interval_ = interval;
     exitSaveLoop.store(false);
 }
 
@@ -70,7 +72,12 @@ void Saver::SaveLoop() {
     }while(start_object != objects_to_save_.front());
 
     }while(0); //scope of queue_mutex_
-    std::this_thread::sleep_for(std::chrono::seconds(10));
+    for (int i = 0; i < save_interval_; i++) {
+        if (exitSaveLoop.load()) {
+            pthread_exit(nullptr);// Thread termination condition
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
   }
 }
 
@@ -97,6 +104,7 @@ void Saver::SaveObjectToFile(data_object_t *object) {
 void Saver::StopSaving(void) {
     if (save_thread_.joinable()) {
         exitSaveLoop.store(true);
+        cv_.notify_one(); // Notify the waiting thread to process the queue manually
         save_thread_.join();
     }
 }

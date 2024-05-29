@@ -22,7 +22,7 @@ protected:
     void createSampleIniFile(const std::string& filename) {
         std::ofstream ini_file(filename, std::ios::trunc);
         ini_file << "[sampling]\n";
-        ini_file << "files = ./\n";
+        ini_file << "filepath = ./\n";
         ini_file << "MARGINCONFIDENCE = 0.1\n";  // Sample threshold for margin confidence
         ini_file << "LEASTCONFIDENCE = 0.2\n";
         ini_file << "RATIOCONFIDENCE = 0.3\n";
