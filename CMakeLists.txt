@@ -52,8 +52,6 @@ INCLUDE_DIRECTORIES(/usr/local/libs/)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/include/datasketches)
 
-add_subdirectory(examples/TFLite_Check)
-
 add_library(imagesampler SHARED
             src/helpers/saver.cpp
             src/helpers/IniParser.cpp
@@ -173,3 +171,5 @@ enable_testing()
 #add_test(NAME image_sampler_test COMMAND image_sampler_test)
 #add_test(NAME mode_profiler_test COMMAND model_profiler_test)
 #add_test(NAME  COMMAND )
+
+add_subdirectory(examples/TFLite_Check EXCLUDE_FROM_ALL)
