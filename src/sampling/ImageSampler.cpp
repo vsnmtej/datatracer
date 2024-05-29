@@ -78,6 +78,7 @@ int ImageSampler::sample(std::vector<std::pair<float, int>> &results, cv::Mat &i
 	// Apply configured sampling criteria to identify uncertain samples
 	for (const auto& sampling_confidence : samplingConfig) {
 		std::string name = sampling_confidence.first;
+		std::string baseName = name;
 		try {
         		thresh = std::stof(sampling_confidence.second);  // Attempt to convert the string to float
         		std::cout << "Converted value: " << thresh << std::endl;
@@ -88,35 +89,31 @@ int ImageSampler::sample(std::vector<std::pair<float, int>> &results, cv::Mat &i
     		}
 		float confidence_score = -1.0f;
 
-		if (strcmp(name.c_str(), "marginconfidence") == 0) {
+		if (strcmp(name.c_str(), "MARGINCONFIDENCE") == 0) {
 			// Compute margin confidence and update statistics
 			confidence_score = margin_confidence(confidence, false);
 			marginConfidenceBox.update(confidence_score);
 			if (confidence_score >= thresh) {
-				std::string baseName = "marginconfidence";
 				std::string savedImagePath = saveImageWithIncrementalName(img, filesSavePath, baseName);
 			}
-		} else if (strcmp(name.c_str(), "leastconfidence") == 0) {
+		} else if (strcmp(name.c_str(), "LEASTCONFIDENCE") == 0) {
 			confidence_score = least_confidence(confidence, false);
 			leastConfidenceBox.update(confidence_score);
 			if (confidence_score >= thresh){
-				std::string baseName = "leastconfidence";
 				std::string savedImagePath = saveImageWithIncrementalName(img, filesSavePath, baseName);
 			}
-		} else if (strcmp(name.c_str(), "ratioconfidence") == 0) {
+		} else if (strcmp(name.c_str(), "RATIOCONFIDENCE") == 0) {
 			confidence_score = ratio_confidence(confidence, false);
 			ratioConfidenceBox.update(confidence_score);
 			if (confidence_score >= thresh){
 				std::string imagePath = filesSavePath;
-				std::string baseName = "ratioconfidence";
 				std::string savedImagePath = saveImageWithIncrementalName(img, filesSavePath, baseName);
 			}
-		} else if (strcmp(name.c_str(), "entropyconfidence") == 0) {
+		} else if (strcmp(name.c_str(), "ENTROPYCONFIDENCE") == 0) {
 			confidence_score = entropy_confidence(confidence);
 			entropyConfidenceBox.update(confidence_score);
 			if (confidence_score >= thresh){
 				std::string imagePath = filesSavePath;
-				std::string baseName = "entropyconfidence";
 				std::string savedImagePath = saveImageWithIncrementalName(img, filesSavePath, baseName);
 			}
 		}
