@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "iniParser.h" // Assuming this is the header where the parseIniFile method is defined
+#include "iniparser.h" // Assuming this is the header where the parseIniFile method is defined
 #include <map>
 #include <fstream>
 

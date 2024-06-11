@@ -73,7 +73,7 @@ add_library(imagesampler SHARED
 
 add_library(imageprofiler SHARED
 			src/helpers/saver.cpp
-			src/helpers/iniParser.cpp
+			src/helpers/iniparser.cpp
                         src/helpers/imghelpers.cpp
                         src/helpers/http_uploader.cpp
                         src/helpers/objectuploader.cpp
@@ -82,7 +82,7 @@ add_library(imageprofiler SHARED
 
 add_library(modelprofiler SHARED 
             src/helpers/saver.cpp
-            src/helpers/iniParser.cpp
+            src/helpers/iniparser.cpp
             src/helpers/http_uploader.cpp
             src/helpers/objectuploader.cpp
             src/profiles/modelprofile.cpp
@@ -109,7 +109,7 @@ add_executable(ImageProcessingTest
               )
 
 add_executable(IniParserTest
-                src/helpers/Iniparser.cpp
+                src/helpers/iniparser.cpp
                 src/helpers/tests/iniparser_test.cpp
               )
 
@@ -122,15 +122,15 @@ add_executable(image_profiler_test
                 src/helpers/saver.cpp
                 src/helpers/iniparser.cpp
                 src/helpers/imghelpers.cpp
-                src/helpers/httpuploader.cpp
+                src/helpers/http_uploader.cpp
                 src/helpers/objectuploader.cpp
                 src/profiles/imageprofile.cpp
-                src/profiles/tests/imageprofiler_test.cpp
+                src/profiles/tests/imageprofile_test.cpp
               )
 add_executable(model_profiler_test
                 src/helpers/saver.cpp
-                src/helpers/iniParser.cpp
-                src/helpers/httpuploader.cpp
+                src/helpers/iniparser.cpp
+                src/helpers/http_uploader.cpp
                 src/helpers/objectuploader.cpp
                 src/profiles/modelprofile.cpp
                 src/profiles/tests/modelprofile_test.cpp
@@ -140,13 +140,14 @@ add_executable(image_sampler_test
                 src/helpers/saver.cpp
                 src/helpers/iniparser.cpp
                 src/helpers/imghelpers.cpp
-                src/helpers/httpuploader.cpp
+                src/helpers/http_uploader.cpp
                 src/helpers/objectuploader.cpp
                 src/sampling/imagesampler.cpp
                 src/sampling/tests/imagesampler_test.cpp
               )
 
 target_compile_definitions(ImageProcessingTest PRIVATE TEST)
+
 target_compile_definitions(IniParserTest PRIVATE TEST)
 target_compile_definitions(SaverTest PRIVATE TEST)
 target_compile_definitions(image_profiler_test PRIVATE TEST)
