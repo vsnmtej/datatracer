@@ -2,7 +2,7 @@
  * @file ImageSampler.cpp
  * @brief Implements ImageSampler class for image sampling based on uncertainty
  */
-#include "ImageSampler.h"
+#include "imagesampler.h"
 #include "imghelpers.h"
 
 ImageSampler::~ImageSampler() {
@@ -20,14 +20,6 @@ ImageSampler::~ImageSampler() {
    */
 ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
   try {
-    s3_client_config_t s3_client_config;
-    std::string bucketName;
-    std::string objectKey;
-    std::chrono::milliseconds interval;
-    int uploadtype=1;
-    std::string endpointUrl="";
-    std::string token="";
-
     saver = new Saver(save_interval, "ImageSampler");
 
     // Read configuration settings
@@ -49,10 +41,16 @@ ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
       saver->AddObjectToSave((void*)(&entropyConfidenceBox), KLL_TYPE, filesSavePath+"entropyconfidence.bin");
       }
     }
-
+    /*std::string endpointUrl="";
+    std::string token="";
     saver->StartSaving();
-//    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
-//    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
+    s3_client_config_t s3_client_config;
+    std::string bucketName;
+    std::string objectKey;
+    std::chrono::milliseconds interval;
+    int uploadtype=1;
+    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
+    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);*/
   } catch (const std::runtime_error& e) {
     std::cerr << e.what() << std::endl;
   }

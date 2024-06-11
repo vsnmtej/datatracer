@@ -64,16 +64,16 @@ include_directories(${CMAKE_SOURCE_DIR}/include/datasketches)
 
 add_library(imagesampler SHARED
             src/helpers/saver.cpp
-            src/helpers/IniParser.cpp
+            src/helpers/iniparser.cpp
             src/helpers/imghelpers.cpp
             src/helpers/http_uploader.cpp
             src/helpers/objectuploader.cpp
-            src/sampling/ImageSampler.cpp
+            src/sampling/imagesampler.cpp
 			)
 
 add_library(imageprofiler SHARED
 			src/helpers/saver.cpp
-			src/helpers/IniParser.cpp
+			src/helpers/iniParser.cpp
                         src/helpers/imghelpers.cpp
                         src/helpers/http_uploader.cpp
                         src/helpers/objectuploader.cpp
@@ -82,7 +82,7 @@ add_library(imageprofiler SHARED
 
 add_library(modelprofiler SHARED 
             src/helpers/saver.cpp
-            src/helpers/IniParser.cpp
+            src/helpers/iniParser.cpp
             src/helpers/http_uploader.cpp
             src/helpers/objectuploader.cpp
             src/profiles/modelprofile.cpp
@@ -93,57 +93,57 @@ message(STATUS "skipping TEST for MAC")
 else()
 add_executable(Tar_GZ_test
             src/helpers/tar_gz_creator.cpp
-            src/helpers/tests/test_tar_gz_creator.cpp
+            src/helpers/tests/tar_gz_creator_test.cpp
             )
 
 
 add_executable(Http_uploader_test
 	    src/helpers/http_uploader.cpp
-            src/helpers/tests/test_http_uploader.cpp	    
+            src/helpers/tests/http_uploader_test.cpp	    
 	    )   
 
 
 add_executable(ImageProcessingTest
                 src/helpers/imghelpers.cpp
-                src/helpers/tests/ImageProcessingTest.cpp
+                src/helpers/tests/imagehelpers_test.cpp
               )
 
 add_executable(IniParserTest
-                src/helpers/IniParser.cpp
-                src/helpers/tests/IniParserTest.cpp
+                src/helpers/Iniparser.cpp
+                src/helpers/tests/iniparser_test.cpp
               )
 
 add_executable(SaverTest
                 src/helpers/saver.cpp
-                src/helpers/tests/SaverTest.cpp
+                src/helpers/tests/saver_test.cpp
               )
 
 add_executable(image_profiler_test
                 src/helpers/saver.cpp
-                src/helpers/IniParser.cpp
+                src/helpers/iniparser.cpp
                 src/helpers/imghelpers.cpp
-                src/helpers/http_uploader.cpp
+                src/helpers/httpuploader.cpp
                 src/helpers/objectuploader.cpp
                 src/profiles/imageprofile.cpp
-                src/profiles/tests/image_profiler_test.cpp
+                src/profiles/tests/imageprofiler_test.cpp
               )
 add_executable(model_profiler_test
                 src/helpers/saver.cpp
-                src/helpers/IniParser.cpp
-                src/helpers/http_uploader.cpp
+                src/helpers/iniParser.cpp
+                src/helpers/httpuploader.cpp
                 src/helpers/objectuploader.cpp
                 src/profiles/modelprofile.cpp
-                src/profiles/tests/model_profile_test.cpp
+                src/profiles/tests/modelprofile_test.cpp
 	      )
 
 add_executable(image_sampler_test
                 src/helpers/saver.cpp
-                src/helpers/IniParser.cpp
+                src/helpers/iniparser.cpp
                 src/helpers/imghelpers.cpp
-                src/helpers/http_uploader.cpp
+                src/helpers/httpuploader.cpp
                 src/helpers/objectuploader.cpp
-                src/sampling/ImageSampler.cpp
-                src/sampling/tests/test_image_sampler.cpp
+                src/sampling/imagesampler.cpp
+                src/sampling/tests/imagesampler_test.cpp
               )
 
 target_compile_definitions(ImageProcessingTest PRIVATE TEST)

@@ -32,7 +32,8 @@ std::vector<std::string> load_labels(const std::string& labels_file) {
     return labels;
 }
 
-void run_inference_on_image(const std::string& imageFile, tflite::Interpreter* interpreter, const std::vector<std::string>& labels, const std::string& model_name, ImageProfile &image_profile ) {
+void run_inference_on_image(const std::string& imageFile, tflite::Interpreter* interpreter, const std::vector<std::string>& labels, const std::string& model_name, ImageProfile &image_profile, 
+	       ModelProfile &model_profile, ImageSampler &image_sampler) {
     // Get Input Tensor Dimensions
     int input = interpreter->inputs()[0];
     auto height = interpreter->tensor(input)->dims->data[1];
@@ -115,6 +116,11 @@ void run_inference_on_image(const std::string& imageFile, tflite::Interpreter* i
     std::cout << "profiling image profile" <<std::endl;
     image_profile.profile(frame, true);
 
+    std::cout << "profiling model profile" << std::endl;
+    model_profile.log_classification_model_stats(10.0, top_results);
+
+    std::cout << "profiling samper" << std::endl;
+    image_sampler.sample(top_results, image, true);
 
     // Display image
     //cv::imshow("Output", frame);
@@ -158,15 +164,16 @@ int main(int argc, char** argv) {
     // Load Labels
     auto labels = load_labels(labelFile);
 
-    //ImageProfile *image_profile = new ImageProfile("config.ini", 1, 4);
-    
     ImageProfile image_profile("config.ini", 1, 4);
+    ModelProfile model_profile("test_model", "config.ini", 1, 3);
+    ImageSampler image_sampler("config.ini", 1);
 
     // Traverse image folder and run inference on each image
     for (const auto& entry : fs::directory_iterator(imageFolder)) {
         if (entry.is_regular_file() && (entry.path().extension() == ".JPEG" || entry.path().extension() == ".png")) {
             std::cout << "Processing image: " << entry.path().string() << std::endl;
-            run_inference_on_image(entry.path().string(), interpreter.get(), labels, modelFileName, image_profile);
+            run_inference_on_image(entry.path().string(), interpreter.get(), labels, modelFileName,
+			    image_profile, model_profile, image_sampler);
         }
     }
 

@@ -6,7 +6,7 @@
 #include <vector>
 #include <cmath>
 #include "imageprofile.h"
-#include "IniParser.h"
+#include "iniparser.h"
 
 ImageProfile::~ImageProfile() {
     delete saver;
@@ -27,14 +27,6 @@ ImageProfile::~ImageProfile() {
 
 ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channels=1) {
     try {
-        s3_client_config_t s3_client_config;
-        std::string bucketName;
-        std::string objectKey;
-        std::chrono::milliseconds interval;
-        int uploadtype=1;
-        std::string endpointUrl="";
-        std::string token="";
-
         saver = new Saver(save_interval, "ImageProfile");
 
       // Read configuration settings
@@ -74,8 +66,14 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
        }
     saver->StartSaving();
 #ifndef TEST
-    //uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
-    //uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
+    /*int uploadtype=1;
+    std::string endpointUrl="";
+    std::string token="";
+    s3_client_config_t s3_client_config;
+    std::string bucketName;
+    std::string objectKey;
+    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
+    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);*/
 #endif
     } catch (const std::runtime_error& e) {
       std::cerr << e.what() << std::endl;
@@ -98,7 +96,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
 		std::string baseName = name;
 	if (strcmp(name.c_str(), "NOISE") == 0) {
           // Compute noise statistic
-          stat_score = calcSNR(img);
+          stat_score = calculateSNR(img);
 	  std::cout << name.c_str() << std::endl;
 	  float threshold = std::stof(imgstat.second);
           // Update corresponding distribution box and save image if threshold exceeded
@@ -108,7 +106,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
               std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
           }
         } else if (strcmp(name.c_str(), "BRIGHTNESS") == 0) {
-			stat_score = calcBrightness(img);
+			stat_score = calculateBrightness(img);
 		        float threshold = std::stof(imgstat.second);
 			brightnessBox.update(stat_score);
 			std::cout << "updated brightness box" <<std::endl;
@@ -117,7 +115,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
                 std::string savedImagePath = saveImageWithIncrementalName(img, imagePath, baseName);
           }
         } else if (strcmp(name.c_str(), "SHARPNESS") == 0) {
-			stat_score = calcSharpness(img);
+			stat_score = calculateSharpnessLaplacian(img);
 		        float threshold = std::stof(imgstat.second);
 			sharpnessBox.update(stat_score);
 			if (stat_score >= threshold && save_sample==true){
@@ -130,7 +128,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
 			      meanBox[i]->update(mean_values[i]);	 
                          }    
         } else if (strcmp(name.c_str(), "CONTRAST") == 0) {
-			stat_score = calcContrast(img);
+			stat_score = calculateContrast(img);
 		        float threshold = std::stof(imgstat.second);
 			contrastBox.update(stat_score);
 			if (stat_score >= threshold && save_sample==true){

@@ -18,7 +18,7 @@ protected:
 };
 
 // Test convertGrayScale function
-TEST_F(ImageProcessingTest, ConvertGrayScale) {
+TEST_F(ImageProcessingTest, convertGrayScale) {
     cv::Mat grayscaleResult;
     int result = convertGrayScale(colorImage, grayscaleResult);
     ASSERT_EQ(result, 0);
@@ -26,20 +26,20 @@ TEST_F(ImageProcessingTest, ConvertGrayScale) {
 }
 
 // Test calcSharpness function
-TEST_F(ImageProcessingTest, CalcSharpness) {
-    double sharpness = calcSharpness(grayscaleImage);
+TEST_F(ImageProcessingTest, calculateSharpnessLaplacian) {
+    double sharpness = calculateSharpnessLaplacian(grayscaleImage);
     EXPECT_GE(sharpness, 0); // Sharpness should be greater than zero
 }
 
 // Test calcSNR function
-TEST_F(ImageProcessingTest, CalcSNR) {
-    double snr = calcSNR(grayscaleImage);
+TEST_F(ImageProcessingTest, calculateSNR) {
+    double snr = calculateSNR(grayscaleImage);
     EXPECT_GT(snr, 0); // SNR should be greater than zero
 }
 
 // Test calcContrast function
-TEST_F(ImageProcessingTest, CalcContrast) {
-    double contrast = calcContrast(grayscaleImage);
+TEST_F(ImageProcessingTest, calculateContrast) {
+    double contrast = calculateContrast(grayscaleImage);
     EXPECT_GE(contrast, 0); // Contrast should not be negative
 }
 

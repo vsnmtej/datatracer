@@ -1,4 +1,4 @@
-#include "ImageSampler.h"
+#include "imagesampler.h"
 #include "saver.h"
 #include <gtest/gtest.h>
 #include <vector>

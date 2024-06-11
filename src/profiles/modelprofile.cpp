@@ -1,5 +1,5 @@
 #include "modelprofile.h"
-#include "IniParser.h"
+#include "iniparser.h"
 
 ModelProfile::~ModelProfile() {
     delete saver;
@@ -22,11 +22,6 @@ ModelProfile::~ModelProfile() {
  */
 ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
 	       	int save_interval, int top_classes) {
-    s3_client_config_t s3_client_config; 
-    std::string bucketName;
-    std::string objectKey;
-    std::chrono::milliseconds interval;
-    int uploadtype=0;
     std::string endpointUrl="";
     std::string token="";
 
@@ -41,8 +36,12 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
   sketch1 = new frequent_class_sketch(64);
   saver->StartSaving();
 #ifndef TEST
+    /*int uploadtype=0;
+    s3_client_config_t s3_client_config; 
+    std::string bucketName;
+    std::string objectKey;
     //uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
-    //uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
+    //uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);*/
 #endif
 }
 
@@ -51,14 +50,6 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
 int ModelProfile::getNumDistributionBoxes() const {
         return top_classes_;
     }
-
-/* Optional: Public accessor to return a reference to a specific distribution box
-const distributionBox& ModelProfile::getDistributionBox(unsigned int index) const {
-    if (index >= boxes.size()) {
-       throw std::out_of_range("Invalid index for distribution box");
-    }
-    return boxes[index];
-}*/
 
 /**
  * @brief Logs classification model statistics
@@ -90,30 +81,3 @@ int ModelProfile::log_classification_model_stats(float inference_latency __attri
     }
   return 0; // Assuming successful logging, replace with error handling if needed
 }
-
-// {dbox1, dbox2, ...} - 5 top_classes
-// [23, 56, 2 , 7 , 9]
-// (23, &dbox1), (56, &dbox2)
-
-/**
- * @brief Logs YOLOv5 model statistics
- * @param inference_latency Time taken for model inference
- * @param results Reference to the detection results from YOLOv5 model
- * @return 0 on success, negative value on error
- *
- * This function logs inference latency, number of detections, objectness scores, and class frequencies for YOLOv5 model.
- * It updates the `model_classes_stat` map with scores for each detected class.
-int ModelProfile::log_yolov5_model_stats(float inference_latency, YoloDetections& results) {
-  inference_latency_.push_back(inference_latency);
-  no_detections_per_image_.push_back(results.size());
-  for (const auto& result : results) {
-    objectnessbox_.update(objectness_score);  // Log objectness score (implementation assumed)
-    frequency_class_.update(cls);        // Placeholder for storing frequent class IDs
-
-    for (const auto& detection : detections) {  // Loop through detected classes (implementation assumed)
-      model_classes_stat_[id].push_back(score); // Update score statistics for each detected class
-    }
-  }
-  return 0; // Assuming successful logging, replace with error handling if needed
-}
-*/

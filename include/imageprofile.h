@@ -8,7 +8,7 @@
 #ifndef IMAGE_PROFILE_H
 #define IMAGE_PROFILE_H
 
-#include "IniParser.h" // Assuming declarations for IniReader, Saver, distributionBox
+#include "iniparser.h" // Assuming declarations for IniReader, Saver, distributionBox
 #include "imghelpers.h"
 #include "saver.h"
 #include <kll_sketch.hpp>
@@ -63,7 +63,7 @@ private:
 #endif
 
     Saver *saver;
-    ImageUploader *uploader;
+    //ImageUploader *uploader;
 
   /**
    * @brief KLL sketch for storing contrast distribution.

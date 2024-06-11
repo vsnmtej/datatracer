@@ -19,7 +19,7 @@
 #include <stdexcept>
 #include <kll_sketch.hpp>
 
-#include "IniParser.h"
+#include "iniparser.h"
 #include "saver.h"
 #include "objectuploader.h"
 
@@ -85,7 +85,7 @@ private:
   distributionBox ratioConfidenceBox;
   distributionBox entropyConfidenceBox;
     Saver *saver;
-    ImageUploader *uploader;
+    //ImageUploader *uploader;
 	std::map<std::string, std::string> samplingConfig;
 };
 
