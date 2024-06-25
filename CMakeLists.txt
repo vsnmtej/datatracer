@@ -68,6 +68,7 @@ add_library(imagesampler SHARED
             src/helpers/imghelpers.cpp
             src/helpers/http_uploader.cpp
             src/helpers/objectuploader.cpp
+	    src/helpers/generic.cpp
             src/sampling/imagesampler.cpp
 			)
 
@@ -77,6 +78,7 @@ add_library(imageprofiler SHARED
                         src/helpers/imghelpers.cpp
                         src/helpers/http_uploader.cpp
                         src/helpers/objectuploader.cpp
+			src/helpers/generic.cpp
 			src/profiles/imageprofile.cpp
 			)
 
@@ -85,6 +87,7 @@ add_library(modelprofiler SHARED
             src/helpers/iniparser.cpp
             src/helpers/http_uploader.cpp
             src/helpers/objectuploader.cpp
+	    src/helpers/generic.cpp
             src/profiles/modelprofile.cpp
             )	    
 
@@ -124,6 +127,7 @@ add_executable(image_profiler_test
                 src/helpers/imghelpers.cpp
                 src/helpers/http_uploader.cpp
                 src/helpers/objectuploader.cpp
+		src/helpers/generic.cpp
                 src/profiles/imageprofile.cpp
                 src/profiles/tests/imageprofile_test.cpp
               )
@@ -132,6 +136,7 @@ add_executable(model_profiler_test
                 src/helpers/iniparser.cpp
                 src/helpers/http_uploader.cpp
                 src/helpers/objectuploader.cpp
+		src/helpers/generic.cpp
                 src/profiles/modelprofile.cpp
                 src/profiles/tests/modelprofile_test.cpp
 	      )
@@ -142,6 +147,7 @@ add_executable(image_sampler_test
                 src/helpers/imghelpers.cpp
                 src/helpers/http_uploader.cpp
                 src/helpers/objectuploader.cpp
+		src/helpers/generic.cpp
                 src/sampling/imagesampler.cpp
                 src/sampling/tests/imagesampler_test.cpp
               )

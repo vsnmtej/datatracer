@@ -12,6 +12,8 @@ ImageProfile::~ImageProfile() {
     delete saver;
     for (const auto& obj :  meanBox)
         delete obj;
+    for (const auto& obj : pixelBox)
+	delete obj;    
 }
 
 /**
@@ -34,7 +36,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
       imageConfig = parser.parseIniFile(conf_path,
 		      "image", "");
       filesSavePath = imageConfig["filepath"];
-
+      createFolderIfNotExists(filesSavePath);
       // Register statistics for saving based on configuration
       for (const auto& stat_confidence : imageConfig) {
         std::string name = stat_confidence.first;
@@ -57,9 +59,9 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
 	  } 
           else if (strcmp(name.c_str(), "HISTOGRAM") == 0) {
              for (int i = 0; i < channels; ++i) {
-		       distributionBox dbox(200);	
-                       pixelBox.push_back(dbox);
-		       saver->AddObjectToSave((void*)(&pixelBox[i]),
+		       distributionBox *dbox_hist = new distributionBox(200);	
+                       pixelBox.push_back(dbox_hist);
+		       saver->AddObjectToSave((void*)(dbox_hist),
 				       KLL_TYPE, filesSavePath+"pixel_"+std::to_string(i)+".bin"); 
              }
           }	     
@@ -97,7 +99,6 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
 	if (strcmp(name.c_str(), "NOISE") == 0) {
           // Compute noise statistic
           stat_score = calculateSNR(img);
-	  std::cout << name.c_str() << std::endl;
 	  float threshold = std::stof(imgstat.second);
           // Update corresponding distribution box and save image if threshold exceeded
           noiseBox.update(stat_score);
@@ -124,7 +125,7 @@ ImageProfile::ImageProfile(std::string conf_path, int save_interval, int channel
 			}
         } else if (strcmp(name.c_str(), "MEAN") == 0) {
 		         cv::Scalar mean_values = cv::mean(img);
-			 for (int i = 0; i < mean_values.rows; ++i) {
+			 for (int i = 0; i < img.channels(); ++i) {
 			      meanBox[i]->update(mean_values[i]);	 
                          }    
         } else if (strcmp(name.c_str(), "CONTRAST") == 0) {
@@ -175,6 +176,6 @@ void ImageProfile::iterateImage(const cv::Mat& img, const std::function<void(con
 
 void ImageProfile::updatePixelValues(const std::vector<int>& pixelValues) {
      for (size_t i = 0; i < pixelValues.size(); ++i){
-            pixelBox[i].update(pixelValues[i]);
+            pixelBox[i]->update(pixelValues[i]);
     }
 }

@@ -32,6 +32,7 @@ ModelProfile::ModelProfile(std::string model_id, std::string conf_path,
   modelConfig = parser.parseIniFile(conf_path,
                           "model", "");
   filesSavePath = modelConfig["filepath"];
+  createFolderIfNotExists(filesSavePath);
   top_classes_ = top_classes;
   sketch1 = new frequent_class_sketch(64);
   saver->StartSaving();
