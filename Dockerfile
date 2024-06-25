@@ -1,8 +1,4 @@
-FROM kullken/ros2_arm64v8:pet-base-humble
-
-# Ensure all commands are run as root
-USER root
-
+FROM ubuntu:latest
 # Update package lists and install a simple application
 RUN apt-get update
 RUN apt-get install -y \
