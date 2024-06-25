@@ -5,6 +5,8 @@
 #include <thread>
 #include <condition_variable>
 #include <queue>
+#include <string>
+#include <atomic>
 
 //#include "MyObject.h" // Include your object header
 typedef struct {
@@ -22,7 +24,8 @@ typedef enum {
 class Saver {
 public:
   // Constructor to specify filename and save interval
-  Saver(int interval);
+  Saver(int interval, std::string class_name);
+  ~Saver();
 
   // Add an object to the queue for saving
   void AddObjectToSave(void *object, int type, const std::string& filename);
@@ -39,10 +42,12 @@ public:
 private:
 #endif
   // Function to be executed in the background thread
+  std::string parent_name;
   void SaveLoop();
 
+  std::atomic<bool> exitSaveLoop;
   std::queue<data_object_t *> objects_to_save_;  // Queue of objects to be saved
-  int save_interval_minutes_;     // Interval between saves in minutes
+  int save_interval_;     // Interval between saves in minutes
   std::thread save_thread_;        // Thread object for saving
   std::mutex queue_mutex_;         // Mutex for queue access
   std::condition_variable cv_;     // Condition variable for thread synchronization

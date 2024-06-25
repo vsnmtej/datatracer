@@ -4,19 +4,18 @@
  */
 
 #include "objectuploader.h"
+#ifdef AWS
 #include <aws/core/Aws.h>
 #include <aws/core/utils/threading/PooledThreadExecutor.h>
 #include <aws/s3/S3Client.h>
 #include <aws/s3/model/PutObjectRequest.h>
+#endif
 #include <fstream>
 #include <iostream>
 #include <thread>
 
 ImageUploader::ImageUploader(int uploadtype, const std::string& endpointUrl, const std::string& token,
-                            const Aws::Auth::AWSCredentials& credentials, const Aws::String& region,
-                            std::shared_ptr<Aws::Utils::Threading::Executor> executor) :
-  credentials_(credentials), region_(region),
-  stopFlag_(false){
+                            s3_client_config_t &s3_client_config):s3_client_config_(s3_client_config), stopFlag_(false){
     type = uploadtype;
     if (uploadtype == 0)
         _HttpUploader = new HttpUploader(endpointUrl, token);
@@ -58,11 +57,13 @@ void ImageUploader::stopUploadThread() {
 void ImageUploader::uploadThread(const std::string& imagePath, const std::string& bucketName,
                                   const std::string& objectKey, const std::chrono::milliseconds& interval) {
 // Create S3 client
+#ifdef AWS
     Aws::S3::S3Client *s3Client;
 //TODO:resolve error
-//    if(type == 1) {
-//        s3Client = new Aws::S3::S3Client(credentials_, Aws::Region::fromName(region_.c_str()));
-//    }
+    if(type == 1) {
+        s3Client = new Aws::S3::S3Client(credentials_, Aws::Region::fromName(region_.c_str()));
+    }
+#endif
   while (!stopFlag_.load()) {
     // Acquire lock to ensure thread-safe image upload
     uploadMutex_.lock();
@@ -70,9 +71,11 @@ void ImageUploader::uploadThread(const std::string& imagePath, const std::string
     if (type == 1) {
         // Upload the image
 //TODO: resolve error
-//        if (!uploadImageToS3(imagePath, bucketName, objectKey, *s3Client)) {
-//            std::cerr << "Failed to upload image in this iteration." << std::endl;
-//        }
+#ifdef AWS
+        if (!uploadImageToS3(imagePath, bucketName, objectKey, *s3Client)) {
+            std::cerr << "Failed to upload image in this iteration." << std::endl;
+        }
+#endif
     } else  {
         _HttpUploader->postFile(imagePath, bucketName, time(NULL));
     }

@@ -1,8 +1,14 @@
 cmake_minimum_required(VERSION 3.10)
 project(imagesampler)
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+
 # Ensure builds on Windows export all symbols
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+set(CMAKE_CXX_FLAGS_DEBUG "-g3 -DDEBUG=1")
+set(CMAKE_CXX_FLAGS_RELEASE "-DDEBUG=0")
 
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_MACOSX_RPATH ON)
@@ -29,17 +35,22 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_CXX_COMPILER_VERSION VERS
 endif()
 
 # Set the AWS service components used by this project.
-set(SERVICE_COMPONENTS s3)
+#set(SERVICE_COMPONENTS s3)
 
 # Find the AWS SDK for C++ package.
-find_package(AWSSDK REQUIRED COMPONENTS ${SERVICE_COMPONENTS})
+#find_package(AWSSDK REQUIRED COMPONENTS ${SERVICE_COMPONENTS})
 
 # Find libcurl
 find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIRS})
 
 # Try to find OpenCV
+if(APPLE)
+set(OpenCV_DIR "/Users/venkatapydialli/Projects/Edgetpu/install/lib/cmake/opencv4")
+else()
 set(OpenCV_DIR "/usr")
+endif()
+
 find_package(OpenCV REQUIRED)
 
 include_directories(${GTEST_INCLUDE_DIRS})
@@ -53,86 +64,96 @@ include_directories(${CMAKE_SOURCE_DIR}/include/datasketches)
 
 add_library(imagesampler SHARED
             src/helpers/saver.cpp
-            src/helpers/IniParser.cpp
+            src/helpers/iniparser.cpp
             src/helpers/imghelpers.cpp
             src/helpers/http_uploader.cpp
             src/helpers/objectuploader.cpp
-            src/sampling/ImageSampler.cpp
+	    src/helpers/generic.cpp
+            src/sampling/imagesampler.cpp
 			)
 
 add_library(imageprofiler SHARED
 			src/helpers/saver.cpp
-			src/helpers/IniParser.cpp
-            src/helpers/imghelpers.cpp
-            src/helpers/http_uploader.cpp
-            src/helpers/objectuploader.cpp
+			src/helpers/iniparser.cpp
+                        src/helpers/imghelpers.cpp
+                        src/helpers/http_uploader.cpp
+                        src/helpers/objectuploader.cpp
+			src/helpers/generic.cpp
 			src/profiles/imageprofile.cpp
 			)
 
 add_library(modelprofiler SHARED 
             src/helpers/saver.cpp
-            src/helpers/IniParser.cpp
+            src/helpers/iniparser.cpp
             src/helpers/http_uploader.cpp
             src/helpers/objectuploader.cpp
+	    src/helpers/generic.cpp
             src/profiles/modelprofile.cpp
             )	    
 
+if(APPLE)
+message(STATUS "skipping TEST for MAC")
+else()
 add_executable(Tar_GZ_test
             src/helpers/tar_gz_creator.cpp
-            src/helpers/tests/test_tar_gz_creator.cpp
+            src/helpers/tests/tar_gz_creator_test.cpp
             )
 
 
 add_executable(Http_uploader_test
 	    src/helpers/http_uploader.cpp
-            src/helpers/tests/test_http_uploader.cpp	    
+            src/helpers/tests/http_uploader_test.cpp	    
 	    )   
 
 
 add_executable(ImageProcessingTest
                 src/helpers/imghelpers.cpp
-                src/helpers/tests/ImageProcessingTest.cpp
+                src/helpers/tests/imagehelpers_test.cpp
               )
 
 add_executable(IniParserTest
-                src/helpers/IniParser.cpp
-                src/helpers/tests/IniParserTest.cpp
+                src/helpers/iniparser.cpp
+                src/helpers/tests/iniparser_test.cpp
               )
 
 add_executable(SaverTest
                 src/helpers/saver.cpp
-                src/helpers/tests/SaverTest.cpp
+                src/helpers/tests/saver_test.cpp
               )
 
 add_executable(image_profiler_test
                 src/helpers/saver.cpp
-                src/helpers/IniParser.cpp
+                src/helpers/iniparser.cpp
                 src/helpers/imghelpers.cpp
                 src/helpers/http_uploader.cpp
                 src/helpers/objectuploader.cpp
+		src/helpers/generic.cpp
                 src/profiles/imageprofile.cpp
-                src/profiles/tests/image_profiler_test.cpp
+                src/profiles/tests/imageprofile_test.cpp
               )
 add_executable(model_profiler_test
                 src/helpers/saver.cpp
-                src/helpers/IniParser.cpp
+                src/helpers/iniparser.cpp
                 src/helpers/http_uploader.cpp
                 src/helpers/objectuploader.cpp
+		src/helpers/generic.cpp
                 src/profiles/modelprofile.cpp
-                src/profiles/tests/model_profile_test.cpp
+                src/profiles/tests/modelprofile_test.cpp
 	      )
 
 add_executable(image_sampler_test
                 src/helpers/saver.cpp
-                src/helpers/IniParser.cpp
+                src/helpers/iniparser.cpp
                 src/helpers/imghelpers.cpp
                 src/helpers/http_uploader.cpp
                 src/helpers/objectuploader.cpp
-                src/sampling/ImageSampler.cpp
-                src/sampling/tests/test_image_sampler.cpp
+		src/helpers/generic.cpp
+                src/sampling/imagesampler.cpp
+                src/sampling/tests/imagesampler_test.cpp
               )
 
 target_compile_definitions(ImageProcessingTest PRIVATE TEST)
+
 target_compile_definitions(IniParserTest PRIVATE TEST)
 target_compile_definitions(SaverTest PRIVATE TEST)
 target_compile_definitions(image_profiler_test PRIVATE TEST)
@@ -141,21 +162,14 @@ target_compile_definitions(model_profiler_test PRIVATE TEST)
 target_compile_definitions(Http_uploader_test PRIVATE TEST)
 target_compile_definitions(Tar_GZ_test PRIVATE TEST)
 
-target_link_libraries(ImageProcessingTest gtest gtest_main ${OpenCV_LIBS} pthread)
-target_link_libraries(IniParserTest gtest gtest_main ${OpenCV_LIBS} pthread)
+target_link_libraries(ImageProcessingTest gtest gtest_main ${OpenCV_LIBS} pthread curl)
+target_link_libraries(IniParserTest gtest gtest_main ${OpenCV_LIBS} pthread curl)
 target_link_libraries(SaverTest gtest gtest_main ${OpenCV_LIBS} pthread)
 target_link_libraries(image_profiler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} curl pthread)
 target_link_libraries(image_sampler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} curl pthread)
 target_link_libraries(model_profiler_test gtest gtest_main ${OpenCV_LIBS} ${AWSSDK_LINK_LIBRARIES} curl pthread)
 target_link_libraries(Http_uploader_test gtest gtest_main ${OpenCV_LIBS} ${CURL_LIBRARIES} curl pthread)
 target_link_libraries(Tar_GZ_test gtest gtest_main tar z boost_filesystem boost_system pthread)
-
-# Install the library
-install(TARGETS ${CMAKE_PROJECT_NAME}
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
 
 enable_testing()
 #Test
@@ -164,6 +178,20 @@ add_test(NAME IniParserTest COMMAND IniParserTest)
 add_test(NAME SaverTest COMMAND SaverTest)
 add_test(NAME image_profiler_test COMMAND image_profiler_test)
 add_test(NAME image_sampler_test COMMAND image_sampler_test)
-add_test(NAME mode_profiler_test COMMAND model_profiler_test)
+add_test(NAME model_profiler_test COMMAND model_profiler_test)
 #add_test(NAME  COMMAND )
+endif()
 
+target_link_libraries(imagesampler ${OpenCV_LIBS} pthread curl)
+target_link_libraries(imageprofiler ${OpenCV_LIBS} pthread curl)
+target_link_libraries(modelprofiler ${OpenCV_LIBS} pthread curl)
+
+# Install the library
+install(TARGETS ${CMAKE_PROJECT_NAME}
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+
+
+add_subdirectory(examples/TFLite_Check EXCLUDE_FROM_ALL)

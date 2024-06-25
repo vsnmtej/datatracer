@@ -2,8 +2,12 @@
  * @file ImageSampler.cpp
  * @brief Implements ImageSampler class for image sampling based on uncertainty
  */
-#include "ImageSampler.h"
+#include "imagesampler.h"
 #include "imghelpers.h"
+
+ImageSampler::~ImageSampler() {
+    delete saver;
+}
 
 /**
  * @class ImageSampler
@@ -16,26 +20,17 @@
    */
 ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
   try {
-    Aws::Auth::AWSCredentials credentials;
-    Aws::String region;
-    std::string bucketName;
-    std::string objectKey;
-    std::chrono::milliseconds interval;
-    int uploadtype=1;
-    std::string endpointUrl="";
-    std::string token="";
-
-    saver = new Saver(save_interval);
+    saver = new Saver(save_interval, "ImageSampler");
 
     // Read configuration settings
     IniParser parser; // Assuming filename is correct
     samplingConfig = parser.parseIniFile(conf_path, "sampling", "");
-    filesSavePath = samplingConfig["files"];
-
+    filesSavePath = samplingConfig["filepath"];
+    samplingConfig.erase("filepath");
     // Register sampling statistics for saving based on configuration
     for (const auto& sampling_confidence : samplingConfig) {
       std::string name = sampling_confidence.first;
-      if (strcmp(name.c_str(), "MARGINCONFIDENCE")) {
+      if (strcmp(name.c_str(), "MARGINCONFIDENCE") == 0) {
       saver->AddObjectToSave((void*)(&marginConfidenceBox), KLL_TYPE, filesSavePath+"marginconfidence.bin");
       } else if(strcmp(name.c_str(), "LEASTCONFIDENCE") == 0) {
       saver->AddObjectToSave((void*)(&leastConfidenceBox), KLL_TYPE, filesSavePath+"leastconfidence.bin");
@@ -46,10 +41,16 @@ ImageSampler::ImageSampler(std::string conf_path, int save_interval) {
       saver->AddObjectToSave((void*)(&entropyConfidenceBox), KLL_TYPE, filesSavePath+"entropyconfidence.bin");
       }
     }
-
+    /*std::string endpointUrl="";
+    std::string token="";
     saver->StartSaving();
-    uploader = new ImageUploader(uploadtype, endpointUrl, token, credentials, region, nullptr);
-    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);
+    s3_client_config_t s3_client_config;
+    std::string bucketName;
+    std::string objectKey;
+    std::chrono::milliseconds interval;
+    int uploadtype=1;
+    uploader = new ImageUploader(uploadtype, endpointUrl, token, s3_client_config);
+    uploader->startUploadThread(filesSavePath, bucketName, objectKey, interval);*/
   } catch (const std::runtime_error& e) {
     std::cerr << e.what() << std::endl;
   }
@@ -75,6 +76,7 @@ int ImageSampler::sample(std::vector<std::pair<float, int>> &results, cv::Mat &i
 	// Apply configured sampling criteria to identify uncertain samples
 	for (const auto& sampling_confidence : samplingConfig) {
 		std::string name = sampling_confidence.first;
+		std::string baseName = name;
 		try {
         		thresh = std::stof(sampling_confidence.second);  // Attempt to convert the string to float
         		std::cout << "Converted value: " << thresh << std::endl;
@@ -85,35 +87,31 @@ int ImageSampler::sample(std::vector<std::pair<float, int>> &results, cv::Mat &i
     		}
 		float confidence_score = -1.0f;
 
-		if (strcmp(name.c_str(), "marginconfidence") == 0) {
+		if (strcmp(name.c_str(), "MARGINCONFIDENCE") == 0) {
 			// Compute margin confidence and update statistics
 			confidence_score = margin_confidence(confidence, false);
 			marginConfidenceBox.update(confidence_score);
 			if (confidence_score >= thresh) {
-				std::string baseName = "marginconfidence";
 				std::string savedImagePath = saveImageWithIncrementalName(img, filesSavePath, baseName);
 			}
-		} else if (strcmp(name.c_str(), "leastconfidence") == 0) {
+		} else if (strcmp(name.c_str(), "LEASTCONFIDENCE") == 0) {
 			confidence_score = least_confidence(confidence, false);
 			leastConfidenceBox.update(confidence_score);
 			if (confidence_score >= thresh){
-				std::string baseName = "leastconfidence";
 				std::string savedImagePath = saveImageWithIncrementalName(img, filesSavePath, baseName);
 			}
-		} else if (strcmp(name.c_str(), "ratioconfidence") == 0) {
+		} else if (strcmp(name.c_str(), "RATIOCONFIDENCE") == 0) {
 			confidence_score = ratio_confidence(confidence, false);
 			ratioConfidenceBox.update(confidence_score);
 			if (confidence_score >= thresh){
 				std::string imagePath = filesSavePath;
-				std::string baseName = "ratioconfidence";
 				std::string savedImagePath = saveImageWithIncrementalName(img, filesSavePath, baseName);
 			}
-		} else if (strcmp(name.c_str(), "entropyconfidence") == 0) {
+		} else if (strcmp(name.c_str(), "ENTROPYCONFIDENCE") == 0) {
 			confidence_score = entropy_confidence(confidence);
 			entropyConfidenceBox.update(confidence_score);
 			if (confidence_score >= thresh){
 				std::string imagePath = filesSavePath;
-				std::string baseName = "entropyconfidence";
 				std::string savedImagePath = saveImageWithIncrementalName(img, filesSavePath, baseName);
 			}
 		}

@@ -1,168 +1,203 @@
-#include "imghelpers.h"
-#include <sys/types.h> // For types like DIR and struct stat
-#include <sys/stat.h> // For mkdir and file permissions
-#include <dirent.h> // For directory operations
-#include <cstring> // For strcmp
-#include <string> // For std::string
-#include <sstream> // For std::stringstream
-#include <algorithm> // For std::max
-#include <iostream> // For std::cerr and std::endl
-#include <cstdio> // For perror
+#include <opencv2/opencv.hpp>
+#include <iostream>
+#include <vector>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <cstring>
+#include <string>
+#include <sstream>
+#include <algorithm>
+#include <cstdio>
+#include <cmath>
 
-int convertGrayScale(Mat &img, Mat &grayscale){
-	cvtColor(img, grayscale, COLOR_BGR2GRAY);
-	return 0;
+/**
+ * @brief Convert an image to grayscale.
+ * 
+ * @param img The input image.
+ * @param grayscale The output grayscale image.
+ * @return int 0 on success.
+ */
+int convertGrayScale(cv::Mat &img, cv::Mat &grayscale) {
+    cv::cvtColor(img, grayscale, cv::COLOR_BGR2GRAY);
+    return 0;
 }
 
-double calcSharpness(Mat &img){
-    // convert the image in to grayscale
-    Mat grayscale;
+/**
+ * @brief Calculate the sharpness of an image using the Sobel operator.
+ * 
+ * @param image The input image.
+ * @return double The calculated sharpness.
+ */
+double calculateSharpnessSobel(cv::Mat &image) {
+    cv::Mat grayscale;
+    if (image.channels() == 3 && image.depth() == CV_8U) {
+        cv::cvtColor(image, grayscale, cv::COLOR_BGR2GRAY);
+    } else {
+        grayscale = image.clone();
+    }
+
+    cv::Mat sobelX, sobelY;
+    cv::Sobel(grayscale, sobelX, CV_64F, 1, 0, cv::BORDER_REPLICATE);
+    cv::Sobel(grayscale, sobelY, CV_64F, 0, 1, cv::BORDER_REPLICATE);
+
+    cv::Mat sobelXSquared, sobelYSquared;
+    cv::multiply(sobelX, sobelX, sobelXSquared);
+    cv::multiply(sobelY, sobelY, sobelYSquared);
+
+    cv::Scalar meanSobelXSquared = cv::mean(sobelXSquared);
+    cv::Scalar meanSobelYSquared = cv::mean(sobelYSquared);
+
+    double sharpness = std::sqrt(meanSobelXSquared[0] + meanSobelYSquared[0]);
+
+    return sharpness;
+}
+
+/**
+ * @brief Calculate the sharpness of an image using the Laplacian operator.
+ * 
+ * @param img The input image.
+ * @return double The calculated sharpness.
+ */
+double calculateSharpnessLaplacian(cv::Mat &img) {
+    cv::Mat grayscale;
     if (img.channels() == 3) {
         cv::cvtColor(img, grayscale, cv::COLOR_BGR2GRAY);
     } else if (img.channels() == 4) {
         cv::cvtColor(img, grayscale, cv::COLOR_BGRA2GRAY);
     } else {
-        // If the image is already grayscale
         grayscale = img;
     }
 
-    // Apply the Laplacian operator to the grayscale image
-    Mat laplacian;
-    Laplacian(grayscale, laplacian, CV_64F);
+    cv::Mat laplacian;
+    cv::Laplacian(grayscale, laplacian, CV_64F);
 
-    // Compute the mean and std of laplacian image
-    Scalar mean, sigma;
-    meanStdDev(laplacian, mean, sigma);
+    cv::Scalar mean, sigma;
+    cv::meanStdDev(laplacian, mean, sigma);
 
-    // Calculate the sharpness of the image using the Laplacian STD
     double sharpness = sigma.val[0] * sigma.val[0];
 
-    return sharpness;	    
+    return sharpness;
 }
 
-double calcSNR(Mat &img){
-    // Convert the image to grayscale
-    Mat grayscale;
+/**
+ * @brief Calculate the Signal-to-Noise Ratio (SNR) of an image.
+ * 
+ * @param img The input image.
+ * @return double The calculated SNR.
+ */
+double calculateSNR(cv::Mat &img) {
+    cv::Mat grayscale;
     if (img.channels() == 3) {
         cv::cvtColor(img, grayscale, cv::COLOR_BGR2GRAY);
     } else if (img.channels() == 4) {
         cv::cvtColor(img, grayscale, cv::COLOR_BGRA2GRAY);
     } else {
-        // If the image is already grayscale
         grayscale = img;
     }
 
-    Scalar mean, sigma;
-    meanStdDev(grayscale, mean, sigma);
-   
-    // Calculate the Signal-to-Noise Ratio (SNR)
+    cv::Scalar mean, sigma;
+    cv::meanStdDev(grayscale, mean, sigma);
+
     double signal = mean[0];
     double noise = sigma[0];
 
     if (noise == 0) {
-        // If noise is zero, return a high SNR (almost infinite)
         return std::numeric_limits<double>::infinity();
     }
 
-    // SNR in decibels (dB)
     double snr = 20 * std::log10(signal / noise);
- 
-    return snr;    
+
+    return snr;
 }
 
-/*
-int calcMean(Mat &img, std::vector<double> &rgbMean){
-    int height = img.rows;
-    int width = img.cols;
-    int channels = img.channels();
-
-    rgbMean[0] = 0;
-    rgbMean[1] = 0;
-    rgbMean[2] = 0;
-
-    for (int i = 0; i < height ; i++){
-        for (int j = 0; j < width; j++){
-	    rgbMean[0] += img.at<Vec3b>(i, j)[0];
-	    rgbMean[1] += img.at<Vec3b>(i, j)[1];
-	    rgbMean[2] += img.at<Vec3b>(i, j)[2];
-	}
-    }
-    int hw = height*width;
-    rgbMean[0] /= hw;
-    rgbMean[1] /= hw;
-    rgbMean[2] /= hw;
-    return 0;
-}
-
-double calcMean(const cv::Mat& img, int channelNumber) {
-    if (channelNumber < 0 || channelNumber >= img.channels()) {
-        throw std::out_of_range("Channel number out of range");
-    }
-    // Split the image into separate channels
+/**
+ * @brief Calculate the mean of each channel in an image.
+ * 
+ * @param image The input image.
+ * @return std::vector<double> A vector containing the mean of each channel.
+ */
+std::vector<double> calculateChannelMeans(const cv::Mat &image) {
+    std::vector<double> channelMeans;
     std::vector<cv::Mat> channels;
-    cv::split(img, channels);
-    // Ensure channel number is valid
-    if (channelNumber < 0 || channelNumber >= channels.size()) {
-        throw std::out_of_range("Invalid channel number");
+    cv::split(image, channels);
+
+    for (size_t i = 0; i < channels.size(); ++i) {
+        cv::Scalar meanValue = cv::mean(channels[i]);
+        channelMeans.push_back(meanValue[0]);
     }
-    // Calculate the mean of the specified channel
-    cv::Scalar mean = cv::mean(channels[channelNumber]);
-    // Return the mean value for the specified channel
-    return mean[0]; // For single-channel images, the mean is in the first element of the scalar
+
+    return channelMeans;
 }
-*/
-double calcContrast(Mat &img){
-    Mat grayscale;
+
+/**
+ * @brief Calculate the contrast of an image.
+ * 
+ * @param img The input image.
+ * @return double The calculated contrast.
+ */
+double calculateContrast(cv::Mat &img) {
+    cv::Mat grayscale;
     if (img.channels() == 3) {
         cv::cvtColor(img, grayscale, cv::COLOR_BGR2GRAY);
     } else if (img.channels() == 4) {
         cv::cvtColor(img, grayscale, cv::COLOR_BGRA2GRAY);
     } else {
-        // If the image is already grayscale
         grayscale = img;
     }
-   
-    double min_pixel_value, max_pixel_value;
-    minMaxLoc(grayscale, &min_pixel_value, &max_pixel_value);
-    return (max_pixel_value - min_pixel_value)/ max_pixel_value;  
+
+    double minPixelValue, maxPixelValue;
+    cv::minMaxLoc(grayscale, &minPixelValue, &maxPixelValue);
+
+    return (maxPixelValue - minPixelValue) / maxPixelValue;
 }
 
-double calcBrightness(Mat &img){
-	std::vector<double> mean;
-        Scalar mean_values = cv::mean(img);
-	if (mean_values.rows > 0){
-	    return mean_values[0] * 0.299 + mean_values[1] * 0.587 + mean_values[2] * 0.114;
-	}else{
-	    return mean_values[0];
-        }
+/**
+ * @brief Calculate the brightness of an image.
+ * 
+ * @param img The input image.
+ * @return double The calculated brightness.
+ */
+double calculateBrightness(cv::Mat &img) {
+    std::vector<double> meanValues;
+    if (img.channels() == 3) {
+        meanValues = calculateChannelMeans(img);
+        return meanValues[0] * 0.299 + meanValues[1] * 0.587 + meanValues[2] * 0.114;
+    } else {
+        cv::Scalar meanValue = cv::mean(img);
+        return meanValue[0];
+    }
 }
 
-std::string saveImageWithIncrementalName(const cv::Mat& img, const std::string& path, const std::string& baseName) {
-    // Ensure the directory exists
-    // Check if the directory already exists
+/**
+ * @brief Save an image with an incremental name in the specified directory.
+ * 
+ * @param img The input image.
+ * @param path The directory path.
+ * @param baseName The base name for the image files.
+ * @return std::string The full path of the saved image.
+ */
+std::string saveImageWithIncrementalName(const cv::Mat &img, const std::string &path, const std::string &baseName) {
     struct stat st;
     if (stat(path.c_str(), &st) != 0) {
-		// Attempt to create the directory
-		if (mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IRWXO) == -1) {
-			// Error occurred
-			perror("Error creating directory");
-			return "";
-		}
-	}
+        if (mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IRWXO) == -1) {
+            perror("Error creating directory");
+            return "";
+        }
+    }
 
-    // Find the highest numbered image in the directory
     int highestIndex = 0;
-	DIR* dir = opendir(path.c_str());
+    DIR *dir = opendir(path.c_str());
     if (dir) {
-        dirent* entry;
+        dirent *entry;
         while ((entry = readdir(dir)) != NULL) {
-			if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
-				std::string filename(entry->d_name);
-				if (filename.find(baseName) == 0) {
-					int index = std::stoi(filename.substr(baseName.length()));
-					highestIndex = std::max(highestIndex, index);
-				}
-			}
+            if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
+                std::string filename(entry->d_name);
+                if (filename.find(baseName) == 0) {
+                    int index = std::stoi(filename.substr(baseName.length()));
+                    highestIndex = std::max(highestIndex, index);
+                }
+            }
         }
         closedir(dir);
     } else {
@@ -170,17 +205,13 @@ std::string saveImageWithIncrementalName(const cv::Mat& img, const std::string& 
         return "";
     }
 
-    // Increment the index for the new image
     int newIndex = highestIndex + 1;
 
-    // Generate the new filename
     std::stringstream ss;
-    ss << path << "/" << baseName << std::setfill('0') << std::setw(4) << newIndex << ".png"; // Using four digits
+    ss << path << "/" << baseName << std::setfill('0') << std::setw(4) << newIndex << ".png";
     std::string newFilename = ss.str();
 
-    // Save the image
     cv::imwrite(newFilename, img);
 
     return newFilename;
 }
-

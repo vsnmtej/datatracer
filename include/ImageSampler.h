@@ -19,7 +19,7 @@
 #include <stdexcept>
 #include <kll_sketch.hpp>
 
-#include "IniParser.h"
+#include "iniparser.h"
 #include "saver.h"
 #include "objectuploader.h"
 
@@ -37,6 +37,7 @@ public:
    * @param configFilePath Path to the configuration file
    */
   explicit ImageSampler(std::string conf_path, int save_interval);
+  ~ImageSampler();
 
   /**
    * @brief Selects uncertain image samples based on configured criteria
@@ -84,7 +85,7 @@ private:
   distributionBox ratioConfidenceBox;
   distributionBox entropyConfidenceBox;
     Saver *saver;
-    ImageUploader *uploader;
+    //ImageUploader *uploader;
 	std::map<std::string, std::string> samplingConfig;
 };
 
